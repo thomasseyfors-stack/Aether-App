@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-export default function ProfileIntake() {
+interface ProfileIntakeProps {
+  onSubmit: (payload: any) => void;
+}
+
+export default function ProfileIntake({ onSubmit }: ProfileIntakeProps) {
   const [formData, setFormData] = useState({
     firstName: '',
     middleName: '',
@@ -16,7 +20,6 @@ export default function ProfileIntake() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [payload, setPayload] = useState<any>(null);
 
   const currentYear = new Date().getFullYear();
 
@@ -69,8 +72,7 @@ export default function ProfileIntake() {
         timestamp: new Date().toISOString()
       };
       
-      setPayload(submissionPayload);
-      console.log('Calculation Payload:', submissionPayload);
+      onSubmit(submissionPayload);
     }
   };
 
@@ -233,15 +235,6 @@ export default function ProfileIntake() {
             Commence Calculation
           </button>
         </form>
-
-        {payload && (
-          <div className="mt-8 p-6 bg-obsidian border border-astral-gold/30 rounded-xl">
-            <h3 className="text-astral-gold font-semibold uppercase tracking-widest text-sm mb-4">Payload Generated</h3>
-            <pre className="text-ash-grey text-xs overflow-x-auto p-4 bg-black/50 rounded-lg border border-ash-grey/10 font-mono">
-              {JSON.stringify(payload, null, 2)}
-            </pre>
-          </div>
-        )}
       </div>
     </div>
   );
