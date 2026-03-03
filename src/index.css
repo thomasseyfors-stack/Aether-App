@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@theme {
+  --color-obsidian: #0B0C10;
+  --color-astral-gold: #F5D061;
+  --color-nebula-purple: #6A0DAD;
+  --color-starlight-white: #FFFFFF;
+  --color-ash-grey: #C5C6C7;
+}
