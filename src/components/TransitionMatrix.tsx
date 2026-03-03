@@ -41,7 +41,7 @@ export default function TransitionMatrix({ payload, onSuccess, onCancel }: Trans
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 15000); // 15-second timeout
 
-          const response = await fetch('/api/ephemeris', {
+          const response = await fetch('/api/calculate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
@@ -77,12 +77,9 @@ export default function TransitionMatrix({ payload, onSuccess, onCancel }: Trans
                 setTimeout(() => {
                   const fullPayload = {
                     pii: payload,
-                    numerology: {
-                      lifePath: 7, // Hardcoded for now, ideally calculated in API or frontend
-                      expression: 9,
-                      interpretation: "Your Life Path 7 indicates a journey of seeking truth, wisdom, and understanding. The Expression 9 suggests a humanitarian approach, driven by compassion and universal love. Together, these vibrations create a powerful resonance for teaching, healing, and uncovering the deeper mysteries of the Aether."
-                    },
-                    matrices: apiData.matrices
+                    numerology: apiData.numerology,
+                    matrices: apiData.matrices,
+                    theoretical: apiData.theoretical
                   };
                   onSuccess(fullPayload);
                 }, 1500); // Brief pause at the final stage
