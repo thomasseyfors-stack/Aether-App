@@ -125,14 +125,22 @@ export function NumerologyCard({ data }: { data: any }) {
         </h2>
       </div>
       
-      <div className="grid grid-cols-2 gap-3 md:gap-4 mb-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4">
         <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
           <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Life Path</p>
           <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.lifePath ?? '?'}</p>
         </div>
         <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
-          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Expression</p>
-          <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.expression ?? '?'}</p>
+          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Destiny</p>
+          <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.destiny ?? '?'}</p>
+        </div>
+        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
+          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Soul Urge</p>
+          <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.soulUrge ?? '?'}</p>
+        </div>
+        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
+          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Personality</p>
+          <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.personality ?? '?'}</p>
         </div>
       </div>
 
