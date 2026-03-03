@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Lock, Star, Moon, Sun } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 // Mock Celestial JSON Payload (Simulating API Response)
 const mockCelestialData = {
@@ -21,6 +22,53 @@ const mockCelestialData = {
     ascendant: { sign: 'Capricorn', degree: '10°' },
     midheaven: { sign: 'Scorpio', degree: '2°' },
     houses: "Calculated successfully based on precise temporal coordinates."
+  },
+  vaults: {
+    sidereal: {
+      title: "The Soul & Spirit Vessel",
+      subtitle: "Sidereal Resonance",
+      placements: [
+        { planet: 'Sun', sign: 'Libra', degree: '21°' },
+        { planet: 'Moon', sign: 'Aries', degree: '28°' },
+        { planet: 'Mercury', sign: 'Scorpio', degree: '11°', isRetrograde: true },
+        { planet: 'Venus', sign: 'Virgo', degree: '18°' },
+        { planet: 'Mars', sign: 'Pisces', degree: '4°' },
+      ],
+      aspects: [
+        { type: 'Trine', planets: 'Sun - Mars', orb: '2°' },
+        { type: 'Square', planets: 'Moon - Saturn', orb: '4°' }
+      ]
+    },
+    draconic: {
+      title: "The Spark & Core Intent",
+      subtitle: "Draconic Matrix",
+      placements: [
+        { planet: 'Sun', sign: 'Gemini', degree: '5°' },
+        { planet: 'Moon', sign: 'Sagittarius', degree: '12°' },
+        { planet: 'Mercury', sign: 'Cancer', degree: '25°' },
+        { planet: 'Venus', sign: 'Taurus', degree: '2°', isRetrograde: true },
+        { planet: 'Mars', sign: 'Leo', degree: '18°' },
+      ],
+      aspects: [
+        { type: 'Opposition', planets: 'Sun - Moon', orb: '7°' },
+        { type: 'Trine', planets: 'Venus - Saturn', orb: '1°' }
+      ]
+    },
+    heliocentric: {
+      title: "The Source & Solar Mission",
+      subtitle: "Heliocentric Coordinates",
+      placements: [
+        { planet: 'Earth', sign: 'Taurus', degree: '15°' },
+        { planet: 'Mercury', sign: 'Aries', degree: '2°' },
+        { planet: 'Venus', sign: 'Pisces', degree: '22°' },
+        { planet: 'Mars', sign: 'Libra', degree: '28°' },
+        { planet: 'Jupiter', sign: 'Capricorn', degree: '14°', isRetrograde: true },
+      ],
+      aspects: [
+        { type: 'Square', planets: 'Earth - Mars', orb: '3°' },
+        { type: 'Sextile', planets: 'Mercury - Jupiter', orb: '2°' }
+      ]
+    }
   }
 };
 
@@ -48,12 +96,12 @@ export default function Dashboard({ payload }: { payload: any }) {
           <TropicalPlacidusCard data={celestialData} isDefaultTime={isDefaultTime} />
           <OpenConductorsCard placements={celestialData?.placements} />
           
-          {/* Progressive Disclosure Locks */}
+          {/* Progressive Disclosure Vaults */}
           <div className="pt-8 space-y-4 border-t border-ash-grey/10">
             <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4 text-center">Encrypted Sectors</h3>
-            <LockedNavigationCard title="The Soul & Spirit Vessel" />
-            <LockedNavigationCard title="The Spark & Core Intent" />
-            <LockedNavigationCard title="The Source & Solar Mission" />
+            <VaultCard data={celestialData.vaults.sidereal} />
+            <VaultCard data={celestialData.vaults.draconic} />
+            <VaultCard data={celestialData.vaults.heliocentric} />
           </div>
         </div>
       </div>
@@ -201,17 +249,107 @@ function OpenConductorsCard({ placements }: { placements: any[] }) {
   );
 }
 
-function LockedNavigationCard({ title }: { title: string }) {
+function VaultCard({ data }: { data: any }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (!data) return null;
+
   return (
-    <div className="bg-obsidian border border-ash-grey/5 rounded-xl p-5 shadow-md flex items-center justify-between opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-not-allowed group">
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 rounded-full bg-black/50 border border-ash-grey/20 flex items-center justify-center group-hover:border-astral-gold/50 transition-colors">
-          <Lock className="w-4 h-4 text-ash-grey group-hover:text-astral-gold transition-colors" />
+    <motion.div 
+      layout
+      className={`bg-obsidian border rounded-xl overflow-hidden transition-all duration-500 ${
+        isOpen 
+          ? 'border-astral-gold/50 shadow-[0_0_30px_rgba(245,208,97,0.15)]' 
+          : 'border-ash-grey/20 shadow-md hover:border-ash-grey/40'
+      }`}
+    >
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full p-5 flex items-center justify-between group"
+      >
+        <div className="flex items-center gap-4">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-500 ${
+            isOpen ? 'bg-astral-gold/10 border border-astral-gold/50' : 'bg-black/50 border border-ash-grey/20 group-hover:border-ash-grey/50'
+          }`}>
+            {isOpen ? (
+              <Unlock className="w-4 h-4 text-astral-gold" />
+            ) : (
+              <Lock className="w-4 h-4 text-ash-grey group-hover:text-starlight-white transition-colors" />
+            )}
+          </div>
+          <div className="text-left">
+            <h3 className={`text-sm font-semibold tracking-widest uppercase transition-colors duration-500 ${
+              isOpen ? 'text-astral-gold' : 'text-starlight-white'
+            }`}>
+              {data.title}
+            </h3>
+            <p className="text-[10px] text-ash-grey tracking-widest uppercase mt-1">{data.subtitle}</p>
+          </div>
         </div>
-        <h3 className="text-starlight-white text-sm font-semibold tracking-widest uppercase">{title}</h3>
-      </div>
-      <span className="text-[10px] text-ash-grey uppercase tracking-widest border border-ash-grey/20 px-2 py-1 rounded">Locked</span>
-    </div>
+        <div className="text-ash-grey">
+          {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        </div>
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="border-t border-astral-gold/20"
+          >
+            <div className="p-6 space-y-6">
+              {/* Placements Matrix */}
+              <div>
+                <h4 className="text-nebula-purple text-xs font-semibold tracking-widest uppercase mb-3 flex items-center gap-2">
+                  <Activity className="w-3 h-3" />
+                  Celestial Coordinates
+                </h4>
+                <div className="grid grid-cols-2 gap-3">
+                  {data.placements?.map((p: any, idx: number) => (
+                    <div key={idx} className="bg-black/40 p-3 rounded-lg border border-astral-gold/10 flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-starlight-white text-sm">{p.planet}</span>
+                        {p.isRetrograde && (
+                          <span className="text-nebula-purple text-[10px] font-bold" title="Retrograde">Rx</span>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <span className="text-astral-gold text-xs block uppercase tracking-wider">{p.sign}</span>
+                        <span className="text-ash-grey text-[10px]">{p.degree}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Aspects Matrix */}
+              {data.aspects && data.aspects.length > 0 && (
+                <div>
+                  <h4 className="text-nebula-purple text-xs font-semibold tracking-widest uppercase mb-3 flex items-center gap-2">
+                    <Star className="w-3 h-3" />
+                    Significant Aspects
+                  </h4>
+                  <div className="space-y-2">
+                    {data.aspects.map((aspect: any, idx: number) => (
+                      <div key={idx} className="flex items-center justify-between bg-black/20 px-4 py-2 rounded border border-ash-grey/5">
+                        <span className="text-starlight-white text-xs uppercase tracking-wider">{aspect.type}</span>
+                        <div className="flex items-center gap-4">
+                          <span className="text-astral-gold text-xs">{aspect.planets}</span>
+                          <span className="text-ash-grey text-[10px] w-8 text-right">{aspect.orb}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
