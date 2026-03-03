@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import HorizonRadar from './HorizonRadar';
 
 // Mock Celestial JSON Payload (Simulating API Response)
 const mockCelestialData = {
@@ -78,6 +79,7 @@ export const ALL_ZODIAC_SIGNS = [
 ];
 
 export default function Dashboard({ payload, onEnterAxiom }: { payload: any, onEnterAxiom?: () => void }) {
+  const [viewMode, setViewMode] = useState<'blueprint' | 'radar'>('blueprint');
   const isDefaultTime = payload?.isDefaultTime ?? true;
   const celestialData = mockCelestialData; // In a real app, this would come from the payload/API
 
@@ -102,19 +104,49 @@ export default function Dashboard({ payload, onEnterAxiom }: { payload: any, onE
           )}
         </header>
 
-        <div className="flex flex-col gap-6">
-          <NumerologyCard data={celestialData?.numerology} />
-          <TropicalPlacidusCard data={celestialData} isDefaultTime={isDefaultTime} />
-          <OpenConductorsCard placements={celestialData?.placements} />
-          
-          {/* Progressive Disclosure Vaults */}
-          <div className="pt-8 space-y-4 border-t border-ash-grey/10">
-            <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4 text-center">Encrypted Sectors</h3>
-            <VaultCard data={celestialData.vaults.sidereal} />
-            <VaultCard data={celestialData.vaults.draconic} />
-            <VaultCard data={celestialData.vaults.heliocentric} />
-          </div>
+        {/* View Mode Toggle */}
+        <div className="flex bg-black/50 p-1 rounded-lg border border-ash-grey/10 w-full max-w-md mx-auto">
+          <button
+            onClick={() => setViewMode('blueprint')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all ${
+              viewMode === 'blueprint' 
+                ? 'bg-obsidian text-astral-gold shadow-md border border-astral-gold/30' 
+                : 'text-ash-grey hover:text-starlight-white'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            The Blueprint
+          </button>
+          <button
+            onClick={() => setViewMode('radar')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all ${
+              viewMode === 'radar' 
+                ? 'bg-obsidian text-nebula-purple shadow-md border border-nebula-purple/30' 
+                : 'text-ash-grey hover:text-starlight-white'
+            }`}
+          >
+            <Radio className="w-4 h-4" />
+            The Radar
+          </button>
         </div>
+
+        {viewMode === 'blueprint' ? (
+          <div className="flex flex-col gap-6 animate-in fade-in duration-500">
+            <NumerologyCard data={celestialData?.numerology} />
+            <TropicalPlacidusCard data={celestialData} isDefaultTime={isDefaultTime} />
+            <OpenConductorsCard placements={celestialData?.placements} />
+            
+            {/* Progressive Disclosure Vaults */}
+            <div className="pt-8 space-y-4 border-t border-ash-grey/10">
+              <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4 text-center">Encrypted Sectors</h3>
+              <VaultCard data={celestialData.vaults.sidereal} />
+              <VaultCard data={celestialData.vaults.draconic} />
+              <VaultCard data={celestialData.vaults.heliocentric} />
+            </div>
+          </div>
+        ) : (
+          <HorizonRadar payload={payload} />
+        )}
       </div>
     </div>
   );
