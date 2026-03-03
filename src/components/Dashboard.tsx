@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker
 import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
+import AetherLogo from './AetherLogo';
 
 // Mock Celestial JSON Payload (Simulating API Response)
 const mockCelestialData = {
@@ -97,11 +98,14 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
     <div className="min-h-screen bg-obsidian text-starlight-white p-4 md:p-8 font-sans">
       <div className="max-w-3xl mx-auto space-y-8">
         <header className="border-b border-nebula-purple/30 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-astral-gold tracking-widest uppercase mb-2">Aether Grid Active</h1>
-            <p className="text-ash-grey text-sm tracking-widest uppercase">
-              Telemetry Synchronized for {pii.firstName ?? 'Traveler'}
-            </p>
+          <div className="flex items-center gap-4">
+            <AetherLogo className="w-16 h-16" />
+            <div>
+              <h1 className="text-3xl font-bold text-astral-gold tracking-widest uppercase mb-2">Aether Grid Active</h1>
+              <p className="text-ash-grey text-sm tracking-widest uppercase">
+                Telemetry Synchronized for {pii.firstName ?? 'Traveler'}
+              </p>
+            </div>
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
             {onEnterAxiom && (

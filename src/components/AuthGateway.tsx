@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AetherLogo from './AetherLogo';
 
 export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState('');
@@ -14,14 +15,15 @@ export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
   return (
     <div className="min-h-screen bg-obsidian flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md bg-obsidian border border-nebula-purple/30 rounded-2xl p-8 shadow-[0_0_30px_rgba(106,13,173,0.15)]">
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 flex flex-col items-center">
+          <AetherLogo className="w-24 h-24 mb-4" />
           <h1 className="text-3xl font-bold text-starlight-white tracking-widest uppercase mb-2">Aether</h1>
           <p className="text-ash-grey text-sm tracking-widest uppercase">Energetic Navigation</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-ash-grey text-xs font-semibold uppercase tracking-wider mb-2">Email Coordinate</label>
+            <label className="block text-ash-grey text-xs font-semibold uppercase tracking-wider mb-2">Email</label>
             <input 
               type="email" 
               value={email}
@@ -32,7 +34,7 @@ export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
           </div>
           
           <div>
-            <label className="block text-ash-grey text-xs font-semibold uppercase tracking-wider mb-2">Security Key</label>
+            <label className="block text-ash-grey text-xs font-semibold uppercase tracking-wider mb-2">Password</label>
             <input 
               type="password" 
               value={password}
