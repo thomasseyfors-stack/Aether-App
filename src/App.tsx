@@ -3,8 +3,9 @@ import AuthGateway from './components/AuthGateway';
 import ProfileIntake from './components/ProfileIntake';
 import TransitionMatrix from './components/TransitionMatrix';
 import Dashboard from './components/Dashboard';
+import TheoreticalAxiom from './components/TheoreticalAxiom';
 
-type AppState = 'auth' | 'intake' | 'transition' | 'dashboard';
+type AppState = 'auth' | 'intake' | 'transition' | 'dashboard' | 'axiom';
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>('auth');
@@ -31,7 +32,18 @@ export default function App() {
           onCancel={handleTransitionCancel} 
         />
       )}
-      {appState === 'dashboard' && <Dashboard payload={payload} />}
+      {appState === 'dashboard' && (
+        <Dashboard 
+          payload={payload} 
+          onEnterAxiom={() => setAppState('axiom')} 
+        />
+      )}
+      {appState === 'axiom' && (
+        <TheoreticalAxiom 
+          payload={payload} 
+          onBack={() => setAppState('dashboard')} 
+        />
+      )}
     </div>
   );
 }

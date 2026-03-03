@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 // Mock Celestial JSON Payload (Simulating API Response)
@@ -72,23 +72,34 @@ const mockCelestialData = {
   }
 };
 
-const ALL_ZODIAC_SIGNS = [
+export const ALL_ZODIAC_SIGNS = [
   'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
 ];
 
-export default function Dashboard({ payload }: { payload: any }) {
+export default function Dashboard({ payload, onEnterAxiom }: { payload: any, onEnterAxiom?: () => void }) {
   const isDefaultTime = payload?.isDefaultTime ?? true;
   const celestialData = mockCelestialData; // In a real app, this would come from the payload/API
 
   return (
     <div className="min-h-screen bg-obsidian text-starlight-white p-4 md:p-8 font-sans">
       <div className="max-w-3xl mx-auto space-y-8">
-        <header className="border-b border-nebula-purple/30 pb-6">
-          <h1 className="text-3xl font-bold text-astral-gold tracking-widest uppercase mb-2">Aether Grid Active</h1>
-          <p className="text-ash-grey text-sm tracking-widest uppercase">
-            Telemetry Synchronized for {payload?.firstName ?? 'Traveler'}
-          </p>
+        <header className="border-b border-nebula-purple/30 pb-6 flex justify-between items-end">
+          <div>
+            <h1 className="text-3xl font-bold text-astral-gold tracking-widest uppercase mb-2">Aether Grid Active</h1>
+            <p className="text-ash-grey text-sm tracking-widest uppercase">
+              Telemetry Synchronized for {payload?.firstName ?? 'Traveler'}
+            </p>
+          </div>
+          {onEnterAxiom && (
+            <button 
+              onClick={onEnterAxiom}
+              className="flex items-center gap-2 bg-nebula-purple/20 hover:bg-nebula-purple/40 text-nebula-purple border border-nebula-purple/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold"
+            >
+              <Beaker className="w-4 h-4" />
+              Theoretical Axiom
+            </button>
+          )}
         </header>
 
         <div className="flex flex-col gap-6">
@@ -109,7 +120,7 @@ export default function Dashboard({ payload }: { payload: any }) {
   );
 }
 
-function NumerologyCard({ data }: { data: any }) {
+export function NumerologyCard({ data }: { data: any }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!data) {
@@ -155,7 +166,7 @@ function NumerologyCard({ data }: { data: any }) {
   );
 }
 
-function TropicalPlacidusCard({ data, isDefaultTime }: { data: any, isDefaultTime: boolean }) {
+export function TropicalPlacidusCard({ data, isDefaultTime }: { data: any, isDefaultTime: boolean }) {
   if (!data?.placements) {
     return <UnavailableCard title="Tropical Placidus" />;
   }
@@ -195,7 +206,7 @@ function TropicalPlacidusCard({ data, isDefaultTime }: { data: any, isDefaultTim
   );
 }
 
-function AscendantData({ angles }: { angles: any }) {
+export function AscendantData({ angles }: { angles: any }) {
   return (
     <div className="border-t border-ash-grey/10 pt-6 mt-2">
       <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4">Angular Coordinates</h3>
@@ -218,7 +229,7 @@ function AscendantData({ angles }: { angles: any }) {
   );
 }
 
-function OpenConductorsCard({ placements }: { placements: any[] }) {
+export function OpenConductorsCard({ placements }: { placements: any[] }) {
   if (!placements) return <UnavailableCard title="Open Conductors" />;
 
   const occupiedSigns = placements.map(p => p?.sign).filter(Boolean);
@@ -249,7 +260,7 @@ function OpenConductorsCard({ placements }: { placements: any[] }) {
   );
 }
 
-function VaultCard({ data }: { data: any }) {
+export function VaultCard({ data }: { data: any }) {
   const [isOpen, setIsOpen] = useState(false);
 
   if (!data) return null;
@@ -353,7 +364,7 @@ function VaultCard({ data }: { data: any }) {
   );
 }
 
-function UnavailableCard({ title }: { title: string }) {
+export function UnavailableCard({ title }: { title: string }) {
   return (
     <section className="bg-obsidian border border-red-900/30 rounded-xl p-6 shadow-lg">
       <h2 className="text-red-500/70 font-semibold uppercase tracking-widest text-sm mb-2 flex items-center gap-2">
