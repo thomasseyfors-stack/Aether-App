@@ -81,7 +81,7 @@ export default function HorizonRadar({ payload }: { payload: any }) {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-4 md:space-y-6 animate-in fade-in duration-500 w-full max-w-full overflow-x-hidden">
       {/* Radar Navigation */}
       <nav className="flex overflow-x-auto hide-scrollbar gap-2 pb-2 border-b border-ash-grey/10">
         <TabButton 
@@ -111,7 +111,7 @@ export default function HorizonRadar({ payload }: { payload: any }) {
       </nav>
 
       {/* Temporal Containers */}
-      <div className="bg-obsidian border border-ash-grey/10 rounded-xl p-6 shadow-lg min-h-[300px]">
+      <div className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg min-h-[300px]">
         {activeTab === 'today' && <TransitContainer title="Daily Transits" data={dynamicTransits.today} />}
         {activeTab === 'month' && <TransitContainer title="Monthly Transits" data={dynamicTransits.month} />}
         {activeTab === 'year' && <TransitContainer title="Annual Outer Planet Transits" data={dynamicTransits.year} showAllSystems />}
@@ -125,7 +125,7 @@ function TabButton({ active, onClick, icon, label }: { active: boolean, onClick:
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold tracking-widest uppercase whitespace-nowrap transition-colors ${
+      className={`flex items-center gap-1 md:gap-2 px-3 md:px-4 py-2 rounded-lg text-[10px] md:text-xs font-semibold tracking-widest uppercase whitespace-nowrap transition-colors ${
         active 
           ? 'bg-nebula-purple/20 text-nebula-purple border border-nebula-purple/50' 
           : 'bg-black/30 text-ash-grey border border-transparent hover:bg-black/50 hover:text-starlight-white'
@@ -139,22 +139,22 @@ function TabButton({ active, onClick, icon, label }: { active: boolean, onClick:
 
 function TransitContainer({ title, data, showAllSystems = false }: { title: string, data: any[], showAllSystems?: boolean }) {
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-sm flex items-center gap-2">
+    <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-astral-gold"></span>
         {title}
       </h2>
       
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {data.map((transit, idx) => (
-          <div key={idx} className="bg-black/40 p-4 rounded-lg border border-ash-grey/10">
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-starlight-white font-bold">{transit.planet}</span>
-                <span className="text-nebula-purple text-xs uppercase tracking-wider">{transit.aspect}</span>
-                <span className="text-starlight-white font-bold">{transit.natalPlanet}</span>
+          <div key={idx} className="bg-black/40 p-3 md:p-4 rounded-lg border border-ash-grey/10">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2">
+              <div className="flex items-center gap-1 md:gap-2 flex-wrap">
+                <span className="text-starlight-white font-bold text-xs md:text-sm">{transit.planet}</span>
+                <span className="text-nebula-purple text-[10px] md:text-xs uppercase tracking-wider">{transit.aspect}</span>
+                <span className="text-starlight-white font-bold text-xs md:text-sm">{transit.natalPlanet}</span>
               </div>
-              <span className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded border ${
+              <span className={`text-[8px] md:text-[10px] uppercase tracking-widest px-2 py-1 rounded border self-start ${
                 transit.system === 'Tropical' ? 'border-blue-500/30 text-blue-400' :
                 transit.system === 'Sidereal' ? 'border-purple-500/30 text-purple-400' :
                 transit.system === 'Draconic' ? 'border-red-500/30 text-red-400' :
@@ -163,7 +163,7 @@ function TransitContainer({ title, data, showAllSystems = false }: { title: stri
                 {transit.system}
               </span>
             </div>
-            <p className="text-ash-grey text-sm">{transit.description}</p>
+            <p className="text-ash-grey text-[10px] md:text-sm">{transit.description}</p>
           </div>
         ))}
       </div>
@@ -173,18 +173,18 @@ function TransitContainer({ title, data, showAllSystems = false }: { title: stri
 
 function EpicycleContainer({ personalYear }: { personalYear: number }) {
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-sm flex items-center gap-2">
+    <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-astral-gold"></span>
         The 9-Year Epicycle
       </h2>
       
-      <div className="bg-black/40 p-6 rounded-lg border border-astral-gold/20 text-center">
-        <p className="text-ash-grey text-xs uppercase tracking-wider mb-2">Current Personal Year</p>
-        <p className="text-6xl font-bold text-astral-gold mb-6">{personalYear}</p>
+      <div className="bg-black/40 p-4 md:p-6 rounded-lg border border-astral-gold/20 text-center">
+        <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-2">Current Personal Year</p>
+        <p className="text-4xl md:text-6xl font-bold text-astral-gold mb-4 md:mb-6">{personalYear}</p>
         
-        <div className="border-t border-ash-grey/10 pt-6">
-          <p className="text-starlight-white text-sm leading-relaxed max-w-lg mx-auto">
+        <div className="border-t border-ash-grey/10 pt-4 md:pt-6">
+          <p className="text-starlight-white text-xs md:text-sm leading-relaxed max-w-lg mx-auto">
             {PERSONAL_YEAR_INTERPRETATIONS[personalYear] || "Interpretation unavailable."}
           </p>
         </div>

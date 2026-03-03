@@ -10,75 +10,7 @@ const STAGES = [
   { id: 4, text: "Isolating Energetic Grid" }
 ];
 
-// Mock Celestial JSON Payload (Simulating API Response)
-const mockCelestialData = {
-  numerology: {
-    lifePath: 7,
-    expression: 9,
-    interpretation: "Your Life Path 7 indicates a journey of seeking truth, wisdom, and understanding. The Expression 9 suggests a humanitarian approach, driven by compassion and universal love. Together, these vibrations create a powerful resonance for teaching, healing, and uncovering the deeper mysteries of the Aether."
-  },
-  placements: [
-    { planet: 'Sun', sign: 'Scorpio', degree: '15°' },
-    { planet: 'Moon', sign: 'Taurus', degree: '22°' },
-    { planet: 'Mercury', sign: 'Sagittarius', degree: '5°' },
-    { planet: 'Venus', sign: 'Libra', degree: '12°' },
-    { planet: 'Mars', sign: 'Aries', degree: '28°' },
-    { planet: 'Jupiter', sign: 'Cancer', degree: '14°' },
-    { planet: 'Saturn', sign: 'Capricorn', degree: '9°' },
-  ],
-  angles: {
-    ascendant: { sign: 'Capricorn', degree: '10°' },
-    midheaven: { sign: 'Scorpio', degree: '2°' },
-    houses: "Calculated successfully based on precise temporal coordinates."
-  },
-  vaults: {
-    sidereal: {
-      title: "The Soul & Spirit Vessel",
-      subtitle: "Sidereal Resonance",
-      placements: [
-        { planet: 'Sun', sign: 'Libra', degree: '21°' },
-        { planet: 'Moon', sign: 'Aries', degree: '28°' },
-        { planet: 'Mercury', sign: 'Scorpio', degree: '11°', isRetrograde: true },
-        { planet: 'Venus', sign: 'Virgo', degree: '18°' },
-        { planet: 'Mars', sign: 'Pisces', degree: '4°' },
-      ],
-      aspects: [
-        { type: 'Trine', planets: 'Sun - Mars', orb: '2°' },
-        { type: 'Square', planets: 'Moon - Saturn', orb: '4°' }
-      ]
-    },
-    draconic: {
-      title: "The Spark & Core Intent",
-      subtitle: "Draconic Matrix",
-      placements: [
-        { planet: 'Sun', sign: 'Gemini', degree: '5°' },
-        { planet: 'Moon', sign: 'Sagittarius', degree: '12°' },
-        { planet: 'Mercury', sign: 'Cancer', degree: '25°' },
-        { planet: 'Venus', sign: 'Taurus', degree: '2°', isRetrograde: true },
-        { planet: 'Mars', sign: 'Leo', degree: '18°' },
-      ],
-      aspects: [
-        { type: 'Opposition', planets: 'Sun - Moon', orb: '7°' },
-        { type: 'Trine', planets: 'Venus - Saturn', orb: '1°' }
-      ]
-    },
-    heliocentric: {
-      title: "The Source & Solar Mission",
-      subtitle: "Heliocentric Coordinates",
-      placements: [
-        { planet: 'Earth', sign: 'Taurus', degree: '15°' },
-        { planet: 'Mercury', sign: 'Aries', degree: '2°' },
-        { planet: 'Venus', sign: 'Pisces', degree: '22°' },
-        { planet: 'Mars', sign: 'Libra', degree: '28°' },
-        { planet: 'Jupiter', sign: 'Capricorn', degree: '14°', isRetrograde: true },
-      ],
-      aspects: [
-        { type: 'Square', planets: 'Earth - Mars', orb: '3°' },
-        { type: 'Sextile', planets: 'Mercury - Jupiter', orb: '2°' }
-      ]
-    }
-  }
-};
+// No mock data needed here anymore
 
 interface TransitionMatrixProps {
   payload: any;
@@ -104,13 +36,12 @@ export default function TransitionMatrix({ payload, onSuccess, onCancel }: Trans
         });
       }, 2500);
 
-      const attemptFetch = async (attempt = 1): Promise<boolean> => {
+      const attemptFetch = async (attempt = 1): Promise<any> => {
         try {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 15000); // 15-second timeout
 
-          // Placeholder backend endpoint
-          const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+          const response = await fetch('/api/ephemeris', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
@@ -120,7 +51,7 @@ export default function TransitionMatrix({ payload, onSuccess, onCancel }: Trans
           clearTimeout(timeoutId);
 
           if (!response.ok) throw new Error('API Error');
-          return true;
+          return await response.json();
         } catch (err) {
           if (attempt < 3 && isMounted) {
             setRetryCount(attempt);
@@ -134,7 +65,7 @@ export default function TransitionMatrix({ payload, onSuccess, onCancel }: Trans
       };
 
       try {
-        await attemptFetch();
+        const apiData = await attemptFetch();
         
         // Ensure the visual sequence completes even if the API is fast
         const checkStage = setInterval(() => {
@@ -146,12 +77,12 @@ export default function TransitionMatrix({ payload, onSuccess, onCancel }: Trans
                 setTimeout(() => {
                   const fullPayload = {
                     pii: payload,
-                    numerology: mockCelestialData.numerology,
-                    matrices: {
-                      tropical: mockCelestialData.placements,
-                      angles: mockCelestialData.angles,
-                      vaults: mockCelestialData.vaults
-                    }
+                    numerology: {
+                      lifePath: 7, // Hardcoded for now, ideally calculated in API or frontend
+                      expression: 9,
+                      interpretation: "Your Life Path 7 indicates a journey of seeking truth, wisdom, and understanding. The Expression 9 suggests a humanitarian approach, driven by compassion and universal love. Together, these vibrations create a powerful resonance for teaching, healing, and uncovering the deeper mysteries of the Aether."
+                    },
+                    matrices: apiData.matrices
                   };
                   onSuccess(fullPayload);
                 }, 1500); // Brief pause at the final stage

@@ -95,13 +95,13 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
   };
 
   return (
-    <div className="min-h-screen bg-obsidian text-starlight-white p-4 md:p-8 font-sans">
-      <div className="max-w-3xl mx-auto space-y-8">
-        <header className="border-b border-nebula-purple/30 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+    <div className="min-h-screen bg-obsidian text-starlight-white p-4 md:p-6 font-sans w-full max-w-full overflow-x-hidden">
+      <div className="max-w-3xl mx-auto space-y-4 md:space-y-6">
+        <header className="border-b border-nebula-purple/30 pb-4 md:pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div className="flex items-center gap-4">
-            <AetherLogo className="w-16 h-16" />
+            <AetherLogo className="w-12 h-12 md:w-16 md:h-16" />
             <div>
-              <h1 className="text-3xl font-bold text-astral-gold tracking-widest uppercase mb-2">Aether Grid Active</h1>
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold tracking-widest uppercase mb-1 md:mb-2">Aether Grid Active</h1>
               <p className="text-ash-grey text-sm tracking-widest uppercase">
                 Telemetry Synchronized for {pii.firstName ?? 'Traveler'}
               </p>
@@ -154,7 +154,7 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
         </div>
 
         {viewMode === 'blueprint' ? (
-          <div className="flex flex-col gap-6 animate-in fade-in duration-500">
+          <div className="flex flex-col gap-4 md:gap-6 animate-in fade-in duration-500">
             <NumerologyCard data={celestialData?.numerology} />
             <TropicalPlacidusCard data={celestialData} isDefaultTime={isDefaultTime} />
             <OpenConductorsCard placements={celestialData?.placements} />
@@ -187,22 +187,22 @@ export function NumerologyCard({ data }: { data: any }) {
   }
 
   return (
-    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-6 shadow-lg transition-all">
+    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-sm flex items-center gap-2">
+        <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-nebula-purple"></span>
           Numerology Resonance
         </h2>
       </div>
       
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="bg-black/30 p-4 rounded-lg border border-ash-grey/5">
-          <p className="text-ash-grey text-xs uppercase tracking-wider mb-1">Life Path</p>
-          <p className="text-3xl font-bold text-astral-gold">{data?.lifePath ?? '?'}</p>
+      <div className="grid grid-cols-2 gap-3 md:gap-4 mb-4">
+        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
+          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Life Path</p>
+          <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.lifePath ?? '?'}</p>
         </div>
-        <div className="bg-black/30 p-4 rounded-lg border border-ash-grey/5">
-          <p className="text-ash-grey text-xs uppercase tracking-wider mb-1">Expression</p>
-          <p className="text-3xl font-bold text-astral-gold">{data?.expression ?? '?'}</p>
+        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
+          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Expression</p>
+          <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.expression ?? '?'}</p>
         </div>
       </div>
 
@@ -231,18 +231,18 @@ export function TropicalPlacidusCard({ data, isDefaultTime }: { data: any, isDef
   }
 
   return (
-    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-6 shadow-lg">
-      <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-sm mb-6 flex items-center gap-2">
+    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg">
+      <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-xs md:text-sm mb-4 md:mb-6 flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-nebula-purple"></span>
         Tropical Placidus
       </h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6">
         {data.placements.map((p: any, idx: number) => (
-          <div key={idx} className="bg-black/30 p-3 rounded-lg border border-ash-grey/5 flex justify-between items-center">
-            <span className="text-starlight-white text-sm">{p?.planet ?? 'Unknown'}</span>
+          <div key={idx} className="bg-black/30 p-2 md:p-3 rounded-lg border border-ash-grey/5 flex justify-between items-center">
+            <span className="text-starlight-white text-xs md:text-sm">{p?.planet ?? 'Unknown'}</span>
             <div className="text-right">
-              <span className="text-astral-gold text-xs block uppercase tracking-wider">{p?.sign ?? '---'}</span>
+              <span className="text-astral-gold text-[10px] md:text-xs block uppercase tracking-wider">{p?.sign ?? '---'}</span>
               <span className="text-ash-grey text-[10px]">{p?.degree ?? '0°'}</span>
             </div>
           </div>
@@ -267,18 +267,18 @@ export function TropicalPlacidusCard({ data, isDefaultTime }: { data: any, isDef
 
 export function AscendantData({ angles }: { angles: any }) {
   return (
-    <div className="border-t border-ash-grey/10 pt-6 mt-2">
-      <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4">Angular Coordinates</h3>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-black/30 p-4 rounded-lg border border-astral-gold/20">
-          <p className="text-ash-grey text-xs uppercase tracking-wider mb-1">Ascendant</p>
-          <p className="text-lg font-bold text-starlight-white">{angles?.ascendant?.sign ?? '---'}</p>
-          <p className="text-astral-gold text-xs">{angles?.ascendant?.degree ?? '0°'}</p>
+    <div className="border-t border-ash-grey/10 pt-4 md:pt-6 mt-2">
+      <h3 className="text-ash-grey text-[10px] md:text-xs tracking-widest uppercase mb-3 md:mb-4">Angular Coordinates</h3>
+      <div className="grid grid-cols-2 gap-3 md:gap-4">
+        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20">
+          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Ascendant</p>
+          <p className="text-base md:text-lg font-bold text-starlight-white">{angles?.ascendant?.sign ?? '---'}</p>
+          <p className="text-astral-gold text-[10px] md:text-xs">{angles?.ascendant?.degree ?? '0°'}</p>
         </div>
-        <div className="bg-black/30 p-4 rounded-lg border border-astral-gold/20">
-          <p className="text-ash-grey text-xs uppercase tracking-wider mb-1">Midheaven</p>
-          <p className="text-lg font-bold text-starlight-white">{angles?.midheaven?.sign ?? '---'}</p>
-          <p className="text-astral-gold text-xs">{angles?.midheaven?.degree ?? '0°'}</p>
+        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20">
+          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Midheaven</p>
+          <p className="text-base md:text-lg font-bold text-starlight-white">{angles?.midheaven?.sign ?? '---'}</p>
+          <p className="text-astral-gold text-[10px] md:text-xs">{angles?.midheaven?.degree ?? '0°'}</p>
         </div>
       </div>
       <p className="text-ash-grey text-[10px] mt-4 text-center italic">
@@ -295,12 +295,12 @@ export function OpenConductorsCard({ placements }: { placements: any[] }) {
   const openSigns = ALL_ZODIAC_SIGNS.filter(sign => !occupiedSigns.includes(sign));
 
   return (
-    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-6 shadow-lg">
-      <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
+    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg">
+      <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-xs md:text-sm mb-3 md:mb-4 flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-nebula-purple"></span>
         Open Conductors
       </h2>
-      <p className="text-ash-grey text-xs mb-6">
+      <p className="text-ash-grey text-[10px] md:text-xs mb-4 md:mb-6">
         Unassigned zodiac sectors representing latent energetic pathways available for conscious integration.
       </p>
       
@@ -335,20 +335,20 @@ export function VaultCard({ data }: { data: any }) {
     >
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-5 flex items-center justify-between group"
+        className="w-full p-4 md:p-5 flex items-center justify-between group"
       >
-        <div className="flex items-center gap-4">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-500 ${
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-colors duration-500 ${
             isOpen ? 'bg-astral-gold/10 border border-astral-gold/50' : 'bg-black/50 border border-ash-grey/20 group-hover:border-ash-grey/50'
           }`}>
             {isOpen ? (
-              <Unlock className="w-4 h-4 text-astral-gold" />
+              <Unlock className="w-3 h-3 md:w-4 md:h-4 text-astral-gold" />
             ) : (
-              <Lock className="w-4 h-4 text-ash-grey group-hover:text-starlight-white transition-colors" />
+              <Lock className="w-3 h-3 md:w-4 md:h-4 text-ash-grey group-hover:text-starlight-white transition-colors" />
             )}
           </div>
           <div className="text-left">
-            <h3 className={`text-sm font-semibold tracking-widest uppercase transition-colors duration-500 ${
+            <h3 className={`text-xs md:text-sm font-semibold tracking-widest uppercase transition-colors duration-500 ${
               isOpen ? 'text-astral-gold' : 'text-starlight-white'
             }`}>
               {data.title}
@@ -370,24 +370,24 @@ export function VaultCard({ data }: { data: any }) {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="border-t border-astral-gold/20"
           >
-            <div className="p-6 space-y-6">
+            <div className="p-4 md:p-6 space-y-4 md:space-y-6">
               {/* Placements Matrix */}
               <div>
-                <h4 className="text-nebula-purple text-xs font-semibold tracking-widest uppercase mb-3 flex items-center gap-2">
+                <h4 className="text-nebula-purple text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-2 md:mb-3 flex items-center gap-2">
                   <Activity className="w-3 h-3" />
                   Celestial Coordinates
                 </h4>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2 md:gap-3">
                   {data.placements?.map((p: any, idx: number) => (
-                    <div key={idx} className="bg-black/40 p-3 rounded-lg border border-astral-gold/10 flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="text-starlight-white text-sm">{p.planet}</span>
+                    <div key={idx} className="bg-black/40 p-2 md:p-3 rounded-lg border border-astral-gold/10 flex justify-between items-center">
+                      <div className="flex items-center gap-1 md:gap-2">
+                        <span className="text-starlight-white text-xs md:text-sm">{p.planet}</span>
                         {p.isRetrograde && (
-                          <span className="text-nebula-purple text-[10px] font-bold" title="Retrograde">Rx</span>
+                          <span className="text-nebula-purple text-[8px] md:text-[10px] font-bold" title="Retrograde">Rx</span>
                         )}
                       </div>
                       <div className="text-right">
-                        <span className="text-astral-gold text-xs block uppercase tracking-wider">{p.sign}</span>
+                        <span className="text-astral-gold text-[10px] md:text-xs block uppercase tracking-wider">{p.sign}</span>
                         <span className="text-ash-grey text-[10px]">{p.degree}</span>
                       </div>
                     </div>
@@ -398,17 +398,17 @@ export function VaultCard({ data }: { data: any }) {
               {/* Aspects Matrix */}
               {data.aspects && data.aspects.length > 0 && (
                 <div>
-                  <h4 className="text-nebula-purple text-xs font-semibold tracking-widest uppercase mb-3 flex items-center gap-2">
+                  <h4 className="text-nebula-purple text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-2 md:mb-3 flex items-center gap-2">
                     <Star className="w-3 h-3" />
                     Significant Aspects
                   </h4>
                   <div className="space-y-2">
                     {data.aspects.map((aspect: any, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between bg-black/20 px-4 py-2 rounded border border-ash-grey/5">
-                        <span className="text-starlight-white text-xs uppercase tracking-wider">{aspect.type}</span>
-                        <div className="flex items-center gap-4">
-                          <span className="text-astral-gold text-xs">{aspect.planets}</span>
-                          <span className="text-ash-grey text-[10px] w-8 text-right">{aspect.orb}</span>
+                      <div key={idx} className="flex items-center justify-between bg-black/20 px-3 md:px-4 py-2 rounded border border-ash-grey/5">
+                        <span className="text-starlight-white text-[10px] md:text-xs uppercase tracking-wider">{aspect.type}</span>
+                        <div className="flex items-center gap-2 md:gap-4">
+                          <span className="text-astral-gold text-[10px] md:text-xs">{aspect.planets}</span>
+                          <span className="text-ash-grey text-[10px] w-6 md:w-8 text-right">{aspect.orb}</span>
                         </div>
                       </div>
                     ))}
