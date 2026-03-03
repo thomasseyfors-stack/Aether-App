@@ -18,11 +18,14 @@ export default function TheoreticalAxiom({ payload, onBack }: { payload: any, on
     <div className="min-h-screen bg-obsidian text-starlight-white p-4 md:p-6 font-sans w-full max-w-full overflow-x-hidden">
       <div className="max-w-3xl mx-auto space-y-4 md:space-y-6">
         <header className="border-b border-nebula-purple/30 pb-4 md:pb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-nebula-purple tracking-widest uppercase mb-1 md:mb-2">Theoretical Axiom</h1>
-            <p className="text-ash-grey text-[10px] md:text-xs tracking-widest uppercase">
-              Cotsworth / UTC Temporal Shift
-            </p>
+          <div className="flex items-center gap-4">
+            <img src="/img-axiom.jpg" alt="Theoretical Axiom" referrerPolicy="no-referrer" className="w-12 h-12 rounded-full border border-ash-grey/30 object-cover shadow-lg" />
+            <div>
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-nebula-purple tracking-widest uppercase mb-1 md:mb-2">Theoretical Axiom</h1>
+              <p className="text-ash-grey text-[10px] md:text-xs tracking-widest uppercase">
+                Cotsworth / UTC Temporal Shift
+              </p>
+            </div>
           </div>
           <button 
             onClick={onBack}

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
 import AetherLogo from './AetherLogo';
+import { generateCharacteristics } from '../utils/geminiClient';
 
 // Mock Celestial JSON Payload (Simulating API Response)
 const mockCelestialData = {
@@ -163,9 +164,9 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
             {celestialData?.vaults && (
               <div className="pt-8 space-y-4 border-t border-ash-grey/10">
                 <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4 text-center">Encrypted Sectors</h3>
-                <VaultCard data={celestialData.vaults.sidereal} />
-                <VaultCard data={celestialData.vaults.draconic} />
-                <VaultCard data={celestialData.vaults.heliocentric} />
+                <VaultCard data={celestialData.vaults.sidereal} imageSrc="/img-soul.jpg" />
+                <VaultCard data={celestialData.vaults.draconic} imageSrc="/img-spark.jpg" />
+                <VaultCard data={celestialData.vaults.heliocentric} imageSrc="/img-source.jpg" />
               </div>
             )}
           </div>
@@ -234,16 +235,38 @@ export function NumerologyCard({ data }: { data: any }) {
 }
 
 export function TropicalPlacidusCard({ data, isDefaultTime }: { data: any, isDefaultTime: boolean }) {
+  const [isOracleOpen, setIsOracleOpen] = useState(false);
+  const [oracleText, setOracleText] = useState<string | null>(null);
+  const [isLoadingOracle, setIsLoadingOracle] = useState(false);
+
+  useEffect(() => {
+    if (isOracleOpen && !oracleText && !isLoadingOracle) {
+      setIsLoadingOracle(true);
+      generateCharacteristics(data, "The Persona")
+        .then(res => {
+          setOracleText(res);
+          setIsLoadingOracle(false);
+        })
+        .catch(() => {
+          setOracleText("Oracle connection interrupted.");
+          setIsLoadingOracle(false);
+        });
+    }
+  }, [isOracleOpen, oracleText, isLoadingOracle, data]);
+
   if (!data?.placements) {
     return <UnavailableCard title="Tropical Placidus" />;
   }
 
   return (
     <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg">
-      <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-xs md:text-sm mb-4 md:mb-6 flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-nebula-purple"></span>
-        Tropical Placidus
-      </h2>
+      <div className="flex items-center gap-4 mb-4 md:mb-6">
+        <img src="/img-mind.jpg" alt="The Mind" referrerPolicy="no-referrer" className="w-12 h-12 rounded-full border border-ash-grey/30 object-cover shadow-lg" />
+        <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-nebula-purple"></span>
+          Tropical Placidus
+        </h2>
+      </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6">
         {data.placements.map((p: any, idx: number) => (
@@ -269,6 +292,29 @@ export function TropicalPlacidusCard({ data, isDefaultTime }: { data: any, isDef
           </p>
         </div>
       )}
+
+      <div className="mt-4 border-t border-ash-grey/10 pt-4">
+        <button 
+          onClick={() => setIsOracleOpen(!isOracleOpen)}
+          className="flex items-center justify-between w-full text-left text-sm text-nebula-purple hover:text-astral-gold transition-colors uppercase tracking-wider"
+        >
+          <span className="flex items-center gap-2"><Sparkles className="w-4 h-4" /> Oracle Interpretation</span>
+          {isOracleOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </button>
+        
+        {isOracleOpen && (
+          <div className="mt-4 text-ash-grey text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300">
+            {isLoadingOracle ? (
+              <div className="flex items-center gap-2 text-astral-gold">
+                <RefreshCcw className="w-4 h-4 animate-spin" />
+                <span className="text-xs uppercase tracking-widest">Consulting Oracle...</span>
+              </div>
+            ) : (
+              <div className="whitespace-pre-wrap">{oracleText}</div>
+            )}
+          </div>
+        )}
+      </div>
     </section>
   );
 }
@@ -327,8 +373,26 @@ export function OpenConductorsCard({ placements }: { placements: any[] }) {
   );
 }
 
-export function VaultCard({ data }: { data: any }) {
+export function VaultCard({ data, imageSrc }: { data: any, imageSrc?: string }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOracleOpen, setIsOracleOpen] = useState(false);
+  const [oracleText, setOracleText] = useState<string | null>(null);
+  const [isLoadingOracle, setIsLoadingOracle] = useState(false);
+
+  useEffect(() => {
+    if (isOracleOpen && !oracleText && !isLoadingOracle) {
+      setIsLoadingOracle(true);
+      generateCharacteristics(data, data.title)
+        .then(res => {
+          setOracleText(res);
+          setIsLoadingOracle(false);
+        })
+        .catch(() => {
+          setOracleText("Oracle connection interrupted.");
+          setIsLoadingOracle(false);
+        });
+    }
+  }, [isOracleOpen, oracleText, isLoadingOracle, data]);
 
   if (!data) return null;
 
@@ -346,15 +410,19 @@ export function VaultCard({ data }: { data: any }) {
         className="w-full p-4 md:p-5 flex items-center justify-between group"
       >
         <div className="flex items-center gap-3 md:gap-4">
-          <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-colors duration-500 ${
-            isOpen ? 'bg-astral-gold/10 border border-astral-gold/50' : 'bg-black/50 border border-ash-grey/20 group-hover:border-ash-grey/50'
-          }`}>
-            {isOpen ? (
-              <Unlock className="w-3 h-3 md:w-4 md:h-4 text-astral-gold" />
-            ) : (
-              <Lock className="w-3 h-3 md:w-4 md:h-4 text-ash-grey group-hover:text-starlight-white transition-colors" />
-            )}
-          </div>
+          {imageSrc ? (
+            <img src={imageSrc} alt={data.title} referrerPolicy="no-referrer" className="w-12 h-12 rounded-full border border-ash-grey/30 object-cover shadow-lg" />
+          ) : (
+            <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-colors duration-500 ${
+              isOpen ? 'bg-astral-gold/10 border border-astral-gold/50' : 'bg-black/50 border border-ash-grey/20 group-hover:border-ash-grey/50'
+            }`}>
+              {isOpen ? (
+                <Unlock className="w-3 h-3 md:w-4 md:h-4 text-astral-gold" />
+              ) : (
+                <Lock className="w-3 h-3 md:w-4 md:h-4 text-ash-grey group-hover:text-starlight-white transition-colors" />
+              )}
+            </div>
+          )}
           <div className="text-left">
             <h3 className={`text-xs md:text-sm font-semibold tracking-widest uppercase transition-colors duration-500 ${
               isOpen ? 'text-astral-gold' : 'text-starlight-white'
@@ -423,6 +491,29 @@ export function VaultCard({ data }: { data: any }) {
                   </div>
                 </div>
               )}
+
+              <div className="mt-4 border-t border-ash-grey/10 pt-4">
+                <button 
+                  onClick={() => setIsOracleOpen(!isOracleOpen)}
+                  className="flex items-center justify-between w-full text-left text-sm text-nebula-purple hover:text-astral-gold transition-colors uppercase tracking-wider"
+                >
+                  <span className="flex items-center gap-2"><Sparkles className="w-4 h-4" /> Oracle Interpretation</span>
+                  {isOracleOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+                
+                {isOracleOpen && (
+                  <div className="mt-4 text-ash-grey text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300">
+                    {isLoadingOracle ? (
+                      <div className="flex items-center gap-2 text-astral-gold">
+                        <RefreshCcw className="w-4 h-4 animate-spin" />
+                        <span className="text-xs uppercase tracking-widest">Consulting Oracle...</span>
+                      </div>
+                    ) : (
+                      <div className="whitespace-pre-wrap">{oracleText}</div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
         )}

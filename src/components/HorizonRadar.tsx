@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Calendar, Clock, Compass, Activity } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, Compass, Activity, RefreshCcw } from 'lucide-react';
+import { generateForecast } from '../utils/geminiClient';
 
 // Numerology Helper: Calculate Personal Year
 function calculatePersonalYear(birthMonth: string, birthDay: string) {
@@ -33,51 +34,42 @@ const PERSONAL_YEAR_INTERPRETATIONS: Record<number, string> = {
   9: "A year of completion, release, and humanitarianism. Let go of what no longer serves you to prepare for a new cycle."
 };
 
-// Mock Forecast Data
-const mockTransits = {
-  today: [
-    { planet: 'Moon', aspect: 'Trine', natalPlanet: 'Sun', system: 'Tropical', description: 'Emotional harmony and ease of self-expression.' },
-    { planet: 'Mercury', aspect: 'Conjunction', natalPlanet: 'Venus', system: 'Sidereal', description: 'Pleasant communications and social interactions.' }
-  ],
-  month: [
-    { planet: 'Sun', aspect: 'Square', natalPlanet: 'Mars', system: 'Tropical', description: 'Potential for friction; channel energy constructively.' },
-    { planet: 'Venus', aspect: 'Sextile', natalPlanet: 'Jupiter', system: 'Sidereal', description: 'Favorable period for financial and romantic growth.' }
-  ],
-  year: [
-    { planet: 'Jupiter', aspect: 'Trine', natalPlanet: 'Sun', system: 'Tropical', description: 'A major cycle of expansion, optimism, and opportunity.' },
-    { planet: 'Saturn', aspect: 'Conjunction', natalPlanet: 'Moon', system: 'Sidereal', description: 'A period of emotional maturation and restructuring.' },
-    { planet: 'Uranus', aspect: 'Opposition', natalPlanet: 'Mercury', system: 'Draconic', description: 'Sudden insights and shifts in perspective.' },
-    { planet: 'Pluto', aspect: 'Trine', natalPlanet: 'Venus', system: 'Heliocentric', description: 'Deep transformation in values and relationships.' }
-  ]
-};
-
 export default function HorizonRadar({ payload }: { payload: any }) {
   const [activeTab, setActiveTab] = useState<'today' | 'month' | 'year' | 'epicycle'>('today');
+  const [forecastData, setForecastData] = useState<any[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   const pii = payload?.pii || payload || {};
   const personalYear = calculatePersonalYear(pii.birthMonth, pii.birthDay);
 
-  // Dynamic Overlay Logic: Use the decrypted "Static Natal Matrices" from the local MDV as the baseline
-  const tropicalBaseline = payload?.matrices?.tropical?.[0]?.planet || 'Sun';
-  const siderealBaseline = payload?.matrices?.vaults?.sidereal?.placements?.[0]?.planet || 'Venus';
-  const draconicBaseline = payload?.matrices?.vaults?.draconic?.placements?.[0]?.planet || 'Mercury';
-  const heliocentricBaseline = payload?.matrices?.vaults?.heliocentric?.placements?.[0]?.planet || 'Venus';
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    
+    if (payload?.matrices) {
+      generateForecast(payload.matrices)
+        .then(res => {
+          if (isMounted) {
+            setForecastData(res);
+            setIsLoading(false);
+          }
+        })
+        .catch(() => {
+          if (isMounted) {
+            setForecastData([]);
+            setIsLoading(false);
+          }
+        });
+    } else {
+      setIsLoading(false);
+    }
+    
+    return () => { isMounted = false; };
+  }, [payload]);
 
-  const dynamicTransits = {
-    today: [
-      { planet: 'Moon', aspect: 'Trine', natalPlanet: tropicalBaseline, system: 'Tropical', description: 'Emotional harmony and ease of self-expression.' },
-      { planet: 'Mercury', aspect: 'Conjunction', natalPlanet: siderealBaseline, system: 'Sidereal', description: 'Pleasant communications and social interactions.' }
-    ],
-    month: [
-      { planet: 'Sun', aspect: 'Square', natalPlanet: 'Mars', system: 'Tropical', description: 'Potential for friction; channel energy constructively.' },
-      { planet: 'Venus', aspect: 'Sextile', natalPlanet: 'Jupiter', system: 'Sidereal', description: 'Favorable period for financial and romantic growth.' }
-    ],
-    year: [
-      { planet: 'Jupiter', aspect: 'Trine', natalPlanet: tropicalBaseline, system: 'Tropical', description: 'A major cycle of expansion, optimism, and opportunity.' },
-      { planet: 'Saturn', aspect: 'Conjunction', natalPlanet: siderealBaseline, system: 'Sidereal', description: 'A period of emotional maturation and restructuring.' },
-      { planet: 'Uranus', aspect: 'Opposition', natalPlanet: draconicBaseline, system: 'Draconic', description: 'Sudden insights and shifts in perspective.' },
-      { planet: 'Pluto', aspect: 'Trine', natalPlanet: heliocentricBaseline, system: 'Heliocentric', description: 'Deep transformation in values and relationships.' }
-    ]
+  const getFilteredData = (period: string) => {
+    if (!forecastData) return [];
+    return forecastData.filter((item: any) => item.period?.toLowerCase() === period.toLowerCase());
   };
 
   return (
@@ -112,10 +104,21 @@ export default function HorizonRadar({ payload }: { payload: any }) {
 
       {/* Temporal Containers */}
       <div className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg min-h-[300px]">
-        {activeTab === 'today' && <TransitContainer title="Daily Transits" data={dynamicTransits.today} />}
-        {activeTab === 'month' && <TransitContainer title="Monthly Transits" data={dynamicTransits.month} />}
-        {activeTab === 'year' && <TransitContainer title="Annual Outer Planet Transits" data={dynamicTransits.year} showAllSystems />}
-        {activeTab === 'epicycle' && <EpicycleContainer personalYear={personalYear} />}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center h-full min-h-[200px] space-y-4">
+            <RefreshCcw className="w-8 h-8 text-nebula-purple animate-spin" />
+            <p className="text-astral-gold text-xs md:text-sm uppercase tracking-widest font-bold animate-pulse">
+              Synthesizing Quantum Forecast...
+            </p>
+          </div>
+        ) : (
+          <>
+            {activeTab === 'today' && <TransitContainer title="Daily Transits" data={getFilteredData('Daily')} />}
+            {activeTab === 'month' && <TransitContainer title="Monthly Transits" data={getFilteredData('Monthly')} />}
+            {activeTab === 'year' && <TransitContainer title="Annual Transits" data={getFilteredData('Yearly')} />}
+            {activeTab === 'epicycle' && <EpicycleContainer personalYear={personalYear} />}
+          </>
+        )}
       </div>
     </div>
   );
@@ -137,7 +140,21 @@ function TabButton({ active, onClick, icon, label }: { active: boolean, onClick:
   );
 }
 
-function TransitContainer({ title, data, showAllSystems = false }: { title: string, data: any[], showAllSystems?: boolean }) {
+function TransitContainer({ title, data }: { title: string, data: any[] }) {
+  if (!data || data.length === 0) {
+    return (
+      <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-astral-gold"></span>
+          {title}
+        </h2>
+        <div className="bg-black/40 p-3 md:p-4 rounded-lg border border-ash-grey/10 text-center">
+          <p className="text-ash-grey text-xs uppercase tracking-widest">No forecast data available.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
@@ -150,18 +167,20 @@ function TransitContainer({ title, data, showAllSystems = false }: { title: stri
           <div key={idx} className="bg-black/40 p-3 md:p-4 rounded-lg border border-ash-grey/10">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2">
               <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-                <span className="text-starlight-white font-bold text-xs md:text-sm">{transit.planet}</span>
-                <span className="text-nebula-purple text-[10px] md:text-xs uppercase tracking-wider">{transit.aspect}</span>
-                <span className="text-starlight-white font-bold text-xs md:text-sm">{transit.natalPlanet}</span>
+                <span className="text-starlight-white font-bold text-xs md:text-sm">{transit.theme}</span>
+                <span className={`text-[10px] md:text-xs uppercase tracking-wider px-2 py-0.5 rounded ${
+                  transit.intensity === 'High' ? 'bg-red-900/30 text-red-400' :
+                  transit.intensity === 'Medium' ? 'bg-yellow-900/30 text-yellow-400' :
+                  'bg-blue-900/30 text-blue-400'
+                }`}>
+                  {transit.intensity} Intensity
+                </span>
               </div>
-              <span className={`text-[8px] md:text-[10px] uppercase tracking-widest px-2 py-1 rounded border self-start ${
-                transit.system === 'Tropical' ? 'border-blue-500/30 text-blue-400' :
-                transit.system === 'Sidereal' ? 'border-purple-500/30 text-purple-400' :
-                transit.system === 'Draconic' ? 'border-red-500/30 text-red-400' :
-                'border-yellow-500/30 text-yellow-400'
-              }`}>
-                {transit.system}
-              </span>
+              {transit.identityTag && (
+                <span className="text-[8px] md:text-[10px] uppercase tracking-widest px-2 py-1 rounded border border-nebula-purple/30 text-nebula-purple self-start">
+                  {transit.identityTag}
+                </span>
+              )}
             </div>
             <p className="text-ash-grey text-[10px] md:text-sm">{transit.description}</p>
           </div>
