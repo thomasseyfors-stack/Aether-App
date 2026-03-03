@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
+import ErrorBoundary from './ErrorBoundary';
 
 // Mock Celestial JSON Payload (Simulating API Response)
 const mockCelestialData = {
@@ -78,7 +79,7 @@ export const ALL_ZODIAC_SIGNS = [
   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
 ];
 
-export default function Dashboard({ payload, onEnterAxiom }: { payload: any, onEnterAxiom?: () => void }) {
+export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { payload: any, onEnterAxiom?: () => void, onRecalibrate: () => void }) {
   const [viewMode, setViewMode] = useState<'blueprint' | 'radar'>('blueprint');
   const isDefaultTime = payload?.isDefaultTime ?? true;
   const celestialData = mockCelestialData; // In a real app, this would come from the payload/API
@@ -86,22 +87,31 @@ export default function Dashboard({ payload, onEnterAxiom }: { payload: any, onE
   return (
     <div className="min-h-screen bg-obsidian text-starlight-white p-4 md:p-8 font-sans">
       <div className="max-w-3xl mx-auto space-y-8">
-        <header className="border-b border-nebula-purple/30 pb-6 flex justify-between items-end">
+        <header className="border-b border-nebula-purple/30 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div>
             <h1 className="text-3xl font-bold text-astral-gold tracking-widest uppercase mb-2">Aether Grid Active</h1>
             <p className="text-ash-grey text-sm tracking-widest uppercase">
               Telemetry Synchronized for {payload?.firstName ?? 'Traveler'}
             </p>
           </div>
-          {onEnterAxiom && (
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            {onEnterAxiom && (
+              <button 
+                onClick={onEnterAxiom}
+                className="flex items-center justify-center gap-2 bg-nebula-purple/20 hover:bg-nebula-purple/40 text-nebula-purple border border-nebula-purple/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto"
+              >
+                <Beaker className="w-4 h-4" />
+                Theoretical Axiom
+              </button>
+            )}
             <button 
-              onClick={onEnterAxiom}
-              className="flex items-center gap-2 bg-nebula-purple/20 hover:bg-nebula-purple/40 text-nebula-purple border border-nebula-purple/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold"
+              onClick={onRecalibrate}
+              className="flex items-center justify-center gap-2 bg-red-900/20 hover:bg-red-900/40 text-red-400 border border-red-500/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto"
             >
-              <Beaker className="w-4 h-4" />
-              Theoretical Axiom
+              <RefreshCcw className="w-4 h-4" />
+              Recalibrate
             </button>
-          )}
+          </div>
         </header>
 
         {/* View Mode Toggle */}
@@ -145,7 +155,9 @@ export default function Dashboard({ payload, onEnterAxiom }: { payload: any, onE
             </div>
           </div>
         ) : (
-          <HorizonRadar payload={payload} />
+          <ErrorBoundary>
+            <HorizonRadar payload={payload} />
+          </ErrorBoundary>
         )}
       </div>
     </div>
