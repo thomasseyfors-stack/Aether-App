@@ -5,6 +5,76 @@ import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
 import AetherLogo from './AetherLogo';
 
+// Mock Celestial JSON Payload (Simulating API Response)
+const mockCelestialData = {
+  numerology: {
+    lifePath: 7,
+    expression: 9,
+    interpretation: "Your Life Path 7 indicates a journey of seeking truth, wisdom, and understanding. The Expression 9 suggests a humanitarian approach, driven by compassion and universal love. Together, these vibrations create a powerful resonance for teaching, healing, and uncovering the deeper mysteries of the Aether."
+  },
+  placements: [
+    { planet: 'Sun', sign: 'Scorpio', degree: '15°' },
+    { planet: 'Moon', sign: 'Taurus', degree: '22°' },
+    { planet: 'Mercury', sign: 'Sagittarius', degree: '5°' },
+    { planet: 'Venus', sign: 'Libra', degree: '12°' },
+    { planet: 'Mars', sign: 'Aries', degree: '28°' },
+    { planet: 'Jupiter', sign: 'Cancer', degree: '14°' },
+    { planet: 'Saturn', sign: 'Capricorn', degree: '9°' },
+  ],
+  angles: {
+    ascendant: { sign: 'Capricorn', degree: '10°' },
+    midheaven: { sign: 'Scorpio', degree: '2°' },
+    houses: "Calculated successfully based on precise temporal coordinates."
+  },
+  vaults: {
+    sidereal: {
+      title: "The Soul & Spirit Vessel",
+      subtitle: "Sidereal Resonance",
+      placements: [
+        { planet: 'Sun', sign: 'Libra', degree: '21°' },
+        { planet: 'Moon', sign: 'Aries', degree: '28°' },
+        { planet: 'Mercury', sign: 'Scorpio', degree: '11°', isRetrograde: true },
+        { planet: 'Venus', sign: 'Virgo', degree: '18°' },
+        { planet: 'Mars', sign: 'Pisces', degree: '4°' },
+      ],
+      aspects: [
+        { type: 'Trine', planets: 'Sun - Mars', orb: '2°' },
+        { type: 'Square', planets: 'Moon - Saturn', orb: '4°' }
+      ]
+    },
+    draconic: {
+      title: "The Spark & Core Intent",
+      subtitle: "Draconic Matrix",
+      placements: [
+        { planet: 'Sun', sign: 'Gemini', degree: '5°' },
+        { planet: 'Moon', sign: 'Sagittarius', degree: '12°' },
+        { planet: 'Mercury', sign: 'Cancer', degree: '25°' },
+        { planet: 'Venus', sign: 'Taurus', degree: '2°', isRetrograde: true },
+        { planet: 'Mars', sign: 'Leo', degree: '18°' },
+      ],
+      aspects: [
+        { type: 'Opposition', planets: 'Sun - Moon', orb: '7°' },
+        { type: 'Trine', planets: 'Venus - Saturn', orb: '1°' }
+      ]
+    },
+    heliocentric: {
+      title: "The Source & Solar Mission",
+      subtitle: "Heliocentric Coordinates",
+      placements: [
+        { planet: 'Earth', sign: 'Taurus', degree: '15°' },
+        { planet: 'Mercury', sign: 'Aries', degree: '2°' },
+        { planet: 'Venus', sign: 'Pisces', degree: '22°' },
+        { planet: 'Mars', sign: 'Libra', degree: '28°' },
+        { planet: 'Jupiter', sign: 'Capricorn', degree: '14°', isRetrograde: true },
+      ],
+      aspects: [
+        { type: 'Square', planets: 'Earth - Mars', orb: '3°' },
+        { type: 'Sextile', planets: 'Mercury - Jupiter', orb: '2°' }
+      ]
+    }
+  }
+};
+
 export const ALL_ZODIAC_SIGNS = [
   'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
