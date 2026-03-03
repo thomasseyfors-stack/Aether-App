@@ -27,11 +27,15 @@ export default function App() {
   
   const handleIntakeSubmit = (data: any) => {
     setPayload(data);
-    saveToCache(data);
     setAppState('transition');
   };
 
-  const handleTransitionSuccess = () => setAppState('dashboard');
+  const handleTransitionSuccess = (fullData: any) => {
+    setPayload(fullData);
+    saveToCache(fullData);
+    setAppState('dashboard');
+  };
+
   const handleTransitionCancel = () => setAppState('intake');
 
   const handleRecalibrate = () => {

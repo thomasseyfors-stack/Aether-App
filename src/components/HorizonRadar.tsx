@@ -54,7 +54,31 @@ const mockTransits = {
 export default function HorizonRadar({ payload }: { payload: any }) {
   const [activeTab, setActiveTab] = useState<'today' | 'month' | 'year' | 'epicycle'>('today');
   
-  const personalYear = calculatePersonalYear(payload?.birthMonth, payload?.birthDay);
+  const pii = payload?.pii || payload || {};
+  const personalYear = calculatePersonalYear(pii.birthMonth, pii.birthDay);
+
+  // Dynamic Overlay Logic: Use the decrypted "Static Natal Matrices" from the local MDV as the baseline
+  const tropicalBaseline = payload?.matrices?.tropical?.[0]?.planet || 'Sun';
+  const siderealBaseline = payload?.matrices?.vaults?.sidereal?.placements?.[0]?.planet || 'Venus';
+  const draconicBaseline = payload?.matrices?.vaults?.draconic?.placements?.[0]?.planet || 'Mercury';
+  const heliocentricBaseline = payload?.matrices?.vaults?.heliocentric?.placements?.[0]?.planet || 'Venus';
+
+  const dynamicTransits = {
+    today: [
+      { planet: 'Moon', aspect: 'Trine', natalPlanet: tropicalBaseline, system: 'Tropical', description: 'Emotional harmony and ease of self-expression.' },
+      { planet: 'Mercury', aspect: 'Conjunction', natalPlanet: siderealBaseline, system: 'Sidereal', description: 'Pleasant communications and social interactions.' }
+    ],
+    month: [
+      { planet: 'Sun', aspect: 'Square', natalPlanet: 'Mars', system: 'Tropical', description: 'Potential for friction; channel energy constructively.' },
+      { planet: 'Venus', aspect: 'Sextile', natalPlanet: 'Jupiter', system: 'Sidereal', description: 'Favorable period for financial and romantic growth.' }
+    ],
+    year: [
+      { planet: 'Jupiter', aspect: 'Trine', natalPlanet: tropicalBaseline, system: 'Tropical', description: 'A major cycle of expansion, optimism, and opportunity.' },
+      { planet: 'Saturn', aspect: 'Conjunction', natalPlanet: siderealBaseline, system: 'Sidereal', description: 'A period of emotional maturation and restructuring.' },
+      { planet: 'Uranus', aspect: 'Opposition', natalPlanet: draconicBaseline, system: 'Draconic', description: 'Sudden insights and shifts in perspective.' },
+      { planet: 'Pluto', aspect: 'Trine', natalPlanet: heliocentricBaseline, system: 'Heliocentric', description: 'Deep transformation in values and relationships.' }
+    ]
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -88,9 +112,9 @@ export default function HorizonRadar({ payload }: { payload: any }) {
 
       {/* Temporal Containers */}
       <div className="bg-obsidian border border-ash-grey/10 rounded-xl p-6 shadow-lg min-h-[300px]">
-        {activeTab === 'today' && <TransitContainer title="Daily Transits" data={mockTransits.today} />}
-        {activeTab === 'month' && <TransitContainer title="Monthly Transits" data={mockTransits.month} />}
-        {activeTab === 'year' && <TransitContainer title="Annual Outer Planet Transits" data={mockTransits.year} showAllSystems />}
+        {activeTab === 'today' && <TransitContainer title="Daily Transits" data={dynamicTransits.today} />}
+        {activeTab === 'month' && <TransitContainer title="Monthly Transits" data={dynamicTransits.month} />}
+        {activeTab === 'year' && <TransitContainer title="Annual Outer Planet Transits" data={dynamicTransits.year} showAllSystems />}
         {activeTab === 'epicycle' && <EpicycleContainer personalYear={personalYear} />}
       </div>
     </div>

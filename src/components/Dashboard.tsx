@@ -81,8 +81,17 @@ export const ALL_ZODIAC_SIGNS = [
 
 export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { payload: any, onEnterAxiom?: () => void, onRecalibrate: () => void }) {
   const [viewMode, setViewMode] = useState<'blueprint' | 'radar'>('blueprint');
-  const isDefaultTime = payload?.isDefaultTime ?? true;
-  const celestialData = mockCelestialData; // In a real app, this would come from the payload/API
+  
+  // Handle both the new MDV structure and fallback to old structure if needed
+  const pii = payload?.pii || payload || {};
+  const isDefaultTime = pii.isDefaultTime ?? true;
+  
+  const celestialData = {
+    numerology: payload?.numerology,
+    placements: payload?.matrices?.tropical,
+    angles: payload?.matrices?.angles,
+    vaults: payload?.matrices?.vaults
+  };
 
   return (
     <div className="min-h-screen bg-obsidian text-starlight-white p-4 md:p-8 font-sans">
@@ -91,7 +100,7 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
           <div>
             <h1 className="text-3xl font-bold text-astral-gold tracking-widest uppercase mb-2">Aether Grid Active</h1>
             <p className="text-ash-grey text-sm tracking-widest uppercase">
-              Telemetry Synchronized for {payload?.firstName ?? 'Traveler'}
+              Telemetry Synchronized for {pii.firstName ?? 'Traveler'}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
@@ -147,12 +156,14 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
             <OpenConductorsCard placements={celestialData?.placements} />
             
             {/* Progressive Disclosure Vaults */}
-            <div className="pt-8 space-y-4 border-t border-ash-grey/10">
-              <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4 text-center">Encrypted Sectors</h3>
-              <VaultCard data={celestialData.vaults.sidereal} />
-              <VaultCard data={celestialData.vaults.draconic} />
-              <VaultCard data={celestialData.vaults.heliocentric} />
-            </div>
+            {celestialData?.vaults && (
+              <div className="pt-8 space-y-4 border-t border-ash-grey/10">
+                <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4 text-center">Encrypted Sectors</h3>
+                <VaultCard data={celestialData.vaults.sidereal} />
+                <VaultCard data={celestialData.vaults.draconic} />
+                <VaultCard data={celestialData.vaults.heliocentric} />
+              </div>
+            )}
           </div>
         ) : (
           <ErrorBoundary>

@@ -126,13 +126,15 @@ export default function TheoreticalAxiom({ payload, onBack }: { payload: any, on
   const [theoreticalData, setTheoreticalData] = useState<any>(null);
   const [cotsworthInfo, setCotsworthInfo] = useState<any>(null);
 
+  const pii = payload?.pii || payload || {};
+
   useEffect(() => {
     // Calculate Temporal Shift
     const info = convertToCotsworth(
-      payload?.birthYear,
-      payload?.birthMonth,
-      payload?.birthDay,
-      payload?.birthTime
+      pii.birthYear,
+      pii.birthMonth,
+      pii.birthDay,
+      pii.birthTime
     );
     setCotsworthInfo(info);
 
@@ -207,7 +209,7 @@ export default function TheoreticalAxiom({ payload, onBack }: { payload: any, on
         {/* Matrix Rendering (Reusing Components) */}
         <div className="flex flex-col gap-6">
           <NumerologyCard data={theoreticalData?.numerology} />
-          <TropicalPlacidusCard data={theoreticalData} isDefaultTime={payload?.isDefaultTime ?? true} />
+          <TropicalPlacidusCard data={theoreticalData} isDefaultTime={pii.isDefaultTime ?? true} />
           <OpenConductorsCard placements={theoreticalData?.placements} />
           
           <div className="pt-8 space-y-4 border-t border-ash-grey/10">
