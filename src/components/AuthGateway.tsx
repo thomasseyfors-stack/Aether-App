@@ -1,15 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AetherLogo from './AetherLogo';
 
 export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    // SSO Simulation: Check if user has authenticated with Google before
+    const hasGoogleAuth = localStorage.getItem('aether_google_auth');
+    if (hasGoogleAuth === 'true') {
+      onLogin();
+      return;
+    }
+
+    // Auto-Fill Logic: Check for saved email
+    const savedEmail = localStorage.getItem('aether_saved_email');
+    if (savedEmail) {
+      setEmail(savedEmail);
+    }
+  }, [onLogin]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email && password) {
+      // Credential Saving
+      localStorage.setItem('aether_saved_email', email);
       onLogin();
     }
+  };
+
+  const handleGoogleSignIn = () => {
+    localStorage.setItem('aether_google_auth', 'true');
+    onLogin();
   };
 
   return (
@@ -63,7 +85,7 @@ export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
 
         <button 
           type="button"
-          onClick={onLogin}
+          onClick={handleGoogleSignIn}
           className="mt-6 w-full bg-starlight-white text-obsidian font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 hover:bg-starlight-white/90 transition-colors"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
