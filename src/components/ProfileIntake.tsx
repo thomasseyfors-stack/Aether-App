@@ -64,11 +64,13 @@ export default function ProfileIntake({ onSubmit }: ProfileIntakeProps) {
     
     if (validate()) {
       // 12:00 PM Fail-Safe
-      const finalTime = formData.birthTime.trim() === '' ? '12:00' : formData.birthTime;
+      const isDefaultTime = formData.birthTime.trim() === '';
+      const finalTime = isDefaultTime ? '12:00' : formData.birthTime;
       
       const submissionPayload = {
         ...formData,
         birthTime: finalTime,
+        isDefaultTime,
         timestamp: new Date().toISOString()
       };
       
