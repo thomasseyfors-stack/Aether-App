@@ -119,7 +119,13 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
               </button>
             )}
             <button 
-              onClick={onRecalibrate}
+              onClick={() => {
+                if (window.confirm("Are you sure you want to disconnect and clear the current calculation matrix?")) {
+                  localStorage.removeItem('aether_guest');
+                  localStorage.removeItem('aether_google_auth');
+                  onRecalibrate();
+                }
+              }}
               className="flex items-center justify-center gap-2 bg-red-900/20 hover:bg-red-900/40 text-red-400 border border-red-500/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto"
             >
               <RefreshCcw className="w-4 h-4" />

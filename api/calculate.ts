@@ -1,5 +1,4 @@
 // @ts-nocheck
-// @ts-nocheck
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import swisseph from 'sweph';
 
