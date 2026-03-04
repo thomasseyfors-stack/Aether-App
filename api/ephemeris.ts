@@ -56,22 +56,24 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     ];
 
     const placements = planetsToCalc.map(p => {
-      const calc = swisseph.calc_ut(julianDay, p.id, flag);
-      const zodiac = getZodiacSignAndDegree(calc.longitude);
+      const [longitude, latitude, distance, longitudeSpeed] = swisseph.calc_ut(julianDay, p.id, flag);
+      const zodiac = getZodiacSignAndDegree(longitude);
       return {
         planet: p.name,
         sign: zodiac.sign,
         degree: zodiac.degree,
-        isRetrograde: calc.longitudeSpeed !== undefined && calc.longitudeSpeed < 0
+        isRetrograde: longitudeSpeed !== undefined && longitudeSpeed < 0
       };
     });
 
     // 3. Calculate Ascendant, Midheaven, and Houses
     // 'P' = Placidus
-    const housesCalc = swisseph.houses(julianDay, Number(latitude), Number(longitude), 'P');
+    const { house, ascmc } = swisseph.houses(julianDay, Number(latitude), Number(longitude), 'P');
+    const ascendant = ascmc[0];
+    const mc = ascmc[1];
     
-    const ascZodiac = getZodiacSignAndDegree(housesCalc.ascendant);
-    const mcZodiac = getZodiacSignAndDegree(housesCalc.mc);
+    const ascZodiac = getZodiacSignAndDegree(ascendant);
+    const mcZodiac = getZodiacSignAndDegree(mc);
 
     const result = {
       matrices: {

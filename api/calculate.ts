@@ -140,37 +140,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Tropical Placidus
     const tropicalPlacements = planetsToCalc.map(id => {
-      const calc = swisseph.calc_ut(julianDay, id, swisseph.constants.SEFLG_SPEED);
-      const zodiac = getZodiacSignAndDegree(calc.longitude);
+      const [longitude, latitude, distance, longitudeSpeed] = swisseph.calc_ut(julianDay, id, swisseph.constants.SEFLG_SPEED);
+      const zodiac = getZodiacSignAndDegree(longitude);
       return {
         planet: getPlanetName(id),
         sign: zodiac.sign,
         degree: zodiac.degree,
-        longitude: calc.longitude,
-        isRetrograde: calc.longitudeSpeed !== undefined && calc.longitudeSpeed < 0
+        longitude: longitude,
+        isRetrograde: longitudeSpeed !== undefined && longitudeSpeed < 0
       };
     });
 
-    const housesCalc = swisseph.houses(julianDay, lat, lon, 'P');
-    const ascZodiac = getZodiacSignAndDegree(housesCalc.ascendant);
-    const mcZodiac = getZodiacSignAndDegree(housesCalc.mc);
+    const { house, ascmc } = swisseph.houses(julianDay, lat, lon, 'P');
+    const ascendant = ascmc[0];
+    const mc = ascmc[1];
+    const ascZodiac = getZodiacSignAndDegree(ascendant);
+    const mcZodiac = getZodiacSignAndDegree(mc);
 
     // Sidereal Lahiri
     swisseph.set_sid_mode(swisseph.constants.SE_SIDM_LAHIRI, 0, 0);
     const siderealPlacements = planetsToCalc.map(id => {
-      const calc = swisseph.calc_ut(julianDay, id, swisseph.constants.SEFLG_SPEED | swisseph.constants.SEFLG_SIDEREAL);
-      const zodiac = getZodiacSignAndDegree(calc.longitude);
+      const [longitude, latitude, distance, longitudeSpeed] = swisseph.calc_ut(julianDay, id, swisseph.constants.SEFLG_SPEED | swisseph.constants.SEFLG_SIDEREAL);
+      const zodiac = getZodiacSignAndDegree(longitude);
       return {
         planet: getPlanetName(id),
         sign: zodiac.sign,
         degree: zodiac.degree,
-        isRetrograde: calc.longitudeSpeed !== undefined && calc.longitudeSpeed < 0
+        isRetrograde: longitudeSpeed !== undefined && longitudeSpeed < 0
       };
     });
 
     // Draconic
-    const trueNodeCalc = swisseph.calc_ut(julianDay, swisseph.constants.SE_TRUE_NODE, swisseph.constants.SEFLG_SPEED);
-    const trueNodeLong = trueNodeCalc.longitude;
+    const [trueNodeLong, trueNodeLat, trueNodeDist, trueNodeSpeed] = swisseph.calc_ut(julianDay, swisseph.constants.SE_TRUE_NODE, swisseph.constants.SEFLG_SPEED);
     const draconicPlacements = tropicalPlacements.map(p => {
       const draconicLong = (p.longitude - trueNodeLong + 360) % 360;
       const zodiac = getZodiacSignAndDegree(draconicLong);
@@ -185,13 +186,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Heliocentric
     const helioPlanets = [swisseph.constants.SE_EARTH, swisseph.constants.SE_MERCURY, swisseph.constants.SE_VENUS, swisseph.constants.SE_MARS, swisseph.constants.SE_JUPITER, swisseph.constants.SE_SATURN, swisseph.constants.SE_URANUS, swisseph.constants.SE_NEPTUNE, swisseph.constants.SE_PLUTO];
     const heliocentricPlacements = helioPlanets.map(id => {
-      const calc = swisseph.calc_ut(julianDay, id, swisseph.constants.SEFLG_SPEED | swisseph.constants.SEFLG_HELCTR);
-      const zodiac = getZodiacSignAndDegree(calc.longitude);
+      const [longitude, latitude, distance, longitudeSpeed] = swisseph.calc_ut(julianDay, id, swisseph.constants.SEFLG_SPEED | swisseph.constants.SEFLG_HELCTR);
+      const zodiac = getZodiacSignAndDegree(longitude);
       return {
         planet: getPlanetName(id),
         sign: zodiac.sign,
         degree: zodiac.degree,
-        isRetrograde: calc.longitudeSpeed !== undefined && calc.longitudeSpeed < 0
+        isRetrograde: longitudeSpeed !== undefined && longitudeSpeed < 0
       };
     });
 
@@ -207,13 +208,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const theoreticalLP = calcLifePath(cMonth, cDay, utcYear);
     
     const theoreticalZodiac = planetsToCalc.map(id => {
-      const calc = swisseph.calc_ut(utcJulianDay, id, swisseph.constants.SEFLG_SPEED);
-      const zodiac = getZodiacSignAndDegree(calc.longitude);
+      const [longitude, latitude, distance, longitudeSpeed] = swisseph.calc_ut(utcJulianDay, id, swisseph.constants.SEFLG_SPEED);
+      const zodiac = getZodiacSignAndDegree(longitude);
       return {
         planet: getPlanetName(id),
         sign: zodiac.sign,
         degree: zodiac.degree,
-        isRetrograde: calc.longitudeSpeed !== undefined && calc.longitudeSpeed < 0
+        isRetrograde: longitudeSpeed !== undefined && longitudeSpeed < 0
       };
     });
 
