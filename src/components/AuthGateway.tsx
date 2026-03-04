@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 import AetherLogo from './AetherLogo';
 
 export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
@@ -30,9 +32,22 @@ export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    localStorage.setItem('aether_google_auth', 'true');
-    onLogin();
+  const handleGoogleSuccess = (credentialResponse: any) => {
+    if (credentialResponse.credential) {
+      // Decode the secure token Google hands us
+      const decoded: any = jwtDecode(credentialResponse.credential);
+      
+      // decoded.sub is the unique, anonymous Google ID string.
+      // We log this confirmation to prove the airlock is functional.
+      console.log("Secure Tunnel Established. Initializing Sovereign Vault Key Protocol.");
+      
+      // Save the anonymous ID for the future encryption matrix
+      localStorage.setItem('aether_sovereign_id', decoded.sub);
+      
+      // Set the local state to allow entry
+      localStorage.setItem('aether_google_auth', 'true');
+      onLogin();
+    }
   };
 
   return (
@@ -75,7 +90,7 @@ export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
           </button>
         </form>
 
-        <div className="mt-8 relative">
+        <div className="mt-8 relative mb-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-ash-grey/20"></div>
           </div>
@@ -84,19 +99,18 @@ export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
           </div>
         </div>
 
-        <button 
-          type="button"
-          onClick={handleGoogleSignIn}
-          className="mt-6 w-full bg-starlight-white text-obsidian font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 hover:bg-starlight-white/90 transition-colors"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-          </svg>
-          <span className="uppercase tracking-wider text-sm">Sign in with Google</span>
-        </button>
+        <div className="flex justify-center w-full mt-6">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => {
+              console.error('Cryptographic handshake failed.');
+            }}
+            theme="filled_black"
+            shape="rectangular"
+            text="signin_with"
+            size="large"
+          />
+        </div>
 
         <button 
           type="button"
@@ -104,7 +118,7 @@ export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
             localStorage.setItem('aether_guest', 'true');
             onLogin();
           }}
-          className="mt-4 w-full border border-ash-grey/20 text-ash-grey hover:text-starlight-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 hover:bg-ash-grey/10 transition-colors uppercase tracking-wider text-xs"
+          className="mt-6 w-full border border-ash-grey/20 text-ash-grey hover:text-starlight-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 hover:bg-ash-grey/10 transition-colors uppercase tracking-wider text-xs"
         >
           Proceed as Guest / Anonymous
         </button>
