@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import swisseph from 'swisseph';
+import swisseph from 'sweph';
 
 // Helper to convert decimal degrees to Zodiac sign and degree
 function getZodiacSignAndDegree(longitude: number) {
