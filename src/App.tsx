@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import AuthGateway from './components/AuthGateway';
 import ProfileIntake from './components/ProfileIntake';
 import TransitionMatrix from './components/TransitionMatrix';
@@ -72,6 +73,7 @@ export default function App() {
           </ErrorBoundary>
         )}
       </div>
+      <Analytics />
     </ErrorBoundary>
   );
 }
