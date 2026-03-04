@@ -17,18 +17,18 @@ function getZodiacSignAndDegree(longitude: number) {
 
 function getPlanetName(id: number) {
   const map: Record<number, string> = {
-    [swisseph.SE_SUN]: 'Sun',
-    [swisseph.SE_MOON]: 'Moon',
-    [swisseph.SE_MERCURY]: 'Mercury',
-    [swisseph.SE_VENUS]: 'Venus',
-    [swisseph.SE_MARS]: 'Mars',
-    [swisseph.SE_JUPITER]: 'Jupiter',
-    [swisseph.SE_SATURN]: 'Saturn',
-    [swisseph.SE_URANUS]: 'Uranus',
-    [swisseph.SE_NEPTUNE]: 'Neptune',
-    [swisseph.SE_PLUTO]: 'Pluto',
-    [swisseph.SE_EARTH]: 'Earth',
-    [swisseph.SE_TRUE_NODE]: 'True Node'
+    [swisseph.constants.SE_SUN]: 'Sun',
+    [swisseph.constants.SE_MOON]: 'Moon',
+    [swisseph.constants.SE_MERCURY]: 'Mercury',
+    [swisseph.constants.SE_VENUS]: 'Venus',
+    [swisseph.constants.SE_MARS]: 'Mars',
+    [swisseph.constants.SE_JUPITER]: 'Jupiter',
+    [swisseph.constants.SE_SATURN]: 'Saturn',
+    [swisseph.constants.SE_URANUS]: 'Uranus',
+    [swisseph.constants.SE_NEPTUNE]: 'Neptune',
+    [swisseph.constants.SE_PLUTO]: 'Pluto',
+    [swisseph.constants.SE_EARTH]: 'Earth',
+    [swisseph.constants.SE_TRUE_NODE]: 'True Node'
   };
   return map[id] || 'Unknown';
 }
@@ -130,17 +130,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const finalUtcDecimalHours = utcDateObj.getUTCHours() + utcDateObj.getUTCMinutes() / 60;
 
     // 1. Calculate Julian Day
-    const julianDay = swisseph.swe_julday(Number(birthYear), Number(birthMonth), Number(birthDay), localDecimalHours, 1);
-    const utcJulianDay = swisseph.swe_julday(utcYear, utcMonth, utcDay, finalUtcDecimalHours, 1);
+    const julianDay = swisseph.julday(Number(birthYear), Number(birthMonth), Number(birthDay), localDecimalHours, 1);
+    const utcJulianDay = swisseph.julday(utcYear, utcMonth, utcDay, finalUtcDecimalHours, 1);
 
     const planetsToCalc = [
-      swisseph.SE_SUN, swisseph.SE_MOON, swisseph.SE_MERCURY, swisseph.SE_VENUS, 
-      swisseph.SE_MARS, swisseph.SE_JUPITER, swisseph.SE_SATURN
+      swisseph.constants.SE_SUN, swisseph.constants.SE_MOON, swisseph.constants.SE_MERCURY, swisseph.constants.SE_VENUS, 
+      swisseph.constants.SE_MARS, swisseph.constants.SE_JUPITER, swisseph.constants.SE_SATURN
     ];
 
     // Tropical Placidus
     const tropicalPlacements = planetsToCalc.map(id => {
-      const calc = swisseph.swe_calc_ut(julianDay, id, swisseph.SEFLG_SPEED);
+      const calc = swisseph.calc_ut(julianDay, id, swisseph.constants.SEFLG_SPEED);
       const zodiac = getZodiacSignAndDegree(calc.longitude);
       return {
         planet: getPlanetName(id),
@@ -151,14 +151,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       };
     });
 
-    const housesCalc = swisseph.swe_houses(julianDay, lat, lon, 'P');
+    const housesCalc = swisseph.houses(julianDay, lat, lon, 'P');
     const ascZodiac = getZodiacSignAndDegree(housesCalc.ascendant);
     const mcZodiac = getZodiacSignAndDegree(housesCalc.mc);
 
     // Sidereal Lahiri
-    swisseph.swe_set_sid_mode(swisseph.SE_SIDM_LAHIRI, 0, 0);
+    swisseph.set_sid_mode(swisseph.constants.SE_SIDM_LAHIRI, 0, 0);
     const siderealPlacements = planetsToCalc.map(id => {
-      const calc = swisseph.swe_calc_ut(julianDay, id, swisseph.SEFLG_SPEED | swisseph.SEFLG_SIDEREAL);
+      const calc = swisseph.calc_ut(julianDay, id, swisseph.constants.SEFLG_SPEED | swisseph.constants.SEFLG_SIDEREAL);
       const zodiac = getZodiacSignAndDegree(calc.longitude);
       return {
         planet: getPlanetName(id),
@@ -169,7 +169,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     // Draconic
-    const trueNodeCalc = swisseph.swe_calc_ut(julianDay, swisseph.SE_TRUE_NODE, swisseph.SEFLG_SPEED);
+    const trueNodeCalc = swisseph.calc_ut(julianDay, swisseph.constants.SE_TRUE_NODE, swisseph.constants.SEFLG_SPEED);
     const trueNodeLong = trueNodeCalc.longitude;
     const draconicPlacements = tropicalPlacements.map(p => {
       const draconicLong = (p.longitude - trueNodeLong + 360) % 360;
@@ -183,9 +183,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     // Heliocentric
-    const helioPlanets = [swisseph.SE_EARTH, swisseph.SE_MERCURY, swisseph.SE_VENUS, swisseph.SE_MARS, swisseph.SE_JUPITER, swisseph.SE_SATURN, swisseph.SE_URANUS, swisseph.SE_NEPTUNE, swisseph.SE_PLUTO];
+    const helioPlanets = [swisseph.constants.SE_EARTH, swisseph.constants.SE_MERCURY, swisseph.constants.SE_VENUS, swisseph.constants.SE_MARS, swisseph.constants.SE_JUPITER, swisseph.constants.SE_SATURN, swisseph.constants.SE_URANUS, swisseph.constants.SE_NEPTUNE, swisseph.constants.SE_PLUTO];
     const heliocentricPlacements = helioPlanets.map(id => {
-      const calc = swisseph.swe_calc_ut(julianDay, id, swisseph.SEFLG_SPEED | swisseph.SEFLG_HELCTR);
+      const calc = swisseph.calc_ut(julianDay, id, swisseph.constants.SEFLG_SPEED | swisseph.constants.SEFLG_HELCTR);
       const zodiac = getZodiacSignAndDegree(calc.longitude);
       return {
         planet: getPlanetName(id),
@@ -207,7 +207,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const theoreticalLP = calcLifePath(cMonth, cDay, utcYear);
     
     const theoreticalZodiac = planetsToCalc.map(id => {
-      const calc = swisseph.swe_calc_ut(utcJulianDay, id, swisseph.SEFLG_SPEED);
+      const calc = swisseph.calc_ut(utcJulianDay, id, swisseph.constants.SEFLG_SPEED);
       const zodiac = getZodiacSignAndDegree(calc.longitude);
       return {
         planet: getPlanetName(id),
