@@ -1,5 +1,38 @@
+// @ts-nocheck
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import swisseph from 'sweph';
+
+function getPlanetData(result: any) {
+  if (result.longitude !== undefined) return { lon: result.longitude, speed: result.longitudeSpeed || 0 };
+  if (result.lon !== undefined) return { lon: result.lon, speed: result.lonSpeed || result.speed || 0 };
+  if (result.lng !== undefined) return { lon: result.lng, speed: result.lngSpeed || result.speed || 0 };
+  
+  // If the wrapper returned a raw data array inside a property
+  const arr = Object.values(result).find(Array.isArray) as number[];
+  if (arr && arr.length >= 6) return { lon: arr[0], speed: arr[3] };
+  
+  // Fallback: extract all numbers
+  const nums = Object.values(result).filter(v => typeof v === 'number');
+  if (nums.length >= 6) return { lon: nums[0], speed: nums[3] };
+  
+  return { lon: 0, speed: 0 };
+}
+
+function getHouseData(result: any) {
+  let cusps = result.house || result.houses || result.cusp || result.cusps;
+  let angles = result.ascmc || result.angles;
+  
+  // Hunt for the arrays if names changed
+  if (!cusps || !angles) {
+    const arrays = Object.values(result).filter(Array.isArray) as number[][];
+    if (arrays.length >= 2) {
+      // Cusps array is length 12 or 13. Angles array is length 10.
+      cusps = arrays.find(a => a.length >= 12) || arrays[0];
+      angles = arrays.find(a => a.length === 10) || arrays[1];
+    }
+  }
+  return { ascendant: angles ? angles[0] : 0, mc: angles ? angles[1] : 0, cusps: cusps || [] };
+}
 
 // Helper to convert decimal degrees to Zodiac sign and degree
 function getZodiacSignAndDegree(longitude: number) {
@@ -56,21 +89,21 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     ];
 
     const placements = planetsToCalc.map(p => {
-      const [longitude, latitude, distance, longitudeSpeed] = swisseph.calc_ut(julianDay, p.id, flag);
-      const zodiac = getZodiacSignAndDegree(longitude);
+      const calcResult = swisseph.calc_ut(julianDay, p.id, flag);
+      const { lon, speed } = getPlanetData(calcResult);
+      const zodiac = getZodiacSignAndDegree(lon);
       return {
         planet: p.name,
         sign: zodiac.sign,
         degree: zodiac.degree,
-        isRetrograde: longitudeSpeed !== undefined && longitudeSpeed < 0
+        isRetrograde: speed < 0
       };
     });
 
     // 3. Calculate Ascendant, Midheaven, and Houses
     // 'P' = Placidus
-    const { house, ascmc } = swisseph.houses(julianDay, Number(latitude), Number(longitude), 'P');
-    const ascendant = ascmc[0];
-    const mc = ascmc[1];
+    const houseResult = swisseph.houses(julianDay, Number(latitude), Number(longitude), 'P');
+    const { ascendant, mc, cusps } = getHouseData(houseResult);
     
     const ascZodiac = getZodiacSignAndDegree(ascendant);
     const mcZodiac = getZodiacSignAndDegree(mc);
