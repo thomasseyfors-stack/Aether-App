@@ -32,19 +32,22 @@ export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
     }
   };
 
-  const handleGoogleSuccess = (credentialResponse: any) => {
+ const handleGoogleSuccess = (credentialResponse: any) => {
     if (credentialResponse.credential) {
       // Decode the secure token Google hands us
       const decoded: any = jwtDecode(credentialResponse.credential);
       
-      // decoded.sub is the unique, anonymous Google ID string.
-      // We log this confirmation to prove the airlock is functional.
       console.log("Secure Tunnel Established. Initializing Sovereign Vault Key Protocol.");
       
-      // Save the anonymous ID for the future encryption matrix
+      // 1. The Cryptographic Anchor (For future encryption)
       localStorage.setItem('aether_sovereign_id', decoded.sub);
       
-      // Set the local state to allow entry
+      // 2. The Secure Local Pass-Through (For UI Auto-Fill)
+      if (decoded.given_name) localStorage.setItem('aether_first_name', decoded.given_name);
+      if (decoded.family_name) localStorage.setItem('aether_last_name', decoded.family_name);
+      if (decoded.email) localStorage.setItem('aether_saved_email', decoded.email);
+      
+      // 3. Set the local state to allow entry
       localStorage.setItem('aether_google_auth', 'true');
       onLogin();
     }
