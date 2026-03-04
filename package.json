@@ -22,7 +22,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-secure-storage": "^1.3.2",
-    "swisseph": "^0.5.17",
+    "sweph": "^2.10.3-4",
     "vite": "^6.2.0"
   },
   "devDependencies": {
