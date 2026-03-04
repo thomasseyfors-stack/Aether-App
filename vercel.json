@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/calculate.ts": {
+      "includeFiles": "node_modules/sweph/**"
+    },
+    "api/oracle.ts": {
+      "includeFiles": "node_modules/sweph/**"
+    }
+  }
+}
