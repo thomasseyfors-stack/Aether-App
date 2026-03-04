@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/calculate.ts": {
-      "includeFiles": "node_modules/sweph/**"
-    }
-  }
-}
