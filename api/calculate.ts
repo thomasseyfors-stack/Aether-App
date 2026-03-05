@@ -1,7 +1,10 @@
 // @ts-nocheck
+export const maxDuration = 60; // Upgrades Vercel timeout limit from 10s to 60s
+
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import swisseph from 'swisseph';
 
+function getPlanetData(result: any) {
 function getPlanetData(result: any) {
   if (result.longitude !== undefined) return { lon: result.longitude, speed: result.longitudeSpeed || 0 };
   if (result.lon !== undefined) return { lon: result.lon, speed: result.lonSpeed || result.speed || 0 };
