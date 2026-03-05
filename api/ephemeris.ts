@@ -1,6 +1,11 @@
 // @ts-nocheck
+export const maxDuration = 60; // Upgrades Vercel timeout limit from 10s to 60s
+
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import swisseph from 'swisseph';
+
+// Vercel NFT Bypass: Structural anchor to force C++ binary packaging
+try { require.resolve('swisseph/build/Release/swisseph.node'); } catch(e) {}
 
 function getPlanetData(result: any) {
   if (result.longitude !== undefined) return { lon: result.longitude, speed: result.longitudeSpeed || 0 };
