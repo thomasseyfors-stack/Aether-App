@@ -1,10 +1,16 @@
 {
   "functions": {
     "api/calculate.ts": {
-      "includeFiles": "node_modules/swisseph/ephe/*"
+      "includeFiles": [
+        "node_modules/swisseph/ephe/*",
+        "node_modules/swisseph/build/Release/swisseph.node"
+      ]
     },
     "api/oracle.ts": {
-      "includeFiles": "node_modules/swisseph/ephe/*"
+      "includeFiles": [
+        "node_modules/swisseph/ephe/*",
+        "node_modules/swisseph/build/Release/swisseph.node"
+      ]
     }
   }
 }
