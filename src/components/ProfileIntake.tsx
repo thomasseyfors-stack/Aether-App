@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, Clock, ArrowRight } from 'lucide-react';
+import { Search, MapPin, Clock, ArrowRight, AlertTriangle } from 'lucide-react';
 
 interface ProfileIntakeProps {
   onComplete: (data: any) => void;
@@ -20,6 +20,7 @@ export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
+  const [validationError, setValidationError] = useState('');
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Predictive Geolocation Search via Nominatim API
@@ -28,7 +29,7 @@ export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
       setSearchResults([]);
       return;
     }
-    
+
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     
     searchTimeoutRef.current = setTimeout(async () => {
@@ -42,45 +43,71 @@ export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
       } finally {
         setIsSearching(false);
       }
-    }, 600); // 600ms debounce to prevent API flooding
+    }, 600);
   }, [searchQuery]);
+
+  // If user edits the search bar after selecting a city, wipe the spatial coordinates to force a re-selection
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    if (latitude || longitude) {
+      setLatitude('');
+      setLongitude('');
+    }
+  };
 
   const selectLocation = (result: any) => {
     setSearchQuery(result.display_name);
     setLatitude(result.lat);
     setLongitude(result.lon);
     setSearchResults([]);
+    setValidationError(''); // Clear any previous errors
   };
 
   const handleCommence = (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError('');
 
-    if (!birthYear || !birthMonth || !birthDay || !birthTime || !utcOffset || !latitude || !longitude) {
-      alert("System Warning: Spatial and Temporal coordinates are required to lock the matrix.");
+    if (!birthYear || !birthMonth || !birthDay || !birthTime) {
+      setValidationError("System Warning: Temporal coordinates (Date & Time) are required.");
       return;
     }
 
-    // The Temporal Transducer: Convert local input to true UTC
-    const sign = Number(utcOffset) >= 0 ? '+' : '-';
-    const pad = (num: number) => Math.abs(num).toString().padStart(2, '0');
-    const offsetString = `${sign}${pad(Number(utcOffset))}:00`;
+    if (!utcOffset) {
+      setValidationError("System Warning: Historical UTC Offset is required to map true orbital positions.");
+      return;
+    }
 
-    // Construct an ISO string to force the browser to calculate the exact UTC shift
-    const localDate = new Date(`${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}T${birthTime}:00${offsetString}`);
+    if (!latitude || !longitude) {
+      setValidationError("System Warning: You must click a specific Birth City from the predictive dropdown to lock your GPS coordinates.");
+      return;
+    }
 
-    // Extract the mathematically aligned UTC coordinates
-    const payload = {
-      firstName,
-      lastName,
-      birthYear: localDate.getUTCFullYear().toString(),
-      birthMonth: (localDate.getUTCMonth() + 1).toString(),
-      birthDay: localDate.getUTCDate().toString(),
-      birthTime: `${localDate.getUTCHours().toString().padStart(2, '0')}:${localDate.getUTCMinutes().toString().padStart(2, '0')}`,
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
-    };
+    try {
+      // The Temporal Transducer: Pure Mathematical UTC Conversion
+      const [hours, minutes] = birthTime.split(':').map(Number);
+      
+      // Calculate timestamp as if local time was UTC
+      const utcEquivalent = Date.UTC(Number(birthYear), Number(birthMonth) - 1, Number(birthDay), hours, minutes);
+      
+      // Subtract offset (e.g., -10 hours) to shift to True UTC
+      const offsetMs = Number(utcOffset) * 60 * 60 * 1000;
+      const trueUtcTime = new Date(utcEquivalent - offsetMs);
 
-    onComplete(payload);
+      const payload = {
+        firstName,
+        lastName,
+        birthYear: trueUtcTime.getUTCFullYear().toString(),
+        birthMonth: (trueUtcTime.getUTCMonth() + 1).toString(),
+        birthDay: trueUtcTime.getUTCDate().toString(),
+        birthTime: `${trueUtcTime.getUTCHours().toString().padStart(2, '0')}:${trueUtcTime.getUTCMinutes().toString().padStart(2, '0')}`,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+      };
+
+      onComplete(payload);
+    } catch (err) {
+      setValidationError("Critical Error: Invalid temporal data sequence.");
+    }
   };
 
   return (
@@ -132,7 +159,7 @@ export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
               type="text" 
               placeholder="e.g., Adak, Alaska" 
               value={searchQuery} 
-              onChange={e => setSearchQuery(e.target.value)} 
+              onChange={handleSearchChange} 
               className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:border-emerald-500 focus:outline-none" 
             />
             
@@ -171,7 +198,6 @@ export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
                 <option value="5.5">+5.5 (India)</option>
                 <option value="8">+8 (China/AWST)</option>
                 <option value="10">+10 (AEST)</option>
-                {/* Additional offsets can be expanded here */}
               </select>
             </div>
             
@@ -183,6 +209,14 @@ export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
             </div>
           </div>
         </div>
+
+        {/* UI Validation Shield */}
+        {validationError && (
+          <div className="bg-red-900/50 border border-red-500 text-red-200 p-3 rounded-lg flex items-start gap-3 text-sm">
+            <AlertTriangle className="w-5 h-5 shrink-0 text-red-400 mt-0.5" />
+            <p>{validationError}</p>
+          </div>
+        )}
 
         <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-lg flex justify-center items-center gap-2 transition-colors">
           Commence Calculation <ArrowRight className="w-5 h-5" />
