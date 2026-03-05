@@ -5,6 +5,9 @@
     },
     "api/oracle.ts": {
       "includeFiles": "node_modules/swisseph/**"
+    },
+    "api/ephemeris.ts": {
+      "includeFiles": "node_modules/swisseph/**"
     }
   }
 }
