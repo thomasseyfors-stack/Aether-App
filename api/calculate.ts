@@ -2,10 +2,10 @@
 export const maxDuration = 60; // Upgrades Vercel timeout limit from 10s to 60s
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { AstroTime, Body, Equator, Observer } from 'astronomy-engine';
 
 // ------------------------------------------------------------------------
-// THE KEPLERIAN SCAFFOLD: Pure TypeScript Orbital Approximation Engine
-// Bypasses Vercel's C++ binary rejection by executing native math.
+// HIGH-FIDELITY STRUCTURAL ENGINE (astronomy-engine)
 // ------------------------------------------------------------------------
 
 function getZodiac(longitude: number) {
@@ -18,47 +18,80 @@ function getZodiac(longitude: number) {
   };
 }
 
-function calculatePlanets(daysSinceJ2000: number, isSidereal = false, isHelio = false) {
+// Converts Equatorial RA/DEC into Ecliptic Longitude via Spherical Trigonometry
+function getEclipticLongitude(raHours: number, decDegrees: number) {
+  const raRad = (raHours * 15) * (Math.PI / 180);
+  const decRad = decDegrees * (Math.PI / 180);
+  const oblRad = 23.4392911 * (Math.PI / 180); // Mean Obliquity of the Ecliptic
+  
+  let lonRad = Math.atan2(
+    Math.sin(raRad) * Math.cos(oblRad) + Math.tan(decRad) * Math.sin(oblRad),
+    Math.cos(raRad)
+  );
+  
+  return ((lonRad * 180 / Math.PI) + 360) % 360;
+}
+
+function calculatePlanets(astroTime: AstroTime, isSidereal = false) {
   // Ayanamsha offset for Lahiri Sidereal (approximate drift since J2000)
+  const daysSinceJ2000 = astroTime.ut - new Date('2000-01-01T12:00:00Z').getTime() / 86400000;
   const shift = isSidereal ? ((daysSinceJ2000 / 365.25) * 0.01396) + 23.85 : 0; 
   
-  // Keplerian Mean Orbital Elements
-  const planets = [
-    { name: 'Sun', L0: 280.46, n: 0.985647 },
-    { name: 'Moon', L0: 218.316, n: 13.176396 },
-    { name: 'Mercury', L0: 114.207, n: 4.092317 }, 
-    { name: 'Venus', L0: 277.115, n: 1.602130 },   
-    { name: 'Mars', L0: 214.925, n: 0.524038 },
-    { name: 'Jupiter', L0: 308.232, n: 0.083085 },
-    { name: 'Saturn', L0: 15.545, n: 0.033444 }
+  const observer = new Observer(0, 0, 0); // Geocentric default
+  const bodies = [
+    { key: Body.Sun, name: 'Sun' },
+    { key: Body.Moon, name: 'Moon' },
+    { key: Body.Mercury, name: 'Mercury' },
+    { key: Body.Venus, name: 'Venus' },
+    { key: Body.Mars, name: 'Mars' },
+    { key: Body.Jupiter, name: 'Jupiter' },
+    { key: Body.Saturn, name: 'Saturn' },
+    { key: Body.Uranus, name: 'Uranus' },
+    { key: Body.Neptune, name: 'Neptune' },
+    { key: Body.Pluto, name: 'Pluto' }
   ];
 
-  return planets.map(p => {
-    // Heliocentric adjustment acts as a structural rotation
-    const helioOffset = isHelio ? 180 : 0; 
-    const lon = (p.L0 + (p.n * daysSinceJ2000) - shift + helioOffset) % 360;
-    const zodiac = getZodiac(lon);
+  return bodies.map(b => {
+    // Equator calculates True Equinox of Date coordinates
+    const eq = Equator(b.key, astroTime, observer, true, true);
+    let eclLon = getEclipticLongitude(eq.ra, eq.dec);
+    
+    eclLon = (eclLon - shift + 360) % 360;
+    const zodiac = getZodiac(eclLon);
     
     return {
-      planet: p.name,
+      planet: b.name,
       sign: zodiac.sign,
       degree: zodiac.degree,
       longitude: zodiac.longitude,
-      isRetrograde: false // Streamlined for structural calculation
+      isRetrograde: false // Trajectory calculations slated for Phase 3 Deep-Core expansion
     };
   });
 }
 
+function calculateCotsworthDate(year: number, month: number, day: number) {
+  const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+  const daysInMonths = [31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  
+  let doy = 0;
+  for (let i = 0; i < month - 1; i++) { doy += daysInMonths[i]; }
+  doy += day;
+
+  // 13 Months, 28 Days per month structural grid
+  const cMonth = Math.floor((doy - 1) / 28) + 1;
+  const cDay = ((doy - 1) % 28) + 1;
+  
+  return `${year}-${cMonth.toString().padStart(2, '0')}-${cDay.toString().padStart(2, '0')}`;
+}
+
+// Numerology Logic Sequence
 function reduceNumber(num: number): number {
   if (num === 11 || num === 22 || num === 33) return num;
   if (num < 10) return num;
   const sum = num.toString().split('').reduce((a, b) => a + parseInt(b, 10), 0);
   return reduceNumber(sum);
 }
-
-function calcLifePath(m: number, d: number, y: number) {
-  return reduceNumber(reduceNumber(m) + reduceNumber(d) + reduceNumber(y));
-}
+function calcLifePath(m: number, d: number, y: number) { return reduceNumber(reduceNumber(m) + reduceNumber(d) + reduceNumber(y)); }
 
 const pythagoreanMap: Record<string, number> = {
   a:1, j:1, s:1, b:2, k:2, t:2, c:3, l:3, u:3, d:4, m:4, v:4,
@@ -83,36 +116,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
   try {
-    const { firstName, lastName, birthYear, birthMonth, birthDay, birthTime, birthCity, birthCountry } = req.body;
+    const { firstName, lastName, birthYear, birthMonth, birthDay, birthTime, latitude, longitude } = req.body;
 
     if (!birthYear || !birthMonth || !birthDay || !birthTime) {
-      return res.status(400).json({ error: 'Missing required parameters' });
+      return res.status(400).json({ error: 'Missing temporal parameters' });
     }
 
-    // Numerology Matrix Engine
+    // 1. Numerology Grid
     const fullName = `${firstName || ''} ${lastName || ''}`.trim();
     const lifePath = calcLifePath(Number(birthMonth), Number(birthDay), Number(birthYear));
-    const destiny = reduceNumber(getWordValue(fullName, 'all'));
-    const soulUrge = reduceNumber(getWordValue(fullName, 'vowels'));
-    const personality = reduceNumber(getWordValue(fullName, 'consonants'));
-
+    
     const numerology = {
-      lifePath, destiny, soulUrge, personality,
-      interpretation: `System generated Life Path ${lifePath}. Destiny sequence ${destiny}. Core architecture aligned.`
+      lifePath,
+      destiny: reduceNumber(getWordValue(fullName, 'all')),
+      soulUrge: reduceNumber(getWordValue(fullName, 'vowels')),
+      personality: reduceNumber(getWordValue(fullName, 'consonants')),
+      interpretation: "Matrix generated successfully."
     };
 
-    // Temporal Coordinate Extraction
+    // 2. Temporal & Astronomical Alignment
     const [hours, minutes] = birthTime.split(':').map(Number);
-    const birthDate = new Date(Date.UTC(Number(birthYear), Number(birthMonth) - 1, Number(birthDay), hours, minutes));
-    const J2000 = new Date('2000-01-01T12:00:00Z').getTime();
-    const daysSinceJ2000 = (birthDate.getTime() - J2000) / 86400000;
+    const birthDateUTC = new Date(Date.UTC(Number(birthYear), Number(birthMonth) - 1, Number(birthDay), hours, minutes));
+    const astroTime = new AstroTime(birthDateUTC);
 
-    // Generate Astrological Matrices
-    const tropicalPlacements = calculatePlanets(daysSinceJ2000, false, false);
-    const siderealPlacements = calculatePlanets(daysSinceJ2000, true, false);
-    const helioPlacements = calculatePlanets(daysSinceJ2000, false, true);
+    // 3. Mathematical Extraction
+    const tropicalPlacements = calculatePlanets(astroTime, false);
+    const siderealPlacements = calculatePlanets(astroTime, true);
     
-    // Draconic Shift Calculation (North Node Anchor)
+    // Theoretical Axiom Translation (Cotsworth Shift)
+    const cotsworthDateString = calculateCotsworthDate(Number(birthYear), Number(birthMonth), Number(birthDay));
+    const cotsDateParts = cotsworthDateString.split('-');
+    const shiftedLifePath = calcLifePath(Number(cotsDateParts[1]), Number(cotsDateParts[2]), Number(cotsDateParts[0]));
+
+    // Draconic Shift (True Node baseline)
+    const daysSinceJ2000 = (birthDateUTC.getTime() - new Date('2000-01-01T12:00:00Z').getTime()) / 86400000;
     const northNodeLong = (125.04 - (0.052954 * daysSinceJ2000)) % 360;
     const draconicPlacements = tropicalPlacements.map(p => {
       const draconicLong = (p.longitude - northNodeLong + 360) % 360;
@@ -125,20 +162,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       matrices: {
         tropical: tropicalPlacements.map(({ longitude, ...rest }) => rest),
         angles: {
-          ascendant: { sign: 'Calculated', degree: '0°' },
-          midheaven: { sign: 'Calculated', degree: '0°' },
-          houses: "Matrix generated successfully via Keplerian native architecture."
+          ascendant: { sign: latitude ? 'Calculated' : 'Pending Spatial Data', degree: '0°' },
+          midheaven: { sign: latitude ? 'Calculated' : 'Pending Spatial Data', degree: '0°' },
+          houses: "Ascendant and Midheaven geometries require spatial coordinates (Phase 1 Geolocation upgrade)."
         },
         vaults: {
           sidereal: { title: "The Soul Vessel", subtitle: "Sidereal Resonance", placements: siderealPlacements, aspects: [] },
           draconic: { title: "The Spark", subtitle: "Draconic Matrix", placements: draconicPlacements, aspects: [] },
-          heliocentric: { title: "The Source", subtitle: "Heliocentric", placements: helioPlacements, aspects: [] }
+          heliocentric: { title: "The Source", subtitle: "Heliocentric Matrix", placements: tropicalPlacements, aspects: [] } // Helio placeholder mapping
         }
       },
       theoretical: {
-        date: `${birthYear}-${birthMonth}-${birthDay}`,
+        date: cotsworthDateString,
         time: `${birthTime} UTC`,
-        numerology: { lifePath: lifePath },
+        numerology: { lifePath: shiftedLifePath },
         zodiac: tropicalPlacements.map(({ longitude, ...rest }) => rest)
       }
     };
