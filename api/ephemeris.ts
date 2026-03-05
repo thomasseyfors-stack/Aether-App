@@ -1,6 +1,6 @@
 // @ts-nocheck
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import swisseph from 'sweph';
+import swisseph from 'swisseph';
 
 function getPlanetData(result: any) {
   if (result.longitude !== undefined) return { lon: result.longitude, speed: result.longitudeSpeed || 0 };
@@ -66,7 +66,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
     // 1. Calculate Julian Day
     // flag: 1 = Gregorian calendar
-    const julianDay = swisseph.julday(
+    const julianDay = swisseph.swe_julday(
       Number(birthYear),
       Number(birthMonth),
       Number(birthDay),
@@ -76,20 +76,20 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
     // 2. Calculate Tropical Longitude for Planets
     // SEFLG_SPEED = 256 (to get speed for retrograde check)
-    const flag = swisseph.constants.SEFLG_SPEED;
+    const flag = swisseph.SEFLG_SPEED;
     
     const planetsToCalc = [
-      { id: swisseph.constants.SE_SUN, name: 'Sun' },
-      { id: swisseph.constants.SE_MOON, name: 'Moon' },
-      { id: swisseph.constants.SE_MERCURY, name: 'Mercury' },
-      { id: swisseph.constants.SE_VENUS, name: 'Venus' },
-      { id: swisseph.constants.SE_MARS, name: 'Mars' },
-      { id: swisseph.constants.SE_JUPITER, name: 'Jupiter' },
-      { id: swisseph.constants.SE_SATURN, name: 'Saturn' }
+      { id: swisseph.SE_SUN, name: 'Sun' },
+      { id: swisseph.SE_MOON, name: 'Moon' },
+      { id: swisseph.SE_MERCURY, name: 'Mercury' },
+      { id: swisseph.SE_VENUS, name: 'Venus' },
+      { id: swisseph.SE_MARS, name: 'Mars' },
+      { id: swisseph.SE_JUPITER, name: 'Jupiter' },
+      { id: swisseph.SE_SATURN, name: 'Saturn' }
     ];
 
     const placements = planetsToCalc.map(p => {
-      const calcResult = swisseph.calc_ut(julianDay, p.id, flag);
+      const calcResult = swisseph.swe_calc_ut(julianDay, p.id, flag);
       const { lon, speed } = getPlanetData(calcResult);
       const zodiac = getZodiacSignAndDegree(lon);
       return {
@@ -102,7 +102,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
     // 3. Calculate Ascendant, Midheaven, and Houses
     // 'P' = Placidus
-    const houseResult = swisseph.houses(julianDay, Number(latitude), Number(longitude), 'P');
+    const houseResult = swisseph.swe_houses(julianDay, Number(latitude), Number(longitude), 'P');
     const { ascendant, mc, cusps } = getHouseData(houseResult);
     
     const ascZodiac = getZodiacSignAndDegree(ascendant);
