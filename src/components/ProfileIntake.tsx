@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface ProfileIntakeProps {
   onSubmit: (payload: any) => void;
@@ -20,6 +20,21 @@ export default function ProfileIntake({ onSubmit }: ProfileIntakeProps) {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // CRITICAL STRUCTURAL UPGRADE: Initialization Sequence
+  // Pulls the extracted SSO data from the Local Storage Pass-Through
+  useEffect(() => {
+    const savedFirstName = localStorage.getItem('aether_first_name');
+    const savedLastName = localStorage.getItem('aether_last_name');
+    
+    if (savedFirstName || savedLastName) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: savedFirstName || prev.firstName,
+        lastName: savedLastName || prev.lastName,
+      }));
+    }
+  }, []);
 
   const currentYear = new Date().getFullYear();
 
