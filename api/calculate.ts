@@ -2,14 +2,11 @@
 export const maxDuration = 60; // Upgrades Vercel timeout limit from 10s to 60s
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createRequire } from 'module';
+import Astronomy from 'astronomy-engine'; // Corrected Namespace Import
 
 // ------------------------------------------------------------------------
 // HIGH-FIDELITY STRUCTURAL ENGINE (astronomy-engine)
 // ------------------------------------------------------------------------
-// Bypass Vercel ESM/CJS module resolution collision
-const require = createRequire(import.meta.url);
-const Astronomy = require('astronomy-engine');
 
 function getZodiac(longitude: number) {
   const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];

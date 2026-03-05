@@ -1,243 +1,193 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, MapPin, Clock, ArrowRight } from 'lucide-react';
 
 interface ProfileIntakeProps {
-  onSubmit: (payload: any) => void;
+  onComplete: (data: any) => void;
 }
 
-export default function ProfileIntake({ onSubmit }: ProfileIntakeProps) {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    gender: '',
-    birthYear: '',
-    birthMonth: '',
-    birthDay: '',
-    birthTime: '',
-    birthCity: '',
-    birthState: '',
-    birthCountry: '',
-  });
+export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [birthYear, setBirthYear] = useState('');
+  const [birthMonth, setBirthMonth] = useState('');
+  const [birthDay, setBirthDay] = useState('');
+  const [birthTime, setBirthTime] = useState('');
+  const [utcOffset, setUtcOffset] = useState('');
+  
+  // Spatial Search States
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const currentYear = new Date().getFullYear();
-
-  const getDaysInMonth = (month: number, year: number) => {
-    return new Date(year, month, 0).getDate();
-  };
-
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.firstName) newErrors.firstName = 'Required';
-    if (!formData.lastName) newErrors.lastName = 'Required';
-    
-    if (!formData.birthYear) {
-      newErrors.birthYear = 'Required';
-    } else if (parseInt(formData.birthYear) > currentYear) {
-      newErrors.birthYear = 'Cannot be in the future';
-    } else if (parseInt(formData.birthYear) < 1900) {
-      newErrors.birthYear = 'Invalid year';
+  // Predictive Geolocation Search via Nominatim API
+  useEffect(() => {
+    if (searchQuery.length < 3) {
+      setSearchResults([]);
+      return;
     }
-
-    if (!formData.birthMonth) newErrors.birthMonth = 'Required';
     
-    if (!formData.birthDay) {
-      newErrors.birthDay = 'Required';
-    } else if (formData.birthMonth && formData.birthYear) {
-      const maxDays = getDaysInMonth(parseInt(formData.birthMonth), parseInt(formData.birthYear));
-      if (parseInt(formData.birthDay) > maxDays || parseInt(formData.birthDay) < 1) {
-        newErrors.birthDay = `Invalid day for selected month (Max: ${maxDays})`;
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    
+    searchTimeoutRef.current = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&limit=5`);
+        const data = await response.json();
+        setSearchResults(data);
+      } catch (error) {
+        console.error("Spatial Radar Error:", error);
+      } finally {
+        setIsSearching(false);
       }
-    }
+    }, 600); // 600ms debounce to prevent API flooding
+  }, [searchQuery]);
 
-    if (!formData.birthCity) newErrors.birthCity = 'Required';
-    if (!formData.birthCountry) newErrors.birthCountry = 'Required';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const selectLocation = (result: any) => {
+    setSearchQuery(result.display_name);
+    setLatitude(result.lat);
+    setLongitude(result.lon);
+    setSearchResults([]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleCommence = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (validate()) {
-      // 12:00 PM Fail-Safe
-      const isDefaultTime = formData.birthTime.trim() === '';
-      const finalTime = isDefaultTime ? '12:00' : formData.birthTime;
-      
-      const submissionPayload = {
-        ...formData,
-        birthTime: finalTime,
-        isDefaultTime,
-        timestamp: new Date().toISOString()
-      };
-      
-      onSubmit(submissionPayload);
-    }
-  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+    if (!birthYear || !birthMonth || !birthDay || !birthTime || !utcOffset || !latitude || !longitude) {
+      alert("System Warning: Spatial and Temporal coordinates are required to lock the matrix.");
+      return;
     }
+
+    // The Temporal Transducer: Convert local input to true UTC
+    const sign = Number(utcOffset) >= 0 ? '+' : '-';
+    const pad = (num: number) => Math.abs(num).toString().padStart(2, '0');
+    const offsetString = `${sign}${pad(Number(utcOffset))}:00`;
+
+    // Construct an ISO string to force the browser to calculate the exact UTC shift
+    const localDate = new Date(`${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}T${birthTime}:00${offsetString}`);
+
+    // Extract the mathematically aligned UTC coordinates
+    const payload = {
+      firstName,
+      lastName,
+      birthYear: localDate.getUTCFullYear().toString(),
+      birthMonth: (localDate.getUTCMonth() + 1).toString(),
+      birthDay: localDate.getUTCDate().toString(),
+      birthTime: `${localDate.getUTCHours().toString().padStart(2, '0')}:${localDate.getUTCMinutes().toString().padStart(2, '0')}`,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+    };
+
+    onComplete(payload);
   };
 
   return (
-    <div className="min-h-screen bg-obsidian text-starlight-white p-4 md:p-8 font-sans">
-      <div className="max-w-3xl mx-auto">
-        <header className="mb-12 border-b border-nebula-purple/30 pb-6">
-          <h1 className="text-3xl font-bold text-astral-gold tracking-widest uppercase mb-2">Structural Life Mapping</h1>
-          <p className="text-ash-grey text-sm tracking-widest uppercase">Temporal & Spatial Coordinates Intake</p>
-        </header>
+    <div className="max-w-2xl mx-auto p-6 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl text-slate-200">
+      <h2 className="text-2xl font-bold mb-6 text-emerald-400 border-b border-slate-700 pb-2 flex items-center gap-2">
+        <MapPin className="w-6 h-6" /> Spatial & Temporal Calibration
+      </h2>
+      
+      <form onSubmit={handleCommence} className="space-y-6">
+        {/* Identity Grid */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1 text-slate-400">First Name</label>
+            <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:border-emerald-500 focus:outline-none" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1 text-slate-400">Last Name</label>
+            <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:border-emerald-500 focus:outline-none" />
+          </div>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Name Section */}
-          <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-6 shadow-lg">
-            <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-sm mb-6 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-nebula-purple"></span>
-              Identity Matrix
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">First Name *</label>
-                <input 
-                  type="text" name="firstName" value={formData.firstName} onChange={handleChange}
-                  className={`w-full bg-obsidian border ${errors.firstName ? 'border-red-500' : 'border-ash-grey/30'} rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors`}
-                />
-                {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+        {/* Temporal Grid */}
+        <div className="grid grid-cols-4 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1 text-slate-400">Year</label>
+            <input type="number" placeholder="YYYY" value={birthYear} onChange={e => setBirthYear(e.target.value)} className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:border-emerald-500 focus:outline-none" required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1 text-slate-400">Month</label>
+            <input type="number" placeholder="MM" min="1" max="12" value={birthMonth} onChange={e => setBirthMonth(e.target.value)} className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:border-emerald-500 focus:outline-none" required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1 text-slate-400">Day</label>
+            <input type="number" placeholder="DD" min="1" max="31" value={birthDay} onChange={e => setBirthDay(e.target.value)} className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:border-emerald-500 focus:outline-none" required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1 text-slate-400">Local Time</label>
+            <input type="time" value={birthTime} onChange={e => setBirthTime(e.target.value)} className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:border-emerald-500 focus:outline-none" required />
+          </div>
+        </div>
+
+        {/* Spatial Grid */}
+        <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 space-y-4">
+          <div className="relative">
+            <label className="block text-sm font-medium mb-1 text-slate-400 flex items-center gap-2">
+              <Search className="w-4 h-4" /> Birth City Search
+            </label>
+            <input 
+              type="text" 
+              placeholder="e.g., Adak, Alaska" 
+              value={searchQuery} 
+              onChange={e => setSearchQuery(e.target.value)} 
+              className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:border-emerald-500 focus:outline-none" 
+            />
+            
+            {/* Predictive Radar Dropdown */}
+            {searchResults.length > 0 && (
+              <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-slate-600 rounded shadow-lg max-h-48 overflow-y-auto">
+                {searchResults.map((result, idx) => (
+                  <div 
+                    key={idx} 
+                    onClick={() => selectLocation(result)}
+                    className="px-3 py-2 hover:bg-emerald-900/50 cursor-pointer text-sm border-b border-slate-700 last:border-0"
+                  >
+                    {result.display_name}
+                  </div>
+                ))}
               </div>
-              <div>
-                <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">Middle Name</label>
-                <input 
-                  type="text" name="middleName" value={formData.middleName} onChange={handleChange}
-                  className="w-full bg-obsidian border border-ash-grey/30 rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors"
-                />
-              </div>
-              <div>
-                <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">Last Name *</label>
-                <input 
-                  type="text" name="lastName" value={formData.lastName} onChange={handleChange}
-                  className={`w-full bg-obsidian border ${errors.lastName ? 'border-red-500' : 'border-ash-grey/30'} rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors`}
-                />
-                {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
-              </div>
-            </div>
-            <div className="mt-4">
-              <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">Gender (Optional)</label>
-              <select 
-                name="gender" value={formData.gender} onChange={handleChange}
-                className="w-full md:w-1/3 bg-obsidian border border-ash-grey/30 rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors appearance-none"
-              >
-                <option value="">Select...</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="non-binary">Non-binary</option>
-                <option value="other">Other</option>
-                <option value="prefer-not-to-say">Prefer not to say</option>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+             <div>
+              <label className="block text-sm font-medium mb-1 text-slate-400 flex items-center gap-2">
+                <Clock className="w-4 h-4" /> Historical UTC Offset
+              </label>
+              <select value={utcOffset} onChange={e => setUtcOffset(e.target.value)} className="w-full bg-slate-800 border border-slate-600 rounded px-3 py-2 focus:border-emerald-500 focus:outline-none" required>
+                <option value="">Select Offset...</option>
+                <option value="-11">-11 (Samoa)</option>
+                <option value="-10">-10 (Hawaii-Aleutian)</option>
+                <option value="-9">-9 (Alaska)</option>
+                <option value="-8">-8 (Pacific)</option>
+                <option value="-7">-7 (Mountain)</option>
+                <option value="-6">-6 (Central)</option>
+                <option value="-5">-5 (Eastern)</option>
+                <option value="0">0 (GMT/UTC)</option>
+                <option value="1">+1 (Central European)</option>
+                <option value="5.5">+5.5 (India)</option>
+                <option value="8">+8 (China/AWST)</option>
+                <option value="10">+10 (AEST)</option>
+                {/* Additional offsets can be expanded here */}
               </select>
             </div>
-          </section>
-
-          {/* Temporal Coordinates */}
-          <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-6 shadow-lg">
-            <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-sm mb-6 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-nebula-purple"></span>
-              Temporal Coordinates
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">Birth Year *</label>
-                <input 
-                  type="number" name="birthYear" value={formData.birthYear} onChange={handleChange} placeholder="YYYY"
-                  className={`w-full bg-obsidian border ${errors.birthYear ? 'border-red-500' : 'border-ash-grey/30'} rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors`}
-                />
-                {errors.birthYear && <p className="text-red-500 text-xs mt-1">{errors.birthYear}</p>}
-              </div>
-              <div>
-                <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">Birth Month *</label>
-                <select 
-                  name="birthMonth" value={formData.birthMonth} onChange={handleChange}
-                  className={`w-full bg-obsidian border ${errors.birthMonth ? 'border-red-500' : 'border-ash-grey/30'} rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors appearance-none`}
-                >
-                  <option value="">MM</option>
-                  {Array.from({length: 12}, (_, i) => i + 1).map(m => (
-                    <option key={m} value={m}>{m.toString().padStart(2, '0')}</option>
-                  ))}
-                </select>
-                {errors.birthMonth && <p className="text-red-500 text-xs mt-1">{errors.birthMonth}</p>}
-              </div>
-              <div>
-                <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">Birth Day *</label>
-                <input 
-                  type="number" name="birthDay" value={formData.birthDay} onChange={handleChange} placeholder="DD"
-                  className={`w-full bg-obsidian border ${errors.birthDay ? 'border-red-500' : 'border-ash-grey/30'} rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors`}
-                />
-                {errors.birthDay && <p className="text-red-500 text-xs mt-1">{errors.birthDay}</p>}
-              </div>
-              <div>
-                <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">Birth Time</label>
-                <input 
-                  type="time" name="birthTime" value={formData.birthTime} onChange={handleChange}
-                  className="w-full bg-obsidian border border-ash-grey/30 rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors [color-scheme:dark]"
-                />
-                <p className="text-ash-grey/50 text-[10px] mt-1 uppercase">Defaults to 12:00 PM if blank</p>
+            
+            <div className="flex flex-col justify-end">
+              <div className="text-xs text-slate-500 bg-slate-900 p-2 rounded border border-slate-700">
+                <span className="block text-emerald-400 font-mono">LAT: {latitude || '---'}</span>
+                <span className="block text-emerald-400 font-mono">LON: {longitude || '---'}</span>
               </div>
             </div>
-          </section>
+          </div>
+        </div>
 
-          {/* Spatial Coordinates */}
-          <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-6 shadow-lg">
-            <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-sm mb-6 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-nebula-purple"></span>
-              Spatial Coordinates
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">Birth City *</label>
-                <input 
-                  type="text" name="birthCity" value={formData.birthCity} onChange={handleChange}
-                  className={`w-full bg-obsidian border ${errors.birthCity ? 'border-red-500' : 'border-ash-grey/30'} rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors`}
-                />
-                {errors.birthCity && <p className="text-red-500 text-xs mt-1">{errors.birthCity}</p>}
-              </div>
-              <div>
-                <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">Birth State/Province</label>
-                <input 
-                  type="text" name="birthState" value={formData.birthState} onChange={handleChange}
-                  className="w-full bg-obsidian border border-ash-grey/30 rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors"
-                />
-              </div>
-              <div>
-                <label className="block text-ash-grey text-xs uppercase tracking-wider mb-2">Birth Country *</label>
-                <input 
-                  type="text" name="birthCountry" value={formData.birthCountry} onChange={handleChange}
-                  className={`w-full bg-obsidian border ${errors.birthCountry ? 'border-red-500' : 'border-ash-grey/30'} rounded-lg px-4 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors`}
-                />
-                {errors.birthCountry && <p className="text-red-500 text-xs mt-1">{errors.birthCountry}</p>}
-              </div>
-            </div>
-          </section>
-
-          {Object.keys(errors).length > 0 && (
-            <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4 text-red-500 text-sm">
-              <p className="font-semibold uppercase tracking-wider mb-1">Validation Error</p>
-              <p>Please correct the highlighted fields before proceeding.</p>
-            </div>
-          )}
-
-          <button 
-            type="submit"
-            className="w-full bg-astral-gold hover:bg-astral-gold/90 text-obsidian font-bold py-4 px-6 rounded-xl uppercase tracking-widest transition-all hover:shadow-[0_0_20px_rgba(245,208,97,0.3)]"
-          >
-            Commence Calculation
-          </button>
-        </form>
-      </div>
+        <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-lg flex justify-center items-center gap-2 transition-colors">
+          Commence Calculation <ArrowRight className="w-5 h-5" />
+        </button>
+      </form>
     </div>
   );
 }
