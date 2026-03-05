@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, MapPin, Clock, ArrowRight, AlertTriangle } from 'lucide-react';
 
 interface ProfileIntakeProps {
-  onComplete: (data: any) => void;
+  onComplete?: (data: any) => void;
+  onSubmit?: (data: any) => void;
+  onCalculate?: (data: any) => void;
 }
 
-export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
+export default function ProfileIntake({ onComplete, onSubmit, onCalculate }: ProfileIntakeProps) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [birthYear, setBirthYear] = useState('');
@@ -132,7 +134,15 @@ export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
 
     // 4. Fire payload OUTSIDE the try-catch to prevent swallowing App routing errors
     try {
-      onComplete(payload);
+      if (onSubmit) {
+        onSubmit(payload);
+      } else if (onComplete) {
+        onComplete(payload);
+      } else if (onCalculate) {
+        onCalculate(payload);
+      } else {
+        throw new Error("Missing submission prop. Parent component did not connect the data line.");
+      }
     } catch (err: any) {
       console.error("Payload Routing Error:", err);
       setValidationError("System Warning: The Main Application rejected the matrix payload. Check console.");
