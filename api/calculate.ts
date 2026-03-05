@@ -2,7 +2,7 @@
 export const maxDuration = 60; // Upgrades Vercel timeout limit from 10s to 60s
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { AstroTime, Body, Equator, Observer } from 'astronomy-engine';
+import Astronomy from 'astronomy-engine'; // Corrected Namespace Import
 
 // ------------------------------------------------------------------------
 // HIGH-FIDELITY STRUCTURAL ENGINE (astronomy-engine)
@@ -32,28 +32,28 @@ function getEclipticLongitude(raHours: number, decDegrees: number) {
   return ((lonRad * 180 / Math.PI) + 360) % 360;
 }
 
-function calculatePlanets(astroTime: AstroTime, isSidereal = false) {
+function calculatePlanets(astroTime: any, isSidereal = false) {
   // Ayanamsha offset for Lahiri Sidereal (approximate drift since J2000)
   const daysSinceJ2000 = astroTime.ut - new Date('2000-01-01T12:00:00Z').getTime() / 86400000;
   const shift = isSidereal ? ((daysSinceJ2000 / 365.25) * 0.01396) + 23.85 : 0; 
   
-  const observer = new Observer(0, 0, 0); // Geocentric default
+  const observer = new Astronomy.Observer(0, 0, 0); // Geocentric default
   const bodies = [
-    { key: Body.Sun, name: 'Sun' },
-    { key: Body.Moon, name: 'Moon' },
-    { key: Body.Mercury, name: 'Mercury' },
-    { key: Body.Venus, name: 'Venus' },
-    { key: Body.Mars, name: 'Mars' },
-    { key: Body.Jupiter, name: 'Jupiter' },
-    { key: Body.Saturn, name: 'Saturn' },
-    { key: Body.Uranus, name: 'Uranus' },
-    { key: Body.Neptune, name: 'Neptune' },
-    { key: Body.Pluto, name: 'Pluto' }
+    { key: Astronomy.Body.Sun, name: 'Sun' },
+    { key: Astronomy.Body.Moon, name: 'Moon' },
+    { key: Astronomy.Body.Mercury, name: 'Mercury' },
+    { key: Astronomy.Body.Venus, name: 'Venus' },
+    { key: Astronomy.Body.Mars, name: 'Mars' },
+    { key: Astronomy.Body.Jupiter, name: 'Jupiter' },
+    { key: Astronomy.Body.Saturn, name: 'Saturn' },
+    { key: Astronomy.Body.Uranus, name: 'Uranus' },
+    { key: Astronomy.Body.Neptune, name: 'Neptune' },
+    { key: Astronomy.Body.Pluto, name: 'Pluto' }
   ];
 
   return bodies.map(b => {
     // Equator calculates True Equinox of Date coordinates
-    const eq = Equator(b.key, astroTime, observer, true, true);
+    const eq = Astronomy.Equator(b.key, astroTime, observer, true, true);
     let eclLon = getEclipticLongitude(eq.ra, eq.dec);
     
     eclLon = (eclLon - shift + 360) % 360;
@@ -137,7 +137,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // 2. Temporal & Astronomical Alignment
     const [hours, minutes] = birthTime.split(':').map(Number);
     const birthDateUTC = new Date(Date.UTC(Number(birthYear), Number(birthMonth) - 1, Number(birthDay), hours, minutes));
-    const astroTime = new AstroTime(birthDateUTC);
+    const astroTime = new Astronomy.AstroTime(birthDateUTC);
 
     // 3. Mathematical Extraction
     const tropicalPlacements = calculatePlanets(astroTime, false);
