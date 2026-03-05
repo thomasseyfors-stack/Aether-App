@@ -82,18 +82,39 @@ export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
       return;
     }
 
+    let payload;
     try {
-      // The Temporal Transducer: Pure Mathematical UTC Conversion
-      const [hours, minutes] = birthTime.split(':').map(Number);
+      // 1. Robust Time Parsing (Armor against AM/PM string collisions)
+      let hours = 0;
+      let minutes = 0;
       
-      // Calculate timestamp as if local time was UTC
+      const timeStrLower = birthTime.toLowerCase();
+      if (timeStrLower.includes('p') || timeStrLower.includes('a')) {
+         const cleanTime = birthTime.replace(/[^0-9:]/g, ''); // Strips all letters
+         const [h, m] = cleanTime.split(':').map(Number);
+         hours = h;
+         minutes = m;
+         if (timeStrLower.includes('p') && hours < 12) hours += 12;
+         if (timeStrLower.includes('a') && hours === 12) hours = 0;
+      } else {
+         const [h, m] = birthTime.split(':').map(Number);
+         hours = h;
+         minutes = m;
+      }
+      
+      // 2. Calculate timestamp as if local time was UTC
       const utcEquivalent = Date.UTC(Number(birthYear), Number(birthMonth) - 1, Number(birthDay), hours, minutes);
       
-      // Subtract offset (e.g., -10 hours) to shift to True UTC
+      // 3. Subtract offset (e.g., -10 hours) to shift to True UTC
       const offsetMs = Number(utcOffset) * 60 * 60 * 1000;
       const trueUtcTime = new Date(utcEquivalent - offsetMs);
 
-      const payload = {
+      // Validate structural integrity before building payload
+      if (isNaN(trueUtcTime.getTime())) {
+         throw new Error("Mathematical rendering returned an Invalid Date. Check input sequence.");
+      }
+
+      payload = {
         firstName,
         lastName,
         birthYear: trueUtcTime.getUTCFullYear().toString(),
@@ -103,10 +124,18 @@ export default function ProfileIntake({ onComplete }: ProfileIntakeProps) {
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
       };
+    } catch (err: any) {
+      console.error("Temporal Calculation Error:", err);
+      setValidationError(`Calculation Error: ${err.message || "Invalid temporal format."}`);
+      return; // Abort launch
+    }
 
+    // 4. Fire payload OUTSIDE the try-catch to prevent swallowing App routing errors
+    try {
       onComplete(payload);
-    } catch (err) {
-      setValidationError("Critical Error: Invalid temporal data sequence.");
+    } catch (err: any) {
+      console.error("Payload Routing Error:", err);
+      setValidationError("System Warning: The Main Application rejected the matrix payload. Check console.");
     }
   };
 
