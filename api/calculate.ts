@@ -261,6 +261,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       };
     }
 
+    // ------------------------------------------------------------------------
+    // THEORETICAL AXIOM: Secondary Mathematical Simulation
+    // Calculating true geometries based on Cotsworth Date + UTC
+    // ------------------------------------------------------------------------
+    const tDateUTC = new Date(Date.UTC(Number(cotsDateParts[0]), Number(cotsDateParts[1]) - 1, Number(cotsDateParts[2]), hours, minutes));
+    const theoDaysSinceJ2000 = (tDateUTC.getTime() - J2000) / 86400000;
+
+    const theoTropical = calculatePlanets(theoDaysSinceJ2000, false, false);
+    const theoSidereal = calculatePlanets(theoDaysSinceJ2000, true, false);
+    const theoHelio = calculatePlanets(theoDaysSinceJ2000, false, true);
+    
+    const theoNorthNodeLong = (125.04 - (0.052954 * theoDaysSinceJ2000)) % 360;
+    const theoDraconic = theoTropical.map(p => {
+      const draconicLong = (p.longitude - theoNorthNodeLong + 360) % 360;
+      const zodiac = getZodiac(draconicLong);
+      return { planet: p.planet, sign: zodiac.sign, degree: zodiac.degree, isRetrograde: false };
+    });
+
     const result = {
       numerology,
       matrices: responseMatrices,
@@ -268,7 +286,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         date: cotsworthDateString,
         time: `${birthTime} UTC`,
         numerology: { lifePath: shiftedLifePath },
-        zodiac: responseMatrices.tropical
+        matrices: {
+          tropical: theoTropical.map(({ longitude, ...rest }) => rest),
+          aspects: [], patterns: [], voids: [],
+          vaults: {
+            sidereal: { 
+              title: "Standard Sidereal Lahiri", 
+              subtitle: "Theoretical Soul Vessel", 
+              placements: theoSidereal.map(({ longitude, ...rest }) => rest), 
+              aspects: [], patterns: [], voids: [] 
+            },
+            draconic: { 
+              title: "Draconic", 
+              subtitle: "Theoretical Spark", 
+              placements: theoDraconic.map(({ longitude, ...rest }) => rest), 
+              aspects: [], patterns: [], voids: [] 
+            },
+            heliocentric: { 
+              title: "Heliocentric", 
+              subtitle: "Theoretical Source", 
+              placements: theoHelio.map(({ longitude, ...rest }) => rest), 
+              aspects: [], patterns: [], voids: [] 
+            }
+          }
+        }
       }
     };
 

@@ -116,7 +116,7 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
 // HIERARCHICAL MATRIX COMPONENTS
 // ---------------------------------------------------------------------------
 
-function IdentityMatrixCard({ title, subtitle, data, isDefaultTime = false, imageSrc, isPrimary = false, isEncrypted = false }: any) {
+export function IdentityMatrixCard({ title, subtitle, data, isDefaultTime = false, imageSrc, isPrimary = false, isEncrypted = false }: any) {
   const [isOpen, setIsOpen] = useState(!isEncrypted);
   const [isOracleOpen, setIsOracleOpen] = useState(false);
   const [oracleText, setOracleText] = useState<string | null>(null);
