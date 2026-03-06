@@ -285,38 +285,27 @@ export function IdentityMatrixCard({ title, subtitle, data, isDefaultTime = fals
   );
 }
 
-// Sub-Component: Placement Grid Rendering (Upgraded with Esoteric Symbology)
-function PlacementSection({ title, icon, placements, fallback }: { title: string, icon: React.ReactNode, placements: any[], fallback?: string }) {
+export function PlacementSection({ title, icon, placements, fallback }: any) {
+  if (!placements || placements.length === 0) return null;
+
   return (
-    <div>
-      <h3 className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-3 flex items-center gap-2">
+    <div className="mb-4 md:mb-6">
+      <h3 className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-3 md:mb-4 flex items-center gap-2">
         {icon} {title}
       </h3>
-      {placements.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
-          {placements.map((p: any, idx: number) => (
-            <div key={idx} className="bg-black/30 p-2 md:p-3 rounded-lg border border-ash-grey/10 flex justify-between items-center">
-              <div className="flex items-center gap-1 md:gap-2">
-                {/* Planet Glyph + Name */}
-                <span className="text-starlight-white text-xs md:text-sm flex items-center gap-1">
-                  <span className="text-nebula-purple font-serif text-sm md:text-base">{planetSymbols[p.planet] || ''}</span>
-                  {p.planet}
-                </span>
-                {p.isRetrograde && <span className="text-red-400 text-[8px] font-bold border border-red-900/50 rounded px-1" title="Retrograde">Rx</span>}
-              </div>
-              <div className="text-right">
-                {/* Zodiac Sign + Glyph */}
-                <span className="text-astral-gold text-[10px] md:text-xs uppercase tracking-wider flex items-center justify-end gap-1">
-                  {p.sign} <span className="text-astral-gold font-serif text-sm">{zodiacSymbols[p.sign] || ''}</span>
-                </span>
-                <span className="text-ash-grey text-[10px] block">{p.degree}</span>
-              </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
+        {placements.map((p: any, idx: number) => (
+          <div key={idx} className="bg-black/30 p-2 md:p-3 rounded border border-ash-grey/5 flex flex-col xl:flex-row xl:justify-between xl:items-center text-[10px] md:text-xs gap-1 overflow-hidden">
+            <span className="text-starlight-white font-medium truncate">{p.planet}</span>
+            <div className="flex items-center gap-1.5 xl:justify-end min-w-0">
+              <span className="text-astral-gold uppercase tracking-wider truncate max-w-[75px] sm:max-w-none" title={p.sign}>
+                {p.sign}
+              </span>
+              <span className="text-ash-grey font-mono whitespace-nowrap shrink-0">{p.degree}</span>
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-ash-grey text-[10px] italic">{fallback}</p>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -403,21 +392,26 @@ export function NumerologyCard({ data }: { data: any }) {
 export function AscendantData({ angles }: { angles: any }) {
   if (!angles) return null;
 
+  // Render the angular coordinates with extreme overflow protection
   const AngleBox = ({ title, data }: { title: string, data: any }) => (
-    <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20">
-      <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">{title}</p>
-      <p className="text-base md:text-lg font-bold text-starlight-white flex items-center gap-2">
-        {data?.sign ?? '---'} 
-        <span className="text-astral-gold font-serif text-sm">{zodiacSymbols[data?.sign] || ''}</span>
-      </p>
-      <p className="text-astral-gold text-[10px] md:text-xs">{data?.degree ?? '0°'}</p>
+    <div className="bg-black/30 p-2 md:p-4 rounded-lg border border-astral-gold/20 overflow-hidden flex flex-col justify-center">
+      <p className="text-ash-grey text-[9px] md:text-xs uppercase tracking-wider mb-1 truncate">{title}</p>
+      
+      <div className="flex flex-wrap items-center gap-1 md:gap-2 w-full min-w-0">
+        <p className="text-sm md:text-lg font-bold text-starlight-white truncate max-w-[70%] md:max-w-[80%]" title={data?.sign}>
+          {data?.sign ?? '---'} 
+        </p>
+        {/* If you are passing symbols into this component, they will render safely next to the truncated text */}
+      </div>
+      
+      <p className="text-astral-gold text-[10px] md:text-xs mt-1 shrink-0">{data?.degree ?? '0°'}</p>
     </div>
   );
 
   return (
     <div className="border-t border-ash-grey/10 pt-4 md:pt-6 mt-2">
       <h3 className="text-ash-grey text-[10px] md:text-xs tracking-widest uppercase mb-3 md:mb-4">Angular Coordinates</h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
         <AngleBox title="Ascendant (ASC)" data={angles.ascendant} />
         <AngleBox title="Descendant (DSC)" data={angles.descendant} />
         <AngleBox title="Midheaven (MC)" data={angles.midheaven} />

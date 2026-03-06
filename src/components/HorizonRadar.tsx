@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Compass, Activity, RefreshCcw, Radio, Palette, Quote, Target, ShieldAlert } from 'lucide-react';
+import { Calendar, Clock, Compass, Activity, RefreshCcw, Radio, Palette, Quote, Target, ShieldAlert, ChevronDown, ChevronUp } from 'lucide-react';
 import { generateForecast, getRadarEnhancements } from '../utils/geminiClient';
 import { calculateLiveTransits } from '../utils/transitEngine';
 
@@ -136,6 +136,44 @@ function TabButton({ active, onClick, icon, label }: { active: boolean, onClick:
 }
 
 function LiveSkyContainer({ data }: { data: any[] }) {
+  const [expandedPlanet, setExpandedPlanet] = useState<string | null>(null);
+
+  // The Offline Algorithmic Decryptor
+  const getInterpretation = (planet: string, sign: string) => {
+    const planetOps: Record<string, string> = {
+      'Sun': "Core Power / Sovereign Identity",
+      'Moon': "Emotional Tides / Subconscious Radar",
+      'Mercury': "Data Routing / Cognitive Processing",
+      'Venus': "Resource Allocation / Cohesion Economics",
+      'Mars': "Kinetic Action / Structural Defense",
+      'Jupiter': "Macro-Expansion / Venture Capital",
+      'Saturn': "Load-Bearing Gravity / Time Management",
+      'Uranus': "Systemic Upgrades / Innovation",
+      'Neptune': "Fluid Dynamics / Visionary Solvents",
+      'Pluto': "Core Regeneration / Deep Demolition"
+    };
+
+    const signEnv: Record<string, string> = {
+      'Aries': "is currently operating in a high-friction, initiating environment. Tactical Deployment: Execute rapid prototyping, launch new initiatives, and use decisive force to break through existing inertia.",
+      'Taurus': "is currently anchored in dense, physical bedrock. Tactical Deployment: Focus on value engineering, asset preservation, and solidifying the operational foundations of your projects.",
+      'Gemini': "is currently routing through multi-threaded data networks. Tactical Deployment: Optimize high-speed communication, synthesize contradictory data, and rapidly bridge disparate systems.",
+      'Cancer': "is currently flowing within a secured, internal perimeter. Tactical Deployment: Fortify your psychological sanctum, conduct emotional reconnaissance, and protect your core assets.",
+      'Leo': "is currently radiating from a centralized command structure. Tactical Deployment: Project sovereign authority, step into visible leadership roles, and generate sustained heat for your team.",
+      'Virgo': "is currently filtering through microscopic analysis. Tactical Deployment: Initiate strict quality control, audit your daily routines, and refine the mechanical efficiency of your grid.",
+      'Libra': "is currently balancing on the fulcrum of equilibrium. Tactical Deployment: Negotiate structural contracts, enforce architectural symmetry, and utilize diplomacy to align opposing forces.",
+      'Scorpio': "is currently diving into deep-state, subterranean operations. Tactical Deployment: Conduct forensic analysis, ruthlessly purge operational rot, and engage in alchemical transmutation.",
+      'Sagittarius': "is currently aiming at long-range, macro-horizons. Tactical Deployment: Execute strategic forecasting, calculate future vectors, and expand your philosophical architecture.",
+      'Capricorn': "is currently climbing toward peak structural integrity. Tactical Deployment: Finalize legacy blueprints, load-test your physical systems, and enforce absolute executive discipline.",
+      'Aquarius': "is currently broadcasting across decentralized grids. Tactical Deployment: Implement disruptive innovations, scale your network architecture, and deploy future-proof software.",
+      'Pisces': "is currently dissolving into the quantum field. Tactical Deployment: Access the Akashic archive, rely on intuitive flow, and allow rigid, obsolete boundaries to gently wash away."
+    };
+
+    const base = planetOps[planet] || "Celestial Body";
+    const action = signEnv[sign] || "is currently moving through the grid. Monitor for localized anomalies.";
+
+    return `The frequency of ${base} ${action}`;
+  };
+
   return (
     <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div className="border-b border-ash-grey/10 pb-4">
@@ -143,28 +181,44 @@ function LiveSkyContainer({ data }: { data: any[] }) {
           <Radio className="w-4 h-4 text-red-500 animate-pulse" /> Real-Time Orbital Telemetry
         </h2>
         <p className="text-ash-grey text-xs md:text-sm leading-relaxed">
-          This grid displays the exact physical coordinates of the planetary bodies at this very second. Unlike your static natal blueprint, the Live Sky represents the "Cosmic Weather." 
-          <br/><br/>
-          <strong>How to deploy this data:</strong> If the Live Moon is in Pisces, the collective emotional tide is currently highly sensitive. As a Master Builder, you can use this fluid window to bypass rigid logic and 'feel' the structural integrity of your projects. If Live Mars is in Aries, the environment is primed for kinetic action and prototype launching. Align your daily execution with these active frequencies to eliminate friction.
+          This grid displays the exact physical coordinates of the planetary bodies at this very second. Click on any active frequency to decrypt its tactical deployment parameters based on its current environmental sector.
         </p>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
-        {data.map((p: any, idx: number) => (
-          <div key={idx} className="bg-black/40 p-2 md:p-3 rounded-lg border border-astral-gold/20 flex justify-between items-center shadow-[0_0_10px_rgba(245,208,97,0.05)]">
-            <div className="flex items-center gap-1 md:gap-2">
-              <span className="text-starlight-white text-xs md:text-sm flex items-center gap-1">
-                <span className="text-nebula-purple font-serif text-sm md:text-base">{planetSymbols[p.planet] || ''}</span>
-                {p.planet}
-              </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
+        {data.map((p: any, idx: number) => {
+          const isExpanded = expandedPlanet === p.planet;
+          return (
+            <div key={idx} className="bg-black/40 rounded-lg border border-astral-gold/20 shadow-[0_0_10px_rgba(245,208,97,0.05)] transition-all flex flex-col overflow-hidden">
+              <button 
+                onClick={() => setExpandedPlanet(isExpanded ? null : p.planet)}
+                className="flex justify-between items-center p-3 md:p-4 w-full hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="text-nebula-purple font-serif text-lg md:text-xl">{planetSymbols[p.planet] || ''}</span>
+                  <span className="text-starlight-white font-bold text-xs md:text-sm uppercase tracking-wider">{p.planet}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="text-right flex flex-col items-end">
+                    <span className="text-astral-gold text-[10px] md:text-xs uppercase tracking-wider flex items-center gap-1">
+                      {p.sign} <span className="text-astral-gold font-serif text-sm">{zodiacSymbols[p.sign] || ''}</span>
+                    </span>
+                    <span className="text-ash-grey text-[10px] block font-mono">{p.degree}</span>
+                  </div>
+                  {isExpanded ? <ChevronUp className="w-4 h-4 text-ash-grey" /> : <ChevronDown className="w-4 h-4 text-ash-grey" />}
+                </div>
+              </button>
+              
+              {isExpanded && (
+                <div className="p-4 bg-black/60 border-t border-astral-gold/10 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300">
+                  <p className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-2 flex items-center gap-1">
+                    <Target className="w-3 h-3" /> System Decrypted
+                  </p>
+                  {getInterpretation(p.planet, p.sign)}
+                </div>
+              )}
             </div>
-            <div className="text-right">
-              <span className="text-astral-gold text-[10px] md:text-xs uppercase tracking-wider flex items-center justify-end gap-1">
-                {p.sign} <span className="text-astral-gold font-serif text-sm">{zodiacSymbols[p.sign] || ''}</span>
-              </span>
-              <span className="text-ash-grey text-[10px] block">{p.degree}</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
