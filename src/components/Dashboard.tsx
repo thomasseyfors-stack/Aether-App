@@ -354,7 +354,18 @@ export function NumerologyCard({ data }: { data: any }) {
         </button>
         {isExpanded && (
           <div className="mt-4 text-ash-grey text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300">
-            {data?.interpretation ?? 'Interpretation unavailable.'}
+            {Array.isArray(data?.interpretation) ? (
+              <ul className="space-y-3">
+                {data.interpretation.map((item: string, idx: number) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-astral-gold mt-1 text-xs">◆</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="whitespace-pre-wrap">{data?.interpretation ?? 'Interpretation unavailable.'}</div>
+            )}
           </div>
         )}
       </div>
@@ -363,22 +374,31 @@ export function NumerologyCard({ data }: { data: any }) {
 }
 
 export function AscendantData({ angles }: { angles: any }) {
+  if (!angles) return null;
+
+  const AngleBox = ({ title, data }: { title: string, data: any }) => (
+    <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20">
+      <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">{title}</p>
+      <p className="text-base md:text-lg font-bold text-starlight-white flex items-center gap-2">
+        {data?.sign ?? '---'} 
+        <span className="text-astral-gold font-serif text-sm">{zodiacSymbols[data?.sign] || ''}</span>
+      </p>
+      <p className="text-astral-gold text-[10px] md:text-xs">{data?.degree ?? '0°'}</p>
+    </div>
+  );
+
   return (
     <div className="border-t border-ash-grey/10 pt-4 md:pt-6 mt-2">
       <h3 className="text-ash-grey text-[10px] md:text-xs tracking-widest uppercase mb-3 md:mb-4">Angular Coordinates</h3>
-      <div className="grid grid-cols-2 gap-3 md:gap-4">
-        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20">
-          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Ascendant</p>
-          <p className="text-base md:text-lg font-bold text-starlight-white">{angles?.ascendant?.sign ?? '---'}</p>
-          <p className="text-astral-gold text-[10px] md:text-xs">{angles?.ascendant?.degree ?? '0°'}</p>
-        </div>
-        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20">
-          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Midheaven</p>
-          <p className="text-base md:text-lg font-bold text-starlight-white">{angles?.midheaven?.sign ?? '---'}</p>
-          <p className="text-astral-gold text-[10px] md:text-xs">{angles?.midheaven?.degree ?? '0°'}</p>
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+        <AngleBox title="Ascendant (ASC)" data={angles.ascendant} />
+        <AngleBox title="Descendant (DSC)" data={angles.descendant} />
+        <AngleBox title="Midheaven (MC)" data={angles.midheaven} />
+        <AngleBox title="Imum Coeli (IC)" data={angles.imumCoeli} />
+        <AngleBox title="North Node" data={angles.northNode} />
+        <AngleBox title="South Node" data={angles.southNode} />
       </div>
-      <p className="text-ash-grey text-[10px] mt-4 text-center italic">{angles?.houses ?? 'House data computed.'}</p>
+      <p className="text-ash-grey text-[10px] mt-4 text-center italic">{angles.houses ?? 'House data computed.'}</p>
     </div>
   );
 }

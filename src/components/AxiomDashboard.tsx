@@ -1,9 +1,7 @@
 import React from 'react';
 import { ArrowLeft, Beaker } from 'lucide-react';
 import AetherLogo from './AetherLogo';
-import { NumerologyCard } from './Dashboard';
-// Ensure IdentityMatrixCard is exported from Dashboard.tsx in your project
-import { IdentityMatrixCard } from './Dashboard'; 
+import { NumerologyCard, IdentityMatrixCard } from './Dashboard'; 
 
 export default function AxiomDashboard({ payload, onReturn }: { payload: any, onReturn: () => void }) {
   const theoretical = payload?.theoretical;
@@ -43,7 +41,6 @@ export default function AxiomDashboard({ payload, onReturn }: { payload: any, on
 
         <div className="flex flex-col gap-4 md:gap-6 animate-in fade-in duration-500">
           
-          {/* Cotsworth Temporal Parameters */}
           <section className="bg-obsidian border border-nebula-purple/20 rounded-xl p-4 md:p-6 shadow-[0_0_20px_rgba(106,13,173,0.1)]">
             <h3 className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-4">Temporal Shift Parameters</h3>
             <div className="grid grid-cols-2 gap-4">
@@ -58,25 +55,27 @@ export default function AxiomDashboard({ payload, onReturn }: { payload: any, on
             </div>
           </section>
 
-          {/* Theoretical Numerology */}
           <NumerologyCard data={{
             lifePath: theoretical.numerology.lifePath,
-            destiny: "N/A",
-            soulUrge: "N/A",
-            personality: "N/A",
-            interpretation: "In this theoretical timeframe, the vibrational frequency of your structural origin completely shifts."
+            destiny: "N/A", soulUrge: "N/A", personality: "N/A",
+            interpretation: theoretical.numerology.interpretation
           }} />
 
-          {/* Theoretical Matrices */}
           <div className="pt-4 space-y-4">
             <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4 text-center">Theoretical Geometries</h3>
             
             <IdentityMatrixCard 
               title="Tropical Placidus" 
               subtitle="Theoretical Persona" 
-              data={{ placements: theoretical.matrices.tropical, aspects: [], patterns: [], voids: [] }} 
+              data={{ 
+                placements: theoretical.matrices.tropical,
+                angles: theoretical.matrices.angles,
+                aspects: theoretical.matrices.aspects,
+                patterns: theoretical.matrices.patterns,
+                voids: theoretical.matrices.voids
+              }} 
               imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-axiom.jpg" 
-              isPrimary={false} 
+              isPrimary={true} 
             />
 
             {theoretical.matrices.vaults && (
