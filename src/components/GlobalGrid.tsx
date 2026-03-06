@@ -1,10 +1,12 @@
 import React from 'react';
-import { ArrowLeft, Globe2, Fingerprint, BookOpen, Milestone } from 'lucide-react';
+import { ArrowLeft, Globe2, Fingerprint, BookOpen, Milestone, MapPin, Download } from 'lucide-react';
 import AetherLogo from './AetherLogo';
+import { exportCodexPDF } from '../utils/exportEngine';
 
 export default function GlobalGrid({ payload, onBack }: { payload: any, onBack: () => void }) {
   // Extract the new cultural grid payload
   const gridData = payload?.matrices?.culturalGrid;
+  const pii = payload?.pii || {};
 
   if (!gridData) {
     return (
@@ -32,12 +34,17 @@ export default function GlobalGrid({ payload, onBack }: { payload: any, onBack: 
               </p>
             </div>
           </div>
-          <button 
-            onClick={onBack}
-            className="flex items-center justify-center gap-2 bg-obsidian hover:bg-black/50 text-ash-grey border border-ash-grey/20 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto"
-          >
-            <ArrowLeft className="w-4 h-4" /> Return to Blueprint
-          </button>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button onClick={() => exportCodexPDF(payload, pii)} className="flex items-center justify-center gap-2 bg-emerald-900/20 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-500/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto">
+              <Download className="w-4 h-4" /> Extract Codex
+            </button>
+            <button 
+              onClick={onBack}
+              className="flex items-center justify-center gap-2 bg-obsidian hover:bg-black/50 text-ash-grey border border-ash-grey/20 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto"
+            >
+              <ArrowLeft className="w-4 h-4" /> Return to Blueprint
+            </button>
+          </div>
         </header>
 
         {/* Introduction */}
@@ -58,6 +65,9 @@ export default function GlobalGrid({ payload, onBack }: { payload: any, onBack: 
                 <h2 className="text-starlight-white font-bold text-sm md:text-base uppercase tracking-wider flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-emerald-400" /> {node.system}
                 </h2>
+                <span className="text-[10px] uppercase tracking-widest px-2 py-1 bg-emerald-900/20 text-emerald-400 border border-emerald-500/30 rounded flex items-center gap-1">
+                  <MapPin className="w-3 h-3" /> {node.region}
+                </span>
               </div>
               
               <div className="space-y-3 flex-1">

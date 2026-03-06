@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe, Download } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe, Download, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
 import AetherLogo from './AetherLogo';
 import { generateCharacteristics } from '../utils/geminiClient';
+import { exportCodexPDF } from '../utils/exportEngine';
 
 export const ALL_ZODIAC_SIGNS = [
   'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
@@ -64,11 +65,8 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
     vaults: payload?.matrices?.vaults
   };
 
-  // Tactical Data Exfiltration (PDF Print Render)
   const executeDataExtraction = () => {
-    // This triggers the browser's native print dialog. 
-    // The @media print CSS in index.css will handle the dark-mode formatting and hide the UI buttons.
-    window.print();
+    exportCodexPDF(payload, pii);
   };
 
   return (
@@ -189,131 +187,100 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
 // ---------------------------------------------------------------------------
 
 export function IdentityMatrixCard({ title, subtitle, data, isDefaultTime = false, imageSrc, isPrimary = false, isEncrypted = false }: any) {
-  const [isOpen, setIsOpen] = useState(!isEncrypted);
-  const [isOracleOpen, setIsOracleOpen] = useState(false);
-  const [oracleText, setOracleText] = useState<string | null>(null);
-  const [isLoadingOracle, setIsLoadingOracle] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(isPrimary);
 
-  useEffect(() => {
-    if (isOracleOpen && !oracleText && !isLoadingOracle && data) {
-      setIsLoadingOracle(true);
-      generateCharacteristics(data, subtitle || title)
-        .then(res => { setOracleText(res); setIsLoadingOracle(false); })
-        .catch(() => { setOracleText("Oracle connection interrupted."); setIsLoadingOracle(false); });
-    }
-  }, [isOracleOpen, oracleText, isLoadingOracle, data, subtitle, title]);
+  if (!data || !data.placements) return <UnavailableCard title={title} />;
 
-  if (!data || (!data.placements && !data.matrices?.tropical)) {
-    return <UnavailableCard title={title} />;
-  }
+  // SEPARATE MAJORS AND MINORS
+  const MAJORS = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'Earth'];
+  const majorPlacements = data.placements.filter((p: any) => MAJORS.includes(p.planet));
+  const minorPlacements = data.placements.filter((p: any) => !MAJORS.includes(p.planet));
 
-  // Handle both primary payload structure and encrypted vault structure
-  const rawPlacements = data.placements || data;
-  const { luminaries, majors, minors } = categorizePlacements(rawPlacements);
-  const aspects = data.aspects || [];
-  const patterns = data.patterns || [];
-  const voids = data.voids || [];
-  const angles = data.angles;
-
-  const toggleHeader = (
-    <div className={`flex items-center gap-4 ${isEncrypted ? 'mb-0' : 'mb-6'}`}>
-      {imageSrc && (
-        <img src={imageSrc} alt={subtitle || title} referrerPolicy="no-referrer" className="w-12 h-12 rounded-full border border-ash-grey/30 object-cover shadow-lg" />
-      )}
-      <div className="text-left">
-        <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
-          {isEncrypted && (isOpen ? <Unlock className="w-3 h-3 text-astral-gold" /> : <Lock className="w-3 h-3 text-ash-grey" />)}
-          {!isEncrypted && <span className="w-2 h-2 rounded-full bg-nebula-purple"></span>}
-          {title}
-        </h2>
-        {subtitle && <p className="text-[10px] text-ash-grey tracking-widest uppercase mt-1">{subtitle}</p>}
-      </div>
-    </div>
-  );
-
-  const content = (
-    <div className="space-y-6">
-      {/* 1. Luminaries */}
-      {luminaries.length > 0 && <PlacementSection title="Luminaries" icon={<CircleDot className="w-3 h-3 text-astral-gold" />} placements={luminaries} />}
-      
-      {/* 2. Major Planets */}
-      {majors.length > 0 && <PlacementSection title="Major Planets" icon={<Orbit className="w-3 h-3 text-nebula-purple" />} placements={majors} />}
-      
-      {/* 3. Minor Objects (Asteroids, Comets, Nodes) */}
-      <PlacementSection title="Minor Celestial Objects" icon={<Asterisk className="w-3 h-3 text-ash-grey" />} placements={minors} fallback="Awaiting deep-space telemetry scan." />
-      
-      {/* Angular Coordinates (Primary Only) */}
-      {isPrimary && !isDefaultTime && angles && <AscendantData angles={angles} />}
-
-      {/* 4. Aspects */}
-      <ListSection title="Aspects" icon={<Network className="w-3 h-3 text-emerald-400" />} items={aspects} fallback="Awaiting geometric aspect mapping." renderItem={(a: any, idx: number) => (
-        <div key={idx} className="flex items-center justify-between bg-black/30 px-3 md:px-4 py-2 rounded border border-ash-grey/10">
-          <span className="text-starlight-white text-[10px] md:text-xs uppercase tracking-wider">{a.type}</span>
-          <div className="flex items-center gap-2 md:gap-4">
-            <span className="text-astral-gold text-[10px] md:text-xs">{a.planets}</span>
-            <span className="text-ash-grey text-[10px] w-6 md:w-8 text-right">{a.orb}</span>
-          </div>
-        </div>
-      )} />
-
-      {/* 5. Patterns */}
-      <ListSection title="Patterns" icon={<Fingerprint className="w-3 h-3 text-astral-gold" />} items={patterns} fallback="Awaiting structural pattern recognition." renderItem={(p: any, idx: number) => (
-        <div key={idx} className="bg-black/30 px-3 md:px-4 py-2 rounded border border-ash-grey/10">
-          <span className="text-astral-gold text-xs uppercase tracking-wider block">{p.name}</span>
-          <span className="text-ash-grey text-[10px]">{p.description}</span>
-        </div>
-      )} />
-
-      {/* 6. Voids */}
-      <ListSection title="Voids (Open Conductors)" icon={<Wind className="w-3 h-3 text-slate-400" />} items={voids} fallback="All primary sectors currently conducting." renderItem={(v: any, idx: number) => (
-        <div key={idx} className="bg-black/30 px-3 md:px-4 py-2 rounded border border-ash-grey/10 flex justify-between">
-          <span className="text-starlight-white text-[10px] md:text-xs uppercase tracking-wider">{v.type}</span>
-          <span className="text-ash-grey text-[10px]">{v.elements}</span>
-        </div>
-      )} />
-
-      {/* Oracle Integration */}
-      <div className="mt-4 border-t border-ash-grey/10 pt-4">
-        <button onClick={() => setIsOracleOpen(!isOracleOpen)} className="flex items-center justify-between w-full text-left text-sm text-nebula-purple hover:text-astral-gold transition-colors uppercase tracking-wider">
-          <span className="flex items-center gap-2"><Sparkles className="w-4 h-4" /> Oracle Interpretation</span>
-          {isOracleOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
-        {isOracleOpen && (
-          <div className="mt-4 text-ash-grey text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300">
-            {isLoadingOracle ? (
-              <div className="flex items-center gap-2 text-astral-gold">
-                <RefreshCcw className="w-4 h-4 animate-spin" />
-                <span className="text-xs uppercase tracking-widest">Consulting Oracle...</span>
-              </div>
-            ) : (<div className="whitespace-pre-wrap">{oracleText}</div>)}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-
-  if (isEncrypted) {
-    return (
-      <motion.div layout className={`bg-obsidian border rounded-xl overflow-hidden transition-all duration-500 ${isOpen ? 'border-astral-gold/50 shadow-[0_0_30px_rgba(245,208,97,0.15)]' : 'border-ash-grey/20 shadow-md hover:border-ash-grey/40'}`}>
-        <button onClick={() => setIsOpen(!isOpen)} className="w-full p-4 md:p-5 flex items-center justify-between group">
-          {toggleHeader}
-          <div className="text-ash-grey">{isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}</div>
-        </button>
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="border-t border-astral-gold/20">
-              <div className="p-4 md:p-6">{content}</div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    );
-  }
+  // PATTERN SYMBOLS
+  const getPatternIcon = (name: string) => {
+    if (name.includes('Cross')) return '⌖';
+    if (name.includes('Square') || name.includes('Stellium')) return '⊤';
+    if (name.includes('Trine')) return '△';
+    if (name.includes('Yod')) return '⇡';
+    return '✧';
+  };
 
   return (
-    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg">
-      {toggleHeader}
-      {content}
+    <section className="bg-obsidian border border-ash-grey/20 rounded-xl overflow-hidden shadow-lg transition-all">
+      <div className="flex flex-col md:flex-row">
+        {imageSrc && (
+          <div className="w-full md:w-1/4 lg:w-1/5 bg-black relative min-h-[120px] md:min-h-[auto] border-b md:border-b-0 md:border-r border-ash-grey/20">
+            <img src={imageSrc} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-60" />
+            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-obsidian via-obsidian/80 to-transparent"></div>
+          </div>
+        )}
+        <div className="flex-1 p-4 md:p-6">
+          <div className="flex items-start justify-between cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                {isEncrypted ? <Lock className="w-4 h-4 text-nebula-purple" /> : <Unlock className="w-4 h-4 text-astral-gold" />}
+                <p className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase">{subtitle}</p>
+              </div>
+              <h2 className="text-lg md:text-xl font-bold text-starlight-white uppercase tracking-wider">{title}</h2>
+              {isDefaultTime && <p className="text-red-400 text-[10px] mt-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Time unknown. Angles unverified.</p>}
+            </div>
+            <button className="text-ash-grey hover:text-starlight-white transition-colors p-2">
+              {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </button>
+          </div>
+
+          {isExpanded && (
+            <div className="mt-6 space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
+              
+              <PlacementSection title="Major Planetary Bodies" icon={<Sun className="w-4 h-4 text-astral-gold" />} placements={majorPlacements} fallback="Awaiting geometric mapping." />
+              
+              {minorPlacements.length > 0 && (
+                <PlacementSection title="Minor Celestial Objects" icon={<Asterisk className="w-4 h-4 text-nebula-purple" />} placements={minorPlacements} fallback="Awaiting deep-space telemetry scan." />
+              )}
+
+              {data.angles && <AscendantData angles={data.angles} />}
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-6 border-t border-ash-grey/10">
+                <div>
+                  <h3 className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-4 flex items-center gap-2">
+                    <Orbit className="w-4 h-4 text-astral-gold" /> Major Aspects
+                  </h3>
+                  {data.aspects && data.aspects.length > 0 ? (
+                    <div className="space-y-2">
+                      {data.aspects.map((aspect: any, idx: number) => (
+                        <div key={idx} className="bg-black/30 p-2 md:p-3 rounded border border-ash-grey/5 flex justify-between items-center text-[10px] md:text-xs">
+                          <span className="text-starlight-white font-medium">{aspect.type}</span>
+                          <span className="text-astral-gold">{aspect.planets}</span>
+                          <span className="text-ash-grey">{aspect.orb}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : <p className="text-ash-grey text-[10px] italic">Awaiting geometric mapping.</p>}
+                </div>
+
+                <div>
+                  <h3 className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-4 flex items-center gap-2">
+                    <CircleDot className="w-4 h-4 text-nebula-purple" /> Structural Patterns
+                  </h3>
+                  {data.patterns && data.patterns.length > 0 ? (
+                    <div className="space-y-3">
+                      {data.patterns.map((pattern: any, idx: number) => (
+                        <div key={idx} className="bg-black/30 p-3 rounded border border-ash-grey/5">
+                          <h4 className="text-starlight-white font-bold text-sm flex items-center gap-2 mb-1">
+                            <span className="text-astral-gold text-lg">{getPatternIcon(pattern.name)}</span> {pattern.name}
+                          </h4>
+                          <p className="text-ash-grey text-[10px] md:text-xs leading-relaxed">{pattern.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : <p className="text-ash-grey text-[10px] italic">Awaiting geometric mapping.</p>}
+                </div>
+              </div>
+
+            </div>
+          )}
+        </div>
+      </div>
     </section>
   );
 }

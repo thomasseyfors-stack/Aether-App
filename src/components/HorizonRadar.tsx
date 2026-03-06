@@ -143,7 +143,9 @@ function LiveSkyContainer({ data }: { data: any[] }) {
           <Radio className="w-4 h-4 text-red-500 animate-pulse" /> Real-Time Orbital Telemetry
         </h2>
         <p className="text-ash-grey text-xs md:text-sm leading-relaxed">
-          This grid displays the exact physical coordinates of the planetary bodies at this very second. Unlike your static natal blueprint, the Live Sky represents the "Cosmic Weather" you are currently navigating through.
+          This grid displays the exact physical coordinates of the planetary bodies at this very second. Unlike your static natal blueprint, the Live Sky represents the "Cosmic Weather." 
+          <br/><br/>
+          <strong>How to deploy this data:</strong> If the Live Moon is in Pisces, the collective emotional tide is currently highly sensitive. As a Master Builder, you can use this fluid window to bypass rigid logic and 'feel' the structural integrity of your projects. If Live Mars is in Aries, the environment is primed for kinetic action and prototype launching. Align your daily execution with these active frequencies to eliminate friction.
         </p>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">

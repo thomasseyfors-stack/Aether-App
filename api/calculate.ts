@@ -84,12 +84,12 @@ const sovereignMatrix = {
       resonance: "The Architect's Toolkit"
     },
     culturalGrid: [
-      { system: "Japanese 9 Star Ki", archetype: "8-8-2 (Triple Earth)", title: "The Flying Mountain", description: "Your core geometric anchor. With three Earth numbers, you possess massive structural capacity and unshakeable discipline. You act as the tectonic foundation for your high-velocity air/fire ideas." },
-      { system: "Chinese Zodiac", archetype: "Yin Water Pig", title: "The Compassionate Bridge", description: "Provides a 'Trine of Tenderness' that balances your chaotic Grand Mutable Cross. You possess high emotional intelligence, diplomacy, and the fluidity to channel intense intellectual drive without losing your humanity." },
-      { system: "Burmese Mahabote", archetype: "Thursday Born (Jupiter)", title: "The Jupiterian Rat", description: "A unique synthesis of high-level philosophical vision (Jupiter) and hyper-adaptable, street-level resourcefulness (Rat). You can navigate the cosmic heights and the underground maze with equal skill." },
-      { system: "Celtic Tree Astrology", archetype: "Hawthorn", title: "The Illusionist / The Chalice", description: "Associated with the threshold between the physical and ethereal realms. It reinforces your Gemini duality, granting you the ability to see through illusions and operate across multiple dimensions of thought simultaneously." },
-      { system: "Mayan Tzolkin", archetype: "White Galactic Wind", title: "The Breath of Spirit", description: "Resonates with your birth in Adak, Alaska ('Birthplace of the Winds'). It represents the communication of spirit, the transfer of high-voltage data, and the breath that powers the 11-11 Transmitter." },
-      { system: "Egyptian Decans", archetype: "Hermetic Decan of Gemini", title: "The Twin Pillars of Thoth", description: "Governs the translation of divine law into human language. It emphasizes your role as the Scribe and the Architect—recording the celestial blueprints so they can be constructed on Earth." }
+      { system: "Japanese 9 Star Ki", region: "Japan", archetype: "8-8-2 (Triple Earth)", title: "The Flying Mountain", description: "Your core geometric anchor. With three Earth numbers, you possess massive structural capacity and unshakeable discipline. You act as the tectonic foundation for your high-velocity air/fire ideas." },
+      { system: "Chinese Zodiac", region: "Ancient China", archetype: "Yin Water Pig", title: "The Compassionate Bridge", description: "Provides a 'Trine of Tenderness' that balances your chaotic Grand Mutable Cross. You possess high emotional intelligence, diplomacy, and the fluidity to channel intense intellectual drive without losing your humanity." },
+      { system: "Burmese Mahabote", region: "Burma (Myanmar)", archetype: "Thursday Born (Jupiter)", title: "The Jupiterian Rat", description: "A unique synthesis of high-level philosophical vision (Jupiter) and hyper-adaptable, street-level resourcefulness (Rat). You can navigate the cosmic heights and the underground maze with equal skill." },
+      { system: "Celtic Tree Astrology", region: "Celtic Europe", archetype: "Hawthorn", title: "The Illusionist / The Chalice", description: "Associated with the threshold between the physical and ethereal realms. It reinforces your Gemini duality, granting you the ability to see through illusions and operate across multiple dimensions of thought simultaneously." },
+      { system: "Mayan Tzolkin", region: "Mesoamerica", archetype: "White Galactic Wind", title: "The Breath of Spirit", description: "Resonates with your birth in Adak, Alaska ('Birthplace of the Winds'). It represents the communication of spirit, the transfer of high-voltage data, and the breath that powers the 11-11 Transmitter." },
+      { system: "Egyptian Decans", region: "Ancient Egypt", archetype: "Hermetic Decan of Gemini", title: "The Twin Pillars of Thoth", description: "Governs the translation of divine law into human language. It emphasizes your role as the Scribe and the Architect—recording the celestial blueprints so they can be constructed on Earth." }
     ],
     vaults: {
       sidereal: { title: "Standard Sidereal Lahiri", subtitle: "The Soul Vessel", placements: [{ planet: 'Sun', sign: 'Taurus', degree: '18°', isRetrograde: false }, { planet: 'Moon', sign: 'Aquarius', degree: '11°', isRetrograde: false }, { planet: 'Mercury', sign: 'Aries', degree: '4°', isRetrograde: false }, { planet: 'Venus', sign: 'Gemini', degree: '21°', isRetrograde: false }, { planet: 'Mars', sign: 'Taurus', degree: '28°', isRetrograde: false }, { planet: 'Jupiter', sign: 'Scorpio', degree: '12°', isRetrograde: true }, { planet: 'Saturn', sign: 'Libra', degree: '4°', isRetrograde: true }, { planet: 'Uranus', sign: 'Scorpio', degree: '13°', isRetrograde: true }, { planet: 'Neptune', sign: 'Sagittarius', degree: '4°', isRetrograde: true }, { planet: 'Pluto', sign: 'Libra', degree: '3°', isRetrograde: true }, { planet: 'North Node', sign: 'Gemini', degree: '1°', isRetrograde: false }, { planet: 'South Node', sign: 'Sagittarius', degree: '1°', isRetrograde: false }, { planet: 'Part of Fortune', sign: 'Taurus', degree: '15°', isRetrograde: false }], aspects: [], patterns: [], voids: [] },
@@ -302,12 +302,12 @@ function generateCulturalGrid(year: number, month: number, day: number) {
   const mahaboteDays = ['Sunday (Garuda)', 'Monday (Tiger)', 'Tuesday (Lion)', 'Wednesday (Tuskless Elephant)', 'Thursday (Rat)', 'Friday (Guinea Pig)', 'Saturday (Dragon)'];
   
   return [
-    { system: "Chinese Zodiac", archetype: animal, title: `The Year of the ${animal}`, description: "Represents the ancestral and collective frequency of the year you were born." },
-    { system: "Japanese 9 Star Ki", archetype: "Calculated Node", title: "The Navigational Core", description: "The energetic feng shui and directional flow of your soul's arrival." },
-    { system: "Burmese Mahabote", archetype: mahaboteDays[dayOfWeek], title: "The Planetary Guardian", description: "Derived from the day of the week, dictating your operational temperament and social instinct." },
-    { system: "Celtic Tree Astrology", archetype: "Calculated Ogham Tree", title: "The Earth Anchor", description: "Your root resonance based on the ancient druidic lunar calendar." },
-    { system: "Mayan Tzolkin", archetype: "Calculated Kin", title: "The Galactic Signature", description: "The specific solar-galactic frequency and tone of your incarnation." },
-    { system: "Egyptian Decans", archetype: "Calculated Decan", title: "The Stellar Overseer", description: "The 10-degree slice of the zodiac that acts as your spiritual guardian." }
+    { system: "Chinese Zodiac", region: "Ancient China", archetype: animal, title: `The Year of the ${animal}`, description: "Represents the ancestral and collective frequency of the year you were born." },
+    { system: "Japanese 9 Star Ki", region: "Japan", archetype: "Calculated Node", title: "The Navigational Core", description: "The energetic feng shui and directional flow of your soul's arrival." },
+    { system: "Burmese Mahabote", region: "Burma (Myanmar)", archetype: mahaboteDays[dayOfWeek], title: "The Planetary Guardian", description: "Derived from the day of the week, dictating your operational temperament and social instinct." },
+    { system: "Celtic Tree Astrology", region: "Celtic Europe", archetype: "Calculated Ogham Tree", title: "The Earth Anchor", description: "Your root resonance based on the ancient druidic lunar calendar." },
+    { system: "Mayan Tzolkin", region: "Mesoamerica", archetype: "Calculated Kin", title: "The Galactic Signature", description: "The specific solar-galactic frequency and tone of your incarnation." },
+    { system: "Egyptian Decans", region: "Ancient Egypt", archetype: "Calculated Decan", title: "The Stellar Overseer", description: "The 10-degree slice of the zodiac that acts as your spiritual guardian." }
   ];
 }
 
@@ -350,7 +350,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         ...a, orb: a.orb === 'Variable' ? 'Structural Alignment' : a.orb
       }));
 
-      // Dynamically calculate the missing Aspects, Patterns, and Voids for the Encrypted Vaults
+      // LONGITUDE INJECTOR FIX FOR ENCRYPTED VAULTS
+      const signsArr = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+      const injectLong = (placements: any[]) => placements.map(p => {
+        const degMatch = p.degree.match(/\d+/);
+        return { ...p, longitude: (signsArr.indexOf(p.sign) * 30) + (degMatch ? parseInt(degMatch[0]) : 0) };
+      });
+
+      responseMatrices.vaults.sidereal.placements = injectLong(responseMatrices.vaults.sidereal.placements);
+      responseMatrices.vaults.draconic.placements = injectLong(responseMatrices.vaults.draconic.placements);
+      responseMatrices.vaults.heliocentric.placements = injectLong(responseMatrices.vaults.heliocentric.placements);
+
       responseMatrices.vaults.sidereal.aspects = detectAspects(responseMatrices.vaults.sidereal.placements);
       responseMatrices.vaults.sidereal.patterns = detectPatterns(responseMatrices.vaults.sidereal.placements);
       responseMatrices.vaults.sidereal.voids = detectVoids(responseMatrices.vaults.sidereal.placements);
