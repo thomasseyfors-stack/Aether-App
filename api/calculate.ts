@@ -40,7 +40,15 @@ const sovereignMatrix = {
       { planet: 'Eris', sign: 'Aries', degree: '15°', isRetrograde: false },
       { planet: 'Hygiea', sign: 'Scorpio', degree: '2°', isRetrograde: false }
     ],
-    angles: { ascendant: { sign: 'Virgo', degree: '16°' }, midheaven: { sign: 'Gemini', degree: '12°' }, houses: "Sovereign spatial coordinates locked and verified." },
+    angles: { 
+      ascendant: { sign: 'Virgo', degree: '16°' }, 
+      descendant: { sign: 'Pisces', degree: '16°' },
+      midheaven: { sign: 'Gemini', degree: '12°' }, 
+      imumCoeli: { sign: 'Sagittarius', degree: '12°' },
+      northNode: { sign: 'Gemini', degree: '25°' },
+      southNode: { sign: 'Sagittarius', degree: '25°' },
+      houses: "Sovereign spatial coordinates locked and verified." 
+    },
     aspects: [
       { type: 'Trine (Air)', planets: 'Gemini - Libra - Aquarius', orb: 'Variable' },
       { type: 'Trine (Fire)', planets: 'Sagittarius - Aries - Leo', orb: 'Variable' },
@@ -154,12 +162,18 @@ function getWordValue(word: string, filter: 'all' | 'vowels' | 'consonants') {
   return sum;
 }
 
-function assembleNumerologyReading(lp: number, dest: number, su: number, pers: number): string {
+// STRUCTURAL UPGRADE: Outputting as an array for bullet list rendering
+function assembleNumerologyReading(lp: number, dest: number, su: number, pers: number): string[] {
   const lpText = numerologyCodex[lp] || "Unmapped Frequency.";
   const destText = numerologyCodex[dest] || "Unmapped Frequency.";
-  const suText = numerologyCodex[su] || "Unmapped Frequency.";
-  const persText = numerologyCodex[pers] || "Unmapped Frequency.";
-  return `Core Blueprint (Life Path ${lp}): ${lpText}\n\nOperational Trajectory (Destiny ${dest}): ${destText}\n\nStructural Integrity: Your Soul Urge (${su}) acts as the internal reactor core—driving your deepest motivations—while your Personality (${pers}) functions as the external armor. When synchronized, they form a highly stable, self-sustaining energetic engine.`;
+  
+  return [
+    `Core Blueprint (Life Path ${lp}): ${lpText}`,
+    `Operational Trajectory (Destiny ${dest}): ${destText}`,
+    `Soul Urge (${su}): Acts as the internal reactor core, driving your deepest motivations.`,
+    `Personality (${pers}): Functions as the external armor and structural interface.`,
+    `When synchronized, these four coordinates form a highly stable, self-sustaining energetic engine.`
+  ];
 }
 
 // ============================================================================
@@ -188,7 +202,6 @@ const ZODIAC_KEY: Record<string, { element: string, modality: string, index: num
   'Pisces':      { element: 'Water', modality: 'Mutable',  index: 11 }
 };
 
-// Decadal Base-State Longitudes to prevent mathematical drift
 const EPOCH_KEY: Record<number, { timestamp: number, planets: any }> = {
   1980: { timestamp: 315532800000, planets: { Sun: 279.2, Moon: 66.2, Mercury: 255.4, Venus: 236.8, Mars: 145.1, Jupiter: 153.2, Saturn: 176.4, Uranus: 235.1, Neptune: 260.4, Pluto: 201.5 } },
   1990: { timestamp: 631152000000, planets: { Sun: 279.6, Moon: 320.1, Mercury: 282.1, Venus: 285.5, Mars: 245.2, Jupiter: 92.4, Saturn: 285.3, Uranus: 276.5, Neptune: 282.1, Pluto: 226.3 } },
@@ -278,6 +291,7 @@ function detectVoids(placements: any[]) {
   return voids;
 }
 
+// STRUCTURAL UPGRADE: Full 6-Point Axis Calculation
 function calculateAngles(targetTime: number, lat: number, lon: number) {
   const obl = 23.439 * (Math.PI / 180);
   const J2000 = 946728000000;
@@ -286,12 +300,22 @@ function calculateAngles(targetTime: number, lat: number, lon: number) {
   if (gmst < 0) gmst += 24;
   let lst = (gmst * 15 + lon) % 360;
   if (lst < 0) lst += 360;
+  
   const lstRad = lst * (Math.PI / 180);
   const latRad = lat * (Math.PI / 180);
   let mcRad = Math.atan2(Math.sin(lstRad), Math.cos(lstRad) * Math.cos(obl));
   let ascY = Math.cos(lstRad);
   let ascX = -Math.sin(lstRad) * Math.cos(obl) - Math.tan(latRad) * Math.sin(obl);
-  return { ascendant: getZodiac((Math.atan2(ascY, ascX) * (180 / Math.PI) + 360) % 360), midheaven: getZodiac((mcRad * (180 / Math.PI) + 360) % 360) };
+  
+  const ascLong = (Math.atan2(ascY, ascX) * (180 / Math.PI) + 360) % 360;
+  const mcLong = (mcRad * (180 / Math.PI) + 360) % 360;
+
+  return { 
+    ascendant: getZodiac(ascLong), 
+    descendant: getZodiac((ascLong + 180) % 360),
+    midheaven: getZodiac(mcLong),
+    imumCoeli: getZodiac((mcLong + 180) % 360)
+  };
 }
 
 function calculateCotsworthDate(year: number, month: number, day: number) {
@@ -353,11 +377,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return { planet: p.planet, sign: zodiac.sign, degree: zodiac.degree, longitude: zodiac.longitude, isRetrograde: false };
       });
       
-      const angles = latitude && longitude ? calculateAngles(targetTime, parseFloat(latitude as string), parseFloat(longitude as string)) : { ascendant: { sign: 'Pending', degree: '0°' }, midheaven: { sign: 'Pending', degree: '0°' } };
+      const calcAngles = latitude && longitude ? calculateAngles(targetTime, parseFloat(latitude as string), parseFloat(longitude as string)) : { ascendant: { sign: 'Pending', degree: '0°' }, descendant: { sign: 'Pending', degree: '0°' }, midheaven: { sign: 'Pending', degree: '0°' }, imumCoeli: { sign: 'Pending', degree: '0°' } };
+      const angles = { ...calcAngles, northNode: getZodiac(northNodeLong), southNode: getZodiac((northNodeLong + 180) % 360), houses: "Spatial calculation sequence complete." };
 
       responseMatrices = {
         tropical: tropicalPlacements.map(({ longitude, ...rest }) => rest),
-        angles: { ascendant: angles.ascendant, midheaven: angles.midheaven, houses: "Spatial calculation sequence complete." },
+        angles: angles,
         aspects: detectAspects(tropicalPlacements),
         patterns: detectPatterns(tropicalPlacements),
         voids: detectVoids(tropicalPlacements),
@@ -385,6 +410,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return { planet: p.planet, sign: zodiac.sign, degree: zodiac.degree, longitude: zodiac.longitude, isRetrograde: false };
     });
 
+    const theoCalcAngles = latitude && longitude ? calculateAngles(theoTime, parseFloat(latitude as string), parseFloat(longitude as string)) : { ascendant: { sign: 'Pending', degree: '0°' }, descendant: { sign: 'Pending', degree: '0°' }, midheaven: { sign: 'Pending', degree: '0°' }, imumCoeli: { sign: 'Pending', degree: '0°' } };
+    const theoAngles = { ...theoCalcAngles, northNode: getZodiac(theoNorthNodeLong), southNode: getZodiac((theoNorthNodeLong + 180) % 360), houses: "Theoretical spatial calculation sequence complete." };
+
     const result = {
       numerology,
       matrices: responseMatrices,
@@ -393,10 +421,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         time: `${birthTime} UTC`,
         numerology: { 
             lifePath: shiftedLifePath,
-            interpretation: `Theoretical Core Alignment (Life Path ${shiftedLifePath}): ${numerologyCodex[shiftedLifePath] || "Unmapped Frequency."}`
+            interpretation: [
+              `Theoretical Core Alignment (Life Path ${shiftedLifePath}): ${numerologyCodex[shiftedLifePath] || "Unmapped Frequency."}`,
+              "In this theoretical Cotsworth timeline, the vibrational frequency of your structural origin completely shifts.",
+              "This alters the baseline reality, forcing a recalculation of your energetic operational mode."
+            ]
         },
         matrices: {
           tropical: theoTropical.map(({ longitude, ...rest }) => rest),
+          angles: theoAngles,
           aspects: detectAspects(theoTropical), patterns: detectPatterns(theoTropical), voids: detectVoids(theoTropical),
           vaults: {
             sidereal: { title: "Standard Sidereal Lahiri", subtitle: "Theoretical Soul Vessel", placements: theoSidereal.map(({ longitude, ...rest }) => rest), aspects: detectAspects(theoSidereal), patterns: detectPatterns(theoSidereal), voids: detectVoids(theoSidereal) },
