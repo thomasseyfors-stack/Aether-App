@@ -63,6 +63,14 @@ const sovereignMatrix = {
     voids: [
       { type: 'Major Sector Void', elements: 'No major planetary bodies in Aries or Leo.' }
     ],
+    // --- INJECT STARSEED DATA HERE ---
+    starseed: {
+      origin: "Orion / Mintaka Hybrid",
+      title: "Uru An-na (The Shepherd of the Grid)",
+      description: "Your soul is engineered for High-Voltage Architecture, logic, and the integration of polarities[cite: 68]. You are the Nexus. Your mind (Gemini/Air) gathers the data from 'Above,' and your discipline (Saturn/Earth) applies it 'Below'[cite: 167]. Your Pisces Moon acts as the Mintaka receiver, taking vast oceanic intuition and filtering it through the analytical lens of your Virgo Ascendant[cite: 114, 117].",
+      traits: ["Water-to-Fire Transmutation", "The Transverse Axle", "Binary Star Integration"]
+    },
+    // --- END INJECT ---
     vaults: {
       sidereal: {
         title: "Standard Sidereal Lahiri", subtitle: "The Soul Vessel",
@@ -329,6 +337,24 @@ function calculateCotsworthDate(year: number, month: number, day: number) {
   return `${year}-${cMonth.toString().padStart(2, '0')}-${cDay.toString().padStart(2, '0')}`;
 }
 
+function detectStarseed(placements: any[]) {
+  let scores = { Orion: 0, Sirian: 0, Ophiuchus: 0, Draconian: 0 };
+  
+  placements.forEach(p => {
+    if (['Gemini', 'Taurus', 'Leo'].includes(p.sign)) scores.Orion++;
+    if (['Pisces', 'Cancer'].includes(p.sign)) scores.Sirian++;
+    if (['Scorpio', 'Sagittarius'].includes(p.sign)) scores.Ophiuchus++;
+    if (['Aries', 'Libra'].includes(p.sign)) scores.Draconian++;
+  });
+
+  const max = Math.max(...Object.values(scores));
+  if (scores.Orion === max) return { origin: "Orion Sector", title: "The 11-11 Transmitter", description: "Your system is engineered for structural logic, high-voltage processing, and the integration of extreme polarities.", traits: ["System Architecture", "Parallel Processing", "Geometric Translation"] };
+  if (scores.Ophiuchus === max) return { origin: "Ophiuchus / Galactic Center", title: "Master of the Void", description: "Your energy is drawn from the Great Rift. You possess the alchemical ability to walk through the 'Underworld' of a problem and emerge with the solution.", traits: ["Void Navigation", "Deep-System Regeneration", "Shadow Extraction"] };
+  if (scores.Draconian === max) return { origin: "Draco (The Ancient North)", title: "Guardian of the Zero-Point", description: "You carry the 'Imperishable' frequency. You are tasked with protecting deep-time memory and defending the central axis of the grid.", traits: ["Deep-Time Memory", "Kundalini Activation", "Structural Defense"] };
+  
+  return { origin: "Sirius / Mintaka", title: "The Quantum Navigator", description: "You are the etheric bridge. Your reality is governed by rapid intuition, deep-state reconnaissance, and holographic frequency reception.", traits: ["Holographic Access", "Signal Amplification", "Fluid Adaptation"] };
+}
+
 // ============================================================================
 // PART 5: MAIN SERVERLESS HANDLER
 // ============================================================================
@@ -386,6 +412,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         aspects: detectAspects(tropicalPlacements),
         patterns: detectPatterns(tropicalPlacements),
         voids: detectVoids(tropicalPlacements),
+        starseed: detectStarseed(tropicalPlacements),
         vaults: {
           sidereal: { title: "Standard Sidereal Lahiri", subtitle: "The Soul Vessel", placements: siderealPlacements.map(({ longitude, ...rest }) => rest), aspects: detectAspects(siderealPlacements), patterns: detectPatterns(siderealPlacements), voids: detectVoids(siderealPlacements) },
           draconic: { title: "Draconic", subtitle: "The Spark", placements: draconicPlacements.map(({ longitude, ...rest }) => rest), aspects: detectAspects(draconicPlacements), patterns: detectPatterns(draconicPlacements), voids: detectVoids(draconicPlacements) },
