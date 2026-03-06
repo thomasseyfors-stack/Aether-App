@@ -1,4 +1,4 @@
-export const maxDuration = 60; // Upgrades Vercel timeout limit from 10s to 60s
+export const maxDuration = 60;
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenAI, Type } from "@google/genai";
 
@@ -91,8 +91,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const text = response.text || "{}";
     return res.status(200).json(JSON.parse(text));
+    
   } catch (error: any) {
-    console.error("Oracle API error:", error);
-    return res.status(500).json({ error: 'Oracle connection interrupted.', details: error.message });
+    console.warn("Oracle Grid Disturbance Detected:", error.message);
+    
+    // STRUCTURAL FAILSAFE: Thematic Decoy Payload
+    // This intercepts Quota Exhaustion (429) or Vercel Timeouts (504) and returns a 200 OK 
+    // with a perfectly formatted JSON decoy to keep the UI intact.
+    
+    const interferenceMessage = "The Aether grid is currently experiencing high-density atmospheric interference due to heavy celestial traffic. The Oracle's connection to the primary generative core is temporarily obscured.\n\nYour mathematical geometries have been successfully locked and mapped above, but the deep interpretive signals require a clearer frequency. Hold your current trajectory and attempt recalibration at a later temporal coordinate.";
+
+    return res.status(200).json({
+        interpretations: {
+            tropical: interferenceMessage,
+            sidereal: interferenceMessage,
+            draconic: interferenceMessage,
+            heliocentric: interferenceMessage
+        },
+        forecasts: [
+            { 
+                period: "Grid Status", 
+                theme: "Atmospheric Interference", 
+                description: "Heavy celestial traffic is currently blocking the forecast telemetry. The structural foundation holds, but long-range radar is obscured. Check back when the aetheric density clears.", 
+                intensity: "High", 
+                identityTag: "System Failsafe" 
+            }
+        ]
+    });
   }
 }
