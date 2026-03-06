@@ -504,8 +504,20 @@ export function StarseedCard({ data }: { data: any }) {
         </button>
         {isExpanded && (
           <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
-            <p>{data.description}</p>
-            <div className="flex flex-wrap gap-2 pt-2">
+            {/* STRUCTURAL UPGRADE: Bullet Point Rendering */}
+            {Array.isArray(data.description) ? (
+              <ul className="space-y-2">
+                {data.description.map((item: string, idx: number) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-astral-gold mt-0.5 text-xs">◆</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>{data.description}</p>
+            )}
+            <div className="flex flex-wrap gap-2 pt-3 border-t border-ash-grey/10">
               {data.traits?.map((trait: string, idx: number) => (
                 <span key={idx} className="text-[9px] uppercase tracking-widest border border-ash-grey/20 bg-black/50 text-ash-grey px-2 py-1 rounded">
                   {trait}
@@ -545,9 +557,21 @@ export function SacredGeometryCard({ data }: { data: any }) {
         </button>
         {isExpanded && (
           <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
-            <p>{data.description}</p>
-            <div className="pt-2">
-               <span className="text-[9px] uppercase tracking-widest border border-emerald-500/20 bg-emerald-900/10 text-emerald-400 px-2 py-1 rounded">
+            {/* STRUCTURAL UPGRADE: Bullet Point Rendering */}
+            {Array.isArray(data.description) ? (
+              <ul className="space-y-2">
+                {data.description.map((item: string, idx: number) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="text-emerald-400 mt-0.5 text-xs">◆</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>{data.description}</p>
+            )}
+            <div className="pt-3 border-t border-ash-grey/10">
+               <span className="text-[9px] uppercase tracking-widest border border-emerald-500/20 bg-emerald-900/10 text-emerald-400 px-2 py-1 rounded inline-block">
                   Resonance: {data.resonance}
                </span>
             </div>

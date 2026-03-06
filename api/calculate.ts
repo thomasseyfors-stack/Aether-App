@@ -66,13 +66,21 @@ const sovereignMatrix = {
     starseed: {
       origin: "Orion / Mintaka Hybrid",
       title: "Uru An-na (The Shepherd of the Grid)",
-      description: "Your soul is engineered for High-Voltage Architecture, logic, and the integration of polarities. You are the Nexus. Your mind (Gemini/Air) gathers the data from 'Above,' and your discipline (Saturn/Earth) applies it 'Below'. Your Pisces Moon acts as the Mintaka receiver, taking vast oceanic intuition and filtering it through the analytical lens of your Virgo Ascendant.",
+      description: [
+        "Your soul is engineered for High-Voltage Architecture, logic, and the integration of polarities.",
+        "You are the Nexus. Your mind (Gemini/Air) gathers the data from 'Above,' and your discipline (Saturn/Earth) applies it 'Below'.",
+        "Your Pisces Moon acts as the Mintaka receiver, taking vast oceanic intuition and filtering it through the analytical lens of your Virgo Ascendant."
+      ],
       traits: ["Water-to-Fire Transmutation", "The Transverse Axle", "Binary Star Integration"]
     },
     sacredGeometry: {
       shape: "The Tesseract (Metatron's Cube)",
       principle: "Structural Stabilization & 4D Containment",
-      description: "As a Master Builder (22) operating a Grand Mutable Cross, your psyche generates immense frictional heat. Metatron's Cube is your geometric Motherboard. It provides the Structural Integrity to hold that tension, organizing the chaos of your cross into a stable, hyper-dimensional interface.",
+      description: [
+        "As a Master Builder (22) operating a Grand Mutable Cross, your psyche generates immense frictional heat.",
+        "Metatron's Cube is your geometric Motherboard.",
+        "It provides the Structural Integrity to hold that tension, organizing the chaos of your cross into a stable, hyper-dimensional interface."
+      ],
       resonance: "The Architect's Toolkit"
     },
     globalGrid: [
@@ -228,27 +236,29 @@ function detectStarseed(placements: any[]) {
     if (['Aries', 'Libra'].includes(p.sign)) scores.Draconian++;
   });
   const max = Math.max(...Object.values(scores));
-  if (scores.Orion === max) return { origin: "Orion Sector", title: "The 11-11 Transmitter", description: "Your system is engineered for structural logic, high-voltage processing, and the integration of extreme polarities.", traits: ["System Architecture", "Parallel Processing", "Geometric Translation"] };
-  if (scores.Ophiuchus === max) return { origin: "Ophiuchus / Galactic Center", title: "Master of the Void", description: "Your energy is drawn from the Great Rift. You possess the alchemical ability to walk through the 'Underworld' of a problem and emerge with the solution.", traits: ["Void Navigation", "Deep-System Regeneration", "Shadow Extraction"] };
-  if (scores.Draconian === max) return { origin: "Draco (The Ancient North)", title: "Guardian of the Zero-Point", description: "You carry the 'Imperishable' frequency. You are tasked with protecting deep-time memory and defending the central axis of the grid.", traits: ["Deep-Time Memory", "Kundalini Activation", "Structural Defense"] };
-  return { origin: "Sirius / Mintaka", title: "The Quantum Navigator", description: "You are the etheric bridge. Your reality is governed by rapid intuition, deep-state reconnaissance, and holographic frequency reception.", traits: ["Holographic Access", "Signal Amplification", "Fluid Adaptation"] };
+  
+  if (scores.Orion === max) return { origin: "Orion Sector", title: "The 11-11 Transmitter", description: ["Your system is engineered for structural logic and high-voltage processing.", "You naturally integrate extreme polarities into a functional system.", "You act as a stabilizing bridge between the Earth and the Cosmos."], traits: ["System Architecture", "Parallel Processing", "Geometric Translation"] };
+  if (scores.Ophiuchus === max) return { origin: "Ophiuchus / Galactic Center", title: "Master of the Void", description: ["Your energy is drawn directly from the Great Rift.", "You possess the alchemical ability to walk through the 'Underworld' of a problem.", "You consistently emerge with the hidden, actionable solution."], traits: ["Void Navigation", "Deep-System Regeneration", "Shadow Extraction"] };
+  if (scores.Draconian === max) return { origin: "Draco (The Ancient North)", title: "Guardian of the Zero-Point", description: ["You carry the 'Imperishable' frequency.", "You are tasked with protecting deep-time memory and ancestral codes.", "You defend the central axis of the cosmic grid from corruption."], traits: ["Deep-Time Memory", "Kundalini Activation", "Structural Defense"] };
+  
+  return { origin: "Sirius / Mintaka", title: "The Quantum Navigator", description: ["You act as the etheric bridge for collective consciousness.", "Your reality is governed by rapid intuition and deep-state reconnaissance.", "You excel at holographic frequency reception and emotional alchemy."], traits: ["Holographic Access", "Signal Amplification", "Fluid Adaptation"] };
 }
 
 function detectSacredGeometry(patterns: any[]) {
   const patternNames = patterns.map(p => p.name);
   if (patternNames.some(n => n.includes('Cross'))) {
-    return { shape: "The Tesseract (Metatron's Cube)", principle: "Structural Stabilization & 4D Containment", description: "Your astrological cross generates immense oppositional friction. Metatron's Cube provides the Structural Integrity to hold that tension, organizing the chaos into the 5 Platonic Solids. It is the geometric Motherboard of the universe.", resonance: "Earth / Ether" };
+    return { shape: "The Tesseract (Metatron's Cube)", principle: "Structural Stabilization & 4D Containment", description: ["Your astrological cross generates immense oppositional friction.", "Metatron's Cube provides the Structural Integrity to hold that tension.", "It organizes the chaos into the 5 Platonic Solids, acting as the geometric Motherboard of the universe."], resonance: "Earth / Ether" };
   }
   if (patternNames.some(n => n.includes('Fire Trine'))) {
-    return { shape: "The Star Tetrahedron", principle: "Kinetic Ignition & Willpower", description: "The geometric equivalent of Fire. It is the engine of action, allowing your high-velocity ideas to penetrate physical reality. It represents the 'Lightning Flash' of direct emanation.", resonance: "Fire / Action" };
+    return { shape: "The Star Tetrahedron", principle: "Kinetic Ignition & Willpower", description: ["This is the geometric equivalent of Fire.", "It is the engine of action, allowing your high-velocity ideas to penetrate physical reality.", "It represents the 'Lightning Flash' of direct emanation."], resonance: "Fire / Action" };
   }
   if (patternNames.some(n => n.includes('Earth Trine'))) {
-    return { shape: "The Hexahedron (Cube)", principle: "Material Grounding & Stability", description: "The building block of the physical universe. It anchors your theoretical visions into undeniable, load-bearing reality. It is the bedrock required for permanent construction.", resonance: "Earth / Structure" };
+    return { shape: "The Hexahedron (Cube)", principle: "Material Grounding & Stability", description: ["This is the basic building block of the physical universe.", "It anchors your theoretical visions into undeniable, load-bearing reality.", "It provides the bedrock required for permanent construction."], resonance: "Earth / Structure" };
   }
   if (patternNames.some(n => n.includes('Yod'))) {
-    return { shape: "The Acheulean Hand-Axe", principle: "The Primal Tool & Sovereign Will", description: "The first geometric imposition of the human mind onto the chaos of the physical world. It represents the raw, heavy work required to carve out your unique destiny.", resonance: "Root / Physical Anchor" };
+    return { shape: "The Acheulean Hand-Axe", principle: "The Primal Tool & Sovereign Will", description: ["The first geometric imposition of the human mind onto the chaos of the physical world.", "It represents the raw, heavy work required to carve out your unique destiny.", "It acts as a grounding anchor for high-frequency data."], resonance: "Root / Physical Anchor" };
   }
-  return { shape: "The Torus Vortex", principle: "Self-Sustaining Autonomy", description: "The fundamental shape of energy flow. It wraps your energies into a cohesive sphere, acting as an environmental shield and renewable battery. You generate your own power.", resonance: "Electromagnetic Field" };
+  return { shape: "The Torus Vortex", principle: "Self-Sustaining Autonomy", description: ["The fundamental shape of energy flow across all scales of reality.", "It wraps your energies into a cohesive sphere, acting as an environmental shield.", "It ensures you generate your own renewable power from the 'Zero Point' within."], resonance: "Electromagnetic Field" };
 }
 
 function calculateAngles(targetTime: number, lat: number, lon: number) {
