@@ -295,13 +295,15 @@ export function PlacementSection({ title, icon, placements, fallback }: any) {
       </h3>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
         {placements.map((p: any, idx: number) => (
-          <div key={idx} className="bg-black/30 p-2 md:p-3 rounded border border-ash-grey/5 flex flex-col xl:flex-row xl:justify-between xl:items-center text-[10px] md:text-xs gap-1 overflow-hidden">
-            <span className="text-starlight-white font-medium truncate">{p.planet}</span>
-            <div className="flex items-center gap-1.5 xl:justify-end min-w-0">
-              <span className="text-astral-gold uppercase tracking-wider truncate max-w-[75px] sm:max-w-none" title={p.sign}>
+          <div key={idx} className="bg-black/30 p-2 md:p-3 rounded border border-ash-grey/5 flex flex-col justify-center gap-1">
+            <span className="text-starlight-white font-medium text-[11px] md:text-xs">{p.planet}</span>
+            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+              <span className="text-astral-gold uppercase tracking-wider text-[10px] md:text-xs break-words">
                 {p.sign}
               </span>
-              <span className="text-ash-grey font-mono whitespace-nowrap shrink-0">{p.degree}</span>
+              <span className="text-ash-grey font-mono text-[10px] md:text-xs whitespace-nowrap">
+                {p.degree}
+              </span>
             </div>
           </div>
         ))}
@@ -392,18 +394,14 @@ export function NumerologyCard({ data }: { data: any }) {
 export function AscendantData({ angles }: { angles: any }) {
   if (!angles) return null;
 
-  // Render the angular coordinates with extreme overflow protection
   const AngleBox = ({ title, data }: { title: string, data: any }) => (
-    <div className="bg-black/30 p-2 md:p-4 rounded-lg border border-astral-gold/20 overflow-hidden flex flex-col justify-center">
-      <p className="text-ash-grey text-[9px] md:text-xs uppercase tracking-wider mb-1 truncate">{title}</p>
-      
-      <div className="flex flex-wrap items-center gap-1 md:gap-2 w-full min-w-0">
-        <p className="text-sm md:text-lg font-bold text-starlight-white truncate max-w-[70%] md:max-w-[80%]" title={data?.sign}>
+    <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20 flex flex-col justify-center">
+      <p className="text-ash-grey text-[9px] md:text-xs uppercase tracking-wider mb-1">{title}</p>
+      <div className="flex flex-wrap items-center gap-1.5 md:gap-2 w-full">
+        <p className="text-sm md:text-lg font-bold text-starlight-white break-words">
           {data?.sign ?? '---'} 
         </p>
-        {/* If you are passing symbols into this component, they will render safely next to the truncated text */}
       </div>
-      
       <p className="text-astral-gold text-[10px] md:text-xs mt-1 shrink-0">{data?.degree ?? '0°'}</p>
     </div>
   );

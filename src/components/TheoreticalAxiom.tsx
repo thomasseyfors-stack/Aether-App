@@ -57,7 +57,9 @@ export default function TheoreticalAxiom({ payload, onBack }: { payload: any, on
 
           <NumerologyCard data={{
             lifePath: theoretical.numerology.lifePath,
-            destiny: "N/A", soulUrge: "N/A", personality: "N/A",
+            destiny: theoretical.numerology.destiny || payload.numerology.destiny, 
+            soulUrge: theoretical.numerology.soulUrge || payload.numerology.soulUrge, 
+            personality: theoretical.numerology.personality || payload.numerology.personality,
             interpretation: theoretical.numerology.interpretation
           }} />
 
