@@ -75,7 +75,7 @@ export default function AxiomDashboard({ payload, onReturn }: { payload: any, on
               title="Tropical Placidus" 
               subtitle="Theoretical Persona" 
               data={{ placements: theoretical.matrices.tropical, aspects: [], patterns: [], voids: [] }} 
-              imageSrc="/img-axiom.jpg" 
+              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-axiom.jpg" 
               isPrimary={false} 
             />
 
@@ -85,21 +85,21 @@ export default function AxiomDashboard({ payload, onReturn }: { payload: any, on
                   title="Standard Sidereal Lahiri" 
                   subtitle="Theoretical Soul Vessel" 
                   data={theoretical.matrices.vaults.sidereal} 
-                  imageSrc="/img-soul.jpg" 
+                  imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-soul.jpg" 
                   isEncrypted 
                 />
                 <IdentityMatrixCard 
                   title="Draconic" 
                   subtitle="Theoretical Spark" 
                   data={theoretical.matrices.vaults.draconic} 
-                  imageSrc="/img-spark.jpg" 
+                  imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-spark.jpg" 
                   isEncrypted 
                 />
                 <IdentityMatrixCard 
                   title="Heliocentric" 
                   subtitle="Theoretical Source" 
                   data={theoretical.matrices.vaults.heliocentric} 
-                  imageSrc="/img-source.jpg" 
+                  imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-source.jpg" 
                   isEncrypted 
                 />
               </div>
