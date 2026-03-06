@@ -195,6 +195,33 @@ function getWordValue(word: string, filter: 'all' | 'vowels' | 'consonants') {
   return sum;
 }
 
+// ------------------------------------------------------------------------
+// THE SOVEREIGN NUMEROLOGY CODEX (Off-Grid Interpreter)
+// ------------------------------------------------------------------------
+const numerologyCodex: Record<number, string> = {
+  1: "The Monolith: A singular pillar of kinetic initiation, sovereign leadership, and pure forward momentum.",
+  2: "The Bridge: A structural load-bearer specializing in dualistic harmony, diplomacy, and energetic connection.",
+  3: "The Catalyst: A dynamic frequency of expression, high-velocity communication, and expansive conceptual geometry.",
+  4: "The Foundation: Absolute bedrock. Represents disciplined architecture, earthly grounding, and unshakeable methodology.",
+  5: "The Velocity: A highly adaptable conduit for change, spatial freedom, and rapid energetic restructuring.",
+  6: "The Sanctuary: A grid-stabilizer focused on harmony, protection, and maintaining the structural integrity of the collective.",
+  7: "The Deep Core: An analytical radar for esoteric truth, seeking the hidden mechanics and data behind the physical veil.",
+  8: "The Architect: A commanding force of material mastery, transmuting raw kinetic energy into enduring worldly structures.",
+  9: "The Apex: The culmination point. A humanitarian frequency operating on universal synthesis and structural completion.",
+  11: "The Antenna (Master Illuminator): A high-voltage conduit bridging the Aether and the Earth, channeling raw intuition into actionable data.",
+  22: "The Master Builder: The highest architectural frequency. The capacity to ground massive, theoretical concepts into concrete, physical reality.",
+  33: "The Master Teacher: A rare harmonic resonance dedicated to unconditional structural support and the elevation of the entire grid."
+};
+
+function assembleNumerologyReading(lp: number, dest: number, su: number, pers: number): string {
+  const lpText = numerologyCodex[lp] || "Unmapped Frequency.";
+  const destText = numerologyCodex[dest] || "Unmapped Frequency.";
+  const suText = numerologyCodex[su] || "Unmapped Frequency.";
+  const persText = numerologyCodex[pers] || "Unmapped Frequency.";
+
+  return `Core Blueprint (Life Path ${lp}): ${lpText}\n\nOperational Trajectory (Destiny ${dest}): ${destText}\n\nStructural Integrity: Your Soul Urge (${su}) acts as the internal reactor core—driving your deepest motivations—while your Personality (${pers}) functions as the external armor. When these four coordinates are synchronized, they form a highly stable, self-sustaining energetic engine capable of massive manifestation.`;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
@@ -202,15 +229,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { firstName, lastName, birthYear, birthMonth, birthDay, birthTime, latitude, longitude } = req.body;
     if (!birthYear || !birthMonth || !birthDay || !birthTime) return res.status(400).json({ error: 'Missing temporal parameters' });
 
-    // Numerology
+    // Numerology Grid Assembly
     const fullName = `${firstName || ''} ${lastName || ''}`.trim();
     const lifePath = calcLifePath(Number(birthMonth), Number(birthDay), Number(birthYear));
+    const destiny = reduceNumber(getWordValue(fullName, 'all'));
+    const soulUrge = reduceNumber(getWordValue(fullName, 'vowels'));
+    const personality = reduceNumber(getWordValue(fullName, 'consonants'));
+    
     const numerology = {
       lifePath,
-      destiny: reduceNumber(getWordValue(fullName, 'all')),
-      soulUrge: reduceNumber(getWordValue(fullName, 'vowels')),
-      personality: reduceNumber(getWordValue(fullName, 'consonants')),
-      interpretation: "Matrix generated successfully."
+      destiny,
+      soulUrge,
+      personality,
+      interpretation: assembleNumerologyReading(lifePath, destiny, soulUrge, personality)
     };
 
     // Temporal Coordinate Extraction
