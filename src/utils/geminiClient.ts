@@ -1,39 +1,51 @@
+let masterCache: any = null;
+let masterPromise: Promise<any> | null = null;
+
+export function clearOracleCache() {
+  masterCache = null;
+  masterPromise = null;
+}
+
+export async function fetchMasterOracle(matrixData: any) {
+  if (masterCache) return masterCache;
+  if (masterPromise) return masterPromise;
+
+  masterPromise = fetch('/api/oracle', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ matrixData })
+  }).then(async res => {
+    if (!res.ok) throw new Error("API Error");
+    const data = await res.json();
+    masterCache = data;
+    return data;
+  }).catch((err) => {
+    console.error("Master Oracle Error:", err);
+    return { interpretations: {}, forecasts: [] };
+  });
+
+  return masterPromise;
+}
+
 export async function generateCharacteristics(matrixData: any, identityName: string): Promise<string> {
-  try {
-    const response = await fetch('/api/oracle', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ promptType: 'characteristics', matrixData, identityName })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    
-    const data = await response.json();
-    return data.text || "Interpretation unavailable.";
-  } catch (error) {
-    console.error("Error generating characteristics:", error);
-    return "Oracle connection interrupted. Interpretation unavailable.";
+  const data = await fetchMasterOracle(matrixData);
+  
+  const keyMap: Record<string, string> = {
+    "The Persona": "tropical",
+    "The Soul & Spirit Vessel": "sidereal",
+    "The Spark & Core Intent": "draconic",
+    "The Source & Solar Mission": "heliocentric"
+  };
+  
+  const key = keyMap[identityName] || "tropical";
+  
+  if (!data.interpretations || !data.interpretations[key]) {
+      return "Oracle connection interrupted. Interpretation unavailable.";
   }
+  return data.interpretations[key];
 }
 
 export async function generateForecast(allMatrices: any): Promise<any> {
-  try {
-    const response = await fetch('/api/oracle', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ promptType: 'forecast', matrixData: allMatrices })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    
-    const data = await response.json();
-    return data.data || [];
-  } catch (error) {
-    console.error("Error generating forecast:", error);
-    return [];
-  }
+  const data = await fetchMasterOracle(allMatrices);
+  return data.forecasts || [];
 }

@@ -2,48 +2,40 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenAI, Type } from "@google/genai";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
   try {
-    const { promptType, matrixData, identityName } = req.body;
-
-    if (!promptType || !matrixData) {
-      return res.status(400).json({ error: 'Missing required parameters' });
-    }
+    const { matrixData } = req.body;
+    if (!matrixData) return res.status(400).json({ error: 'Missing matrix payload' });
 
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-    if (promptType === 'characteristics') {
-      const response = await ai.models.generateContent({
-        model: "gemini-3.1-pro-preview",
-        contents: `You are an esoteric astrologer and quantum navigator. Provide a 2-paragraph esoteric interpretation of the user's specific placements, aspects, and retrogrades for the identity "${identityName}". 
-        
-        Matrix Data:
-        ${JSON.stringify(matrixData, null, 2)}
-        
-        Focus on the deep, spiritual, and energetic meaning of these specific celestial coordinates. Do not use generic astrology descriptions.`,
-      });
-      return res.status(200).json({ text: response.text || "Interpretation unavailable." });
-    } 
-    
-    if (promptType === 'forecast') {
-      const response = await ai.models.generateContent({
-        model: "gemini-3.1-pro-preview",
-        contents: `You are an esoteric astrologer and quantum navigator. Generate a daily, monthly, and yearly energy forecast that synthesizes ALL matrices (Tropical, Sidereal, Draconic, Heliocentric, Theoretical).
-        
-        All Matrices Data:
-        ${JSON.stringify(matrixData, null, 2)}
-        
-        The output must be structured JSON matching this exact format:
-        [
+    const response = await ai.models.generateContent({
+      model: "gemini-3.1-pro-preview",
+      contents: `You are an esoteric astrologer and quantum navigator. Analyze the following celestial matrix data:
+      
+      Matrix Data:
+      ${JSON.stringify(matrixData)}
+      
+      Provide a highly structured JSON response containing:
+      1. Interpretations for the 4 identity vaults (Tropical "The Persona", Sidereal "The Soul & Spirit Vessel", Draconic "The Spark & Core Intent", Heliocentric "The Source & Solar Mission"). Each should be a 2-paragraph esoteric interpretation focusing on the deep, spiritual, and energetic meaning of these specific celestial coordinates.
+      2. A Daily, Monthly, and Yearly energy forecast synthesizing all matrices.
+      
+      Format the output EXACTLY as this JSON schema:
+      {
+        "interpretations": {
+          "tropical": "string",
+          "sidereal": "string",
+          "draconic": "string",
+          "heliocentric": "string"
+        },
+        "forecasts": [
           {
             "period": "Daily",
             "theme": "string",
             "description": "string",
             "intensity": "High" | "Medium" | "Low",
-            "identityTag": "string (e.g., 'The Mind', 'The Spark', 'The Soul', 'The Source')"
+            "identityTag": "string"
           },
           {
             "period": "Monthly",
@@ -59,31 +51,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             "intensity": "High" | "Medium" | "Low",
             "identityTag": "string"
           }
-        ]`,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.ARRAY,
-            items: {
+        ]
+      }`,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            interpretations: {
               type: Type.OBJECT,
               properties: {
-                period: { type: Type.STRING },
-                theme: { type: Type.STRING },
-                description: { type: Type.STRING },
-                intensity: { type: Type.STRING },
-                identityTag: { type: Type.STRING }
+                tropical: { type: Type.STRING },
+                sidereal: { type: Type.STRING },
+                draconic: { type: Type.STRING },
+                heliocentric: { type: Type.STRING }
               },
-              required: ["period", "theme", "description", "intensity", "identityTag"]
+              required: ["tropical", "sidereal", "draconic", "heliocentric"]
+            },
+            forecasts: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  period: { type: Type.STRING },
+                  theme: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                  intensity: { type: Type.STRING },
+                  identityTag: { type: Type.STRING }
+                },
+                required: ["period", "theme", "description", "intensity", "identityTag"]
+              }
             }
-          }
+          },
+          required: ["interpretations", "forecasts"]
         }
-      });
-      
-      const text = response.text || "[]";
-      return res.status(200).json({ data: JSON.parse(text) });
-    }
+      }
+    });
 
-    return res.status(400).json({ error: 'Invalid promptType' });
+    const text = response.text || "{}";
+    return res.status(200).json(JSON.parse(text));
   } catch (error: any) {
     console.error("Oracle API error:", error);
     return res.status(500).json({ error: 'Oracle connection interrupted.', details: error.message });
