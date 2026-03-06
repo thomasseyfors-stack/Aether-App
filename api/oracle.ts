@@ -1,3 +1,4 @@
+export const maxDuration = 60; // Upgrades Vercel timeout limit from 10s to 60s
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenAI, Type } from "@google/genai";
 
