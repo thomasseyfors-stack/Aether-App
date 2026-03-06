@@ -457,7 +457,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         matrices: {
           tropical: theoTropical.map(({ longitude, ...rest }) => rest),
           angles: theoAngles,
-          aspects: detectAspects(theoTropical), patterns: detectPatterns(theoTropical), voids: detectVoids(theoTropical),
+          aspects: detectAspects(theoTropical), patterns: detectPatterns(theoTropical), voids: detectVoids(theoTropical), starseed: detectStarseed(theoTropical),
           vaults: {
             sidereal: { title: "Standard Sidereal Lahiri", subtitle: "Theoretical Soul Vessel", placements: theoSidereal.map(({ longitude, ...rest }) => rest), aspects: detectAspects(theoSidereal), patterns: detectPatterns(theoSidereal), voids: detectVoids(theoSidereal) },
             draconic: { title: "Draconic", subtitle: "Theoretical Spark", placements: theoDraconic.map(({ longitude, ...rest }) => rest), aspects: detectAspects(theoDraconic), patterns: detectPatterns(theoDraconic), voids: detectVoids(theoDraconic) },
