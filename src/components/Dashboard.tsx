@@ -64,19 +64,11 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
     vaults: payload?.matrices?.vaults
   };
 
-  // Tactical Data Exfiltration
+  // Tactical Data Exfiltration (PDF Print Render)
   const executeDataExtraction = () => {
-    if (!payload) return;
-    const dataStr = JSON.stringify(payload, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Celestial_Codex_Matrix.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    // This triggers the browser's native print dialog. 
+    // The @media print CSS in index.css will handle the dark-mode formatting and hide the UI buttons.
+    window.print();
   };
 
   return (
@@ -109,7 +101,7 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
               const event = new CustomEvent('navigateGlobalGrid');
               window.dispatchEvent(event);
             }} className="flex items-center justify-center gap-2 bg-emerald-900/20 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-500/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto">
-              <Globe className="w-4 h-4" /> Global Grid
+              <Globe className="w-4 h-4" /> Cultural Matrix
             </button>
             <button onClick={() => {
                 if (window.confirm("Are you sure you want to disconnect and clear the current calculation matrix?")) {
@@ -396,18 +388,22 @@ export function NumerologyCard({ data }: { data: any }) {
         <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
           <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Life Path</p>
           <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.lifePath ?? '?'}</p>
+          <p className="text-[8px] text-ash-grey/60 uppercase mt-1">Calculated via Date of Birth</p>
         </div>
         <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
           <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Destiny</p>
           <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.destiny ?? '?'}</p>
+          <p className="text-[8px] text-ash-grey/60 uppercase mt-1">Calculated via Full Legal Name</p>
         </div>
         <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
           <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Soul Urge</p>
           <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.soulUrge ?? '?'}</p>
+          <p className="text-[8px] text-ash-grey/60 uppercase mt-1">Calculated via Name Vowels</p>
         </div>
         <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
           <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Personality</p>
           <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.personality ?? '?'}</p>
+          <p className="text-[8px] text-ash-grey/60 uppercase mt-1">Calculated via Name Consonants</p>
         </div>
       </div>
 
@@ -517,12 +513,15 @@ export function StarseedCard({ data }: { data: any }) {
             ) : (
               <p>{data.description}</p>
             )}
-            <div className="flex flex-wrap gap-2 pt-3 border-t border-ash-grey/10">
-              {data.traits?.map((trait: string, idx: number) => (
-                <span key={idx} className="text-[9px] uppercase tracking-widest border border-ash-grey/20 bg-black/50 text-ash-grey px-2 py-1 rounded">
-                  {trait}
-                </span>
-              ))}
+            <div className="pt-3 border-t border-ash-grey/10">
+              <p className="text-starlight-white text-[10px] uppercase tracking-widest font-bold mb-2">Active Operational Traits:</p>
+              <div className="flex flex-wrap gap-2">
+                {data.traits?.map((trait: string, idx: number) => (
+                  <span key={idx} className="text-[9px] uppercase tracking-widest border border-ash-grey/20 bg-black/50 text-ash-grey px-2 py-1 rounded">
+                    {trait}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -571,8 +570,9 @@ export function SacredGeometryCard({ data }: { data: any }) {
               <p>{data.description}</p>
             )}
             <div className="pt-3 border-t border-ash-grey/10">
+               <p className="text-starlight-white text-[10px] uppercase tracking-widest font-bold mb-2">Energetic Resonance / Elemental Lock:</p>
                <span className="text-[9px] uppercase tracking-widest border border-emerald-500/20 bg-emerald-900/10 text-emerald-400 px-2 py-1 rounded inline-block">
-                  Resonance: {data.resonance}
+                  {data.resonance}
                </span>
             </div>
           </div>

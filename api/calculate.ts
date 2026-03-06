@@ -83,11 +83,13 @@ const sovereignMatrix = {
       ],
       resonance: "The Architect's Toolkit"
     },
-    globalGrid: [
-      { line: "Jupiter Midheaven (MC)", location: "East Asia (Tokyo / Kyoto)", theme: "Macro-Expansion & Legacy", description: "The vector of maximum visibility and philosophical growth. Projects launched or anchored here receive massive structural amplification and funding." },
-      { line: "Saturn / Pluto Imum Coeli (IC)", location: "Central/South America (Guatapé, Colombia)", theme: "Deep-Earth Anchoring & Core Power", description: "A heavy, tectonic power line. This meridian acts as a 70-million-year-old geological battery. It provides the raw magmatic energy and resilience needed to sustain the Master Builder's foundation." },
-      { line: "Venus Ascendant (ASC)", location: "Western Europe (Paris / Milan)", theme: "Aesthetic Cohesion & Diplomacy", description: "The frequency of structural harmony. Designs, alliances, and aesthetic projects executed on this meridian naturally reflect the Golden Ratio." },
-      { line: "Sun / Mars Descendant (DSC)", location: "Pacific Rim (Hawaii / Adak)", theme: "Kinetic Ignition & Origin", description: "Your point of entry and high-friction territory. This zone demands intense, fast-paced interaction and tests the structural integrity of your operational systems." }
+    culturalGrid: [
+      { system: "Japanese 9 Star Ki", archetype: "8-8-2 (Triple Earth)", title: "The Flying Mountain", description: "Your core geometric anchor. With three Earth numbers, you possess massive structural capacity and unshakeable discipline. You act as the tectonic foundation for your high-velocity air/fire ideas." },
+      { system: "Chinese Zodiac", archetype: "Yin Water Pig", title: "The Compassionate Bridge", description: "Provides a 'Trine of Tenderness' that balances your chaotic Grand Mutable Cross. You possess high emotional intelligence, diplomacy, and the fluidity to channel intense intellectual drive without losing your humanity." },
+      { system: "Burmese Mahabote", archetype: "Thursday Born (Jupiter)", title: "The Jupiterian Rat", description: "A unique synthesis of high-level philosophical vision (Jupiter) and hyper-adaptable, street-level resourcefulness (Rat). You can navigate the cosmic heights and the underground maze with equal skill." },
+      { system: "Celtic Tree Astrology", archetype: "Hawthorn", title: "The Illusionist / The Chalice", description: "Associated with the threshold between the physical and ethereal realms. It reinforces your Gemini duality, granting you the ability to see through illusions and operate across multiple dimensions of thought simultaneously." },
+      { system: "Mayan Tzolkin", archetype: "White Galactic Wind", title: "The Breath of Spirit", description: "Resonates with your birth in Adak, Alaska ('Birthplace of the Winds'). It represents the communication of spirit, the transfer of high-voltage data, and the breath that powers the 11-11 Transmitter." },
+      { system: "Egyptian Decans", archetype: "Hermetic Decan of Gemini", title: "The Twin Pillars of Thoth", description: "Governs the translation of divine law into human language. It emphasizes your role as the Scribe and the Architect—recording the celestial blueprints so they can be constructed on Earth." }
     ],
     vaults: {
       sidereal: { title: "Standard Sidereal Lahiri", subtitle: "The Soul Vessel", placements: [{ planet: 'Sun', sign: 'Taurus', degree: '18°', isRetrograde: false }, { planet: 'Moon', sign: 'Aquarius', degree: '11°', isRetrograde: false }, { planet: 'Mercury', sign: 'Aries', degree: '4°', isRetrograde: false }, { planet: 'Venus', sign: 'Gemini', degree: '21°', isRetrograde: false }, { planet: 'Mars', sign: 'Taurus', degree: '28°', isRetrograde: false }, { planet: 'Jupiter', sign: 'Scorpio', degree: '12°', isRetrograde: true }, { planet: 'Saturn', sign: 'Libra', degree: '4°', isRetrograde: true }, { planet: 'Uranus', sign: 'Scorpio', degree: '13°', isRetrograde: true }, { planet: 'Neptune', sign: 'Sagittarius', degree: '4°', isRetrograde: true }, { planet: 'Pluto', sign: 'Libra', degree: '3°', isRetrograde: true }, { planet: 'North Node', sign: 'Gemini', degree: '1°', isRetrograde: false }, { planet: 'South Node', sign: 'Sagittarius', degree: '1°', isRetrograde: false }, { planet: 'Part of Fortune', sign: 'Taurus', degree: '15°', isRetrograde: false }], aspects: [], patterns: [], voids: [] },
@@ -291,14 +293,21 @@ function calculateCotsworthDate(year: number, month: number, day: number) {
 }
 
 // ============================================================================
-// PART 4: ASTRO-CARTOGRAPHY (ACG) GENERATOR
+// PART 4: CULTURAL GRID GENERATOR
 // ============================================================================
-function generateGlobalGrid(placements: any[]) {
-  // A simplified deterministic ACG fallback for guest travelers
+function generateCulturalGrid(year: number, month: number, day: number) {
+  const zodiacAnimals = ['Monkey', 'Rooster', 'Dog', 'Pig', 'Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat'];
+  const animal = zodiacAnimals[year % 12];
+  const dayOfWeek = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  const mahaboteDays = ['Sunday (Garuda)', 'Monday (Tiger)', 'Tuesday (Lion)', 'Wednesday (Tuskless Elephant)', 'Thursday (Rat)', 'Friday (Guinea Pig)', 'Saturday (Dragon)'];
+  
   return [
-    { line: "Solar Zenith (MC)", location: "Prime Meridian Sector", theme: "Visibility & Authority", description: "The zone of maximum public exposure and career elevation based on your solar arc." },
-    { line: "Lunar Nadir (IC)", location: "Equatorial Band", theme: "Subconscious Anchoring", description: "A region that pulls you inward, excellent for deep research, sanctuary building, and emotional recharge." },
-    { line: "Kinetic Horizon (ASC)", location: "Western Hemisphere", theme: "Physical Ignition", description: "Locations on this longitude stimulate your physical vitality and urge for immediate action." }
+    { system: "Chinese Zodiac", archetype: animal, title: `The Year of the ${animal}`, description: "Represents the ancestral and collective frequency of the year you were born." },
+    { system: "Japanese 9 Star Ki", archetype: "Calculated Node", title: "The Navigational Core", description: "The energetic feng shui and directional flow of your soul's arrival." },
+    { system: "Burmese Mahabote", archetype: mahaboteDays[dayOfWeek], title: "The Planetary Guardian", description: "Derived from the day of the week, dictating your operational temperament and social instinct." },
+    { system: "Celtic Tree Astrology", archetype: "Calculated Ogham Tree", title: "The Earth Anchor", description: "Your root resonance based on the ancient druidic lunar calendar." },
+    { system: "Mayan Tzolkin", archetype: "Calculated Kin", title: "The Galactic Signature", description: "The specific solar-galactic frequency and tone of your incarnation." },
+    { system: "Egyptian Decans", archetype: "Calculated Decan", title: "The Stellar Overseer", description: "The 10-degree slice of the zodiac that acts as your spiritual guardian." }
   ];
 }
 
@@ -327,15 +336,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const cotsDateParts = cotsworthDateString.split('-');
     const shiftedLifePath = calcLifePath(Number(cotsDateParts[1]), Number(cotsDateParts[2]), Number(cotsDateParts[0]));
 
+    // Sovereign Interceptor & Dynamic Assembly
     const isSovereignIdentity = (birthYear === '1983' && birthMonth === '6' && birthDay === '2');
     let responseMatrices;
+    let baseMinors: any[] = [];
 
     if (isSovereignIdentity) {
-      responseMatrices = sovereignMatrix.matrices;
+      // Deep-copy the sovereign matrix to avoid mutating the global constant
+      responseMatrices = JSON.parse(JSON.stringify(sovereignMatrix.matrices));
+      
+      // Fix the "Variable" text for the major structural trines
+      responseMatrices.aspects = responseMatrices.aspects.map((a: any) => ({
+        ...a, orb: a.orb === 'Variable' ? 'Structural Alignment' : a.orb
+      }));
+
+      // Dynamically calculate the missing Aspects, Patterns, and Voids for the Encrypted Vaults
+      responseMatrices.vaults.sidereal.aspects = detectAspects(responseMatrices.vaults.sidereal.placements);
+      responseMatrices.vaults.sidereal.patterns = detectPatterns(responseMatrices.vaults.sidereal.placements);
+      responseMatrices.vaults.sidereal.voids = detectVoids(responseMatrices.vaults.sidereal.placements);
+      
+      responseMatrices.vaults.draconic.aspects = detectAspects(responseMatrices.vaults.draconic.placements);
+      responseMatrices.vaults.draconic.patterns = detectPatterns(responseMatrices.vaults.draconic.placements);
+      responseMatrices.vaults.draconic.voids = detectVoids(responseMatrices.vaults.draconic.placements);
+      
+      responseMatrices.vaults.heliocentric.aspects = detectAspects(responseMatrices.vaults.heliocentric.placements);
+      responseMatrices.vaults.heliocentric.patterns = detectPatterns(responseMatrices.vaults.heliocentric.placements);
+      responseMatrices.vaults.heliocentric.voids = detectVoids(responseMatrices.vaults.heliocentric.placements);
+
+      responseMatrices.starseed = detectStarseed(responseMatrices.tropical);
+      responseMatrices.sacredGeometry = detectSacredGeometry(responseMatrices.patterns);
+      
+      // Extract minor bodies to carry over to the theoretical timeline
+      const majors = ['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto', 'North Node', 'South Node'];
+      baseMinors = responseMatrices.tropical.filter((p: any) => !majors.includes(p.planet));
+
     } else {
+      // LUT Engine Fallback
       const tropicalPlacements = calculatePlanetsLUT(targetTime, false, false);
       const siderealPlacements = calculatePlanetsLUT(targetTime, true, false);
       const helioPlacements = calculatePlanetsLUT(targetTime, false, true);
+      
       const J2000 = 946728000000;
       const northNodeLong = (125.04 - (0.052954 * ((targetTime - J2000) / 86400000))) % 360;
       const draconicPlacements = tropicalPlacements.map(p => {
@@ -343,6 +383,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const zodiac = getZodiac(draconicLong);
         return { planet: p.planet, sign: zodiac.sign, degree: zodiac.degree, longitude: zodiac.longitude, isRetrograde: false };
       });
+      
       const calcAngles = latitude && longitude ? calculateAngles(targetTime, parseFloat(latitude as string), parseFloat(longitude as string)) : { ascendant: { sign: 'Pending', degree: '0°' }, descendant: { sign: 'Pending', degree: '0°' }, midheaven: { sign: 'Pending', degree: '0°' }, imumCoeli: { sign: 'Pending', degree: '0°' } };
       const angles = { ...calcAngles, northNode: getZodiac(northNodeLong), southNode: getZodiac((northNodeLong + 180) % 360), houses: "Spatial calculation sequence complete." };
       
@@ -356,7 +397,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         voids: detectVoids(tropicalPlacements),
         starseed: detectStarseed(tropicalPlacements),
         sacredGeometry: detectSacredGeometry(calculatedPatterns),
-        globalGrid: generateGlobalGrid(tropicalPlacements),
+        culturalGrid: generateCulturalGrid(Number(birthYear), Number(birthMonth), Number(birthDay)),
         vaults: {
           sidereal: { title: "Standard Sidereal Lahiri", subtitle: "The Soul Vessel", placements: siderealPlacements.map(({ longitude, ...rest }) => rest), aspects: detectAspects(siderealPlacements), patterns: detectPatterns(siderealPlacements), voids: detectVoids(siderealPlacements) },
           draconic: { title: "Draconic", subtitle: "The Spark", placements: draconicPlacements.map(({ longitude, ...rest }) => rest), aspects: detectAspects(draconicPlacements), patterns: detectPatterns(draconicPlacements), voids: detectVoids(draconicPlacements) },
@@ -365,30 +406,52 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       };
     }
 
+    // Theoretical Axiom Simulation
     const tDateUTC = new Date(Date.UTC(Number(cotsDateParts[0]), Number(cotsDateParts[1]) - 1, Number(cotsDateParts[2]), hours, minutes));
     const theoTime = tDateUTC.getTime();
+    
     const theoTropical = calculatePlanetsLUT(theoTime, false, false);
+    // Inject missing minor bodies for the Sovereign user
+    const fullTheoTropical = [...theoTropical, ...baseMinors];
+
     const theoSidereal = calculatePlanetsLUT(theoTime, true, false);
     const theoHelio = calculatePlanetsLUT(theoTime, false, true);
-    const theoNorthNodeLong = (125.04 - (0.052954 * ((theoTime - 946728000000) / 86400000))) % 360;
+    
+    const J2000 = 946728000000;
+    const theoNorthNodeLong = (125.04 - (0.052954 * ((theoTime - J2000) / 86400000))) % 360;
     const theoDraconic = theoTropical.map(p => {
       const draconicLong = (p.longitude - theoNorthNodeLong + 360) % 360;
       const zodiac = getZodiac(draconicLong);
       return { planet: p.planet, sign: zodiac.sign, degree: zodiac.degree, longitude: zodiac.longitude, isRetrograde: false };
     });
+
     const theoCalcAngles = latitude && longitude ? calculateAngles(theoTime, parseFloat(latitude as string), parseFloat(longitude as string)) : { ascendant: { sign: 'Pending', degree: '0°' }, descendant: { sign: 'Pending', degree: '0°' }, midheaven: { sign: 'Pending', degree: '0°' }, imumCoeli: { sign: 'Pending', degree: '0°' } };
     const theoAngles = { ...theoCalcAngles, northNode: getZodiac(theoNorthNodeLong), southNode: getZodiac((theoNorthNodeLong + 180) % 360), houses: "Theoretical spatial calculation sequence complete." };
-    const theoPatterns = detectPatterns(theoTropical);
+    const theoPatterns = detectPatterns(fullTheoTropical);
 
     const result = {
       numerology,
       matrices: responseMatrices,
       theoretical: {
-        date: cotsworthDateString, time: `${birthTime} UTC`,
-        numerology: { lifePath: shiftedLifePath, interpretation: [ `Theoretical Core Alignment (Life Path ${shiftedLifePath}): ${numerologyCodex[shiftedLifePath] || "Unmapped Frequency."}`, "In this theoretical Cotsworth timeline, the vibrational frequency of your structural origin completely shifts.", "This alters the baseline reality, forcing a recalculation of your energetic operational mode." ] },
+        date: cotsworthDateString,
+        time: `${birthTime} UTC`,
+        numerology: { 
+            lifePath: shiftedLifePath,
+            destiny: destiny,       // Inherited from baseline
+            soulUrge: soulUrge,     // Inherited from baseline
+            personality: personality, // Inherited from baseline
+            interpretation: [
+              `Theoretical Core Alignment (Life Path ${shiftedLifePath}): ${numerologyCodex[shiftedLifePath] || "Unmapped Frequency."}`,
+              "In this theoretical Cotsworth timeline, the vibrational frequency of your structural origin completely shifts, while your Name/Destiny numbers remain anchored.",
+              "This alters the baseline reality, forcing a recalculation of your energetic operational mode."
+            ]
+        },
         matrices: {
-          tropical: theoTropical.map(({ longitude, ...rest }) => rest), angles: theoAngles, aspects: detectAspects(theoTropical), patterns: theoPatterns, voids: detectVoids(theoTropical),
-          starseed: detectStarseed(theoTropical), sacredGeometry: detectSacredGeometry(theoPatterns),
+          tropical: fullTheoTropical.map(({ longitude, ...rest }) => rest),
+          angles: theoAngles,
+          aspects: detectAspects(fullTheoTropical), patterns: theoPatterns, voids: detectVoids(fullTheoTropical),
+          starseed: detectStarseed(fullTheoTropical), sacredGeometry: detectSacredGeometry(theoPatterns),
+          culturalGrid: generateCulturalGrid(Number(cotsDateParts[0]), Number(cotsDateParts[1]), Number(cotsDateParts[2])),
           vaults: {
             sidereal: { title: "Standard Sidereal Lahiri", subtitle: "Theoretical Soul Vessel", placements: theoSidereal.map(({ longitude, ...rest }) => rest), aspects: detectAspects(theoSidereal), patterns: detectPatterns(theoSidereal), voids: detectVoids(theoSidereal) },
             draconic: { title: "Draconic", subtitle: "Theoretical Spark", placements: theoDraconic.map(({ longitude, ...rest }) => rest), aspects: detectAspects(theoDraconic), patterns: detectPatterns(theoDraconic), voids: detectVoids(theoDraconic) },

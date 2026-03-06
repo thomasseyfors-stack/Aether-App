@@ -7,3 +7,46 @@
   --color-starlight-white: #FFFFFF;
   --color-ash-grey: #C5C6C7;
 }
+
+/* ==========================================================================
+   TACTICAL DATA EXFILTRATION (PDF / PRINT PROTOCOL)
+   ========================================================================== */
+@media print {
+  /* 1. Force the Dark Mode aesthetic into the PDF */
+  body, html {
+    background-color: #050505 !important;
+    color: #e6e6e6 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 2. Hide all interactive UI elements from the final document */
+  button, nav {
+    display: none !important;
+  }
+
+  /* 3. Prevent structural cards from breaking awkwardly in the middle of a page */
+  section, .grid > div {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* 4. Clean up borders and shadows for crisp 2D printing */
+  .shadow-lg, .shadow-md {
+    box-shadow: none !important;
+    border: 1px solid rgba(169, 169, 169, 0.3) !important;
+  }
+
+  /* 5. Ensure the main container utilizes the full page width */
+  .max-w-3xl {
+    max-w: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 6. Hide the scrollbar entirely during export */
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+}

@@ -138,10 +138,14 @@ function TabButton({ active, onClick, icon, label }: { active: boolean, onClick:
 function LiveSkyContainer({ data }: { data: any[] }) {
   return (
     <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
-        <Radio className="w-4 h-4 text-red-500 animate-pulse" />
-        Real-Time Orbital Telemetry
-      </h2>
+      <div className="border-b border-ash-grey/10 pb-4">
+        <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2 mb-2">
+          <Radio className="w-4 h-4 text-red-500 animate-pulse" /> Real-Time Orbital Telemetry
+        </h2>
+        <p className="text-ash-grey text-xs md:text-sm leading-relaxed">
+          This grid displays the exact physical coordinates of the planetary bodies at this very second. Unlike your static natal blueprint, the Live Sky represents the "Cosmic Weather" you are currently navigating through.
+        </p>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
         {data.map((p: any, idx: number) => (
           <div key={idx} className="bg-black/40 p-2 md:p-3 rounded-lg border border-astral-gold/20 flex justify-between items-center shadow-[0_0_10px_rgba(245,208,97,0.05)]">
@@ -177,7 +181,14 @@ function TransitContainer({ title, data }: { title: string, data: any[] }) {
   }
   return (
     <div className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-astral-gold"></span>{title}</h2>
+      <div className="border-b border-ash-grey/10 pb-4">
+        <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2 mb-2">
+          <span className="w-2 h-2 rounded-full bg-astral-gold"></span>{title}
+        </h2>
+        <p className="text-ash-grey text-xs md:text-sm leading-relaxed">
+          This operational brief analyzes how the current celestial weather interacts with your specific natal architecture. Use the "Tactical Execution" and "Friction Avoidance" parameters to navigate the systemic pressure.
+        </p>
+      </div>
       <div className="space-y-4">
         {data.map((transit, idx) => (
           <div key={idx} className="bg-black/40 p-4 rounded-lg border border-ash-grey/10 shadow-md">
@@ -188,9 +199,7 @@ function TransitContainer({ title, data }: { title: string, data: any[] }) {
               </div>
               {transit.identityTag && <span className="text-[10px] uppercase tracking-widest px-2 py-1 rounded border border-nebula-purple/30 text-nebula-purple self-start">{transit.identityTag}</span>}
             </div>
-            
             <p className="text-ash-grey text-sm mb-4 leading-relaxed">{transit.description}</p>
-            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-2">
               {transit.attempt && (
                 <div className="bg-emerald-900/10 border border-emerald-500/20 rounded p-3">
