@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
@@ -107,11 +107,14 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
 
         {viewMode === 'blueprint' ? (
           <div className="flex flex-col gap-4 md:gap-6 animate-in fade-in duration-500">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+            {/* The 3-Pillar Macro Telemetry Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               <NumerologyCard data={celestialData?.numerology} />
-              <StarseedCard data={celestialData?.starseed || (celestialData?.placements ? payload?.matrices?.starseed : null)} />
+              <StarseedCard data={celestialData?.placements ? payload?.matrices?.starseed : null} />
+              <SacredGeometryCard data={celestialData?.placements ? payload?.matrices?.sacredGeometry : null} />
             </div>
-            <IdentityMatrixCard title="Tropical Placidus" subtitle="The Persona" data={celestialData} isDefaultTime={isDefaultTime} imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-mind.jpg" isPrimary />
+            
+            <IdentityMatrixCard title="Tropical Placidus" subtitle="The Persona" data={celestialData} isDefaultTime={isDefaultTime} imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-mind-abc.jpg" isPrimary />
             
             {celestialData?.vaults && (
               <div className="pt-8 space-y-4 border-t border-ash-grey/10">
@@ -421,7 +424,7 @@ export function UnavailableCard({ title }: { title: string }) {
 export function StarseedCard({ data }: { data: any }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  if (!data) return <UnavailableCard title="Starseed Resonance" />;
+  if (!data) return null;
 
   return (
     <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col">
@@ -433,8 +436,8 @@ export function StarseedCard({ data }: { data: any }) {
       
       <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4">
         <p className="text-nebula-purple text-[10px] md:text-xs uppercase tracking-wider mb-1">Primary Vector</p>
-        <p className="text-xl md:text-2xl font-bold text-starlight-white leading-tight mb-2">{data.origin}</p>
-        <p className="text-astral-gold text-xs uppercase tracking-widest font-mono">{data.title}</p>
+        <p className="text-lg md:text-xl font-bold text-starlight-white leading-tight mb-2">{data.origin}</p>
+        <p className="text-astral-gold text-[10px] uppercase tracking-widest font-mono">{data.title}</p>
       </div>
 
       <div className="mt-auto border-t border-ash-grey/10 pt-4">
@@ -443,14 +446,53 @@ export function StarseedCard({ data }: { data: any }) {
           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
         {isExpanded && (
-          <div className="mt-4 text-ash-grey text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-4">
+          <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
             <p>{data.description}</p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 pt-2">
               {data.traits?.map((trait: string, idx: number) => (
-                <span key={idx} className="text-[10px] uppercase tracking-widest border border-ash-grey/20 bg-black/50 text-ash-grey px-2 py-1 rounded">
+                <span key={idx} className="text-[9px] uppercase tracking-widest border border-ash-grey/20 bg-black/50 text-ash-grey px-2 py-1 rounded">
                   {trait}
                 </span>
               ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+export function SacredGeometryCard({ data }: { data: any }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  if (!data) return null;
+
+  return (
+    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
+          <Hexagon className="w-4 h-4 text-emerald-400" /> Sacred Geometry
+        </h2>
+      </div>
+      
+      <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4">
+        <p className="text-nebula-purple text-[10px] md:text-xs uppercase tracking-wider mb-1">Architectural Form</p>
+        <p className="text-lg md:text-xl font-bold text-starlight-white leading-tight mb-2">{data.shape}</p>
+        <p className="text-emerald-400 text-[10px] uppercase tracking-widest font-mono">{data.principle}</p>
+      </div>
+
+      <div className="mt-auto border-t border-ash-grey/10 pt-4">
+        <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-between w-full text-left text-sm text-starlight-white hover:text-astral-gold transition-colors uppercase tracking-wider">
+          <span>Structural Analysis</span>
+          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        </button>
+        {isExpanded && (
+          <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
+            <p>{data.description}</p>
+            <div className="pt-2">
+               <span className="text-[9px] uppercase tracking-widest border border-emerald-500/20 bg-emerald-900/10 text-emerald-400 px-2 py-1 rounded">
+                  Resonance: {data.resonance}
+               </span>
             </div>
           </div>
         )}
