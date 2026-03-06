@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
 import AetherLogo from './AetherLogo';
-import { generateCharacteristics } from '../utils/geminiClient';
+import { generateCharacteristics, clearOracleCache } from '../utils/geminiClient';
 
 // Mock Celestial JSON Payload (Simulating API Response)
 const mockCelestialData = {
@@ -86,7 +86,7 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
   
   // Handle both the new MDV structure and fallback to old structure if needed
   const pii = payload?.pii || payload || {};
-  const isDefaultTime = pii.isDefaultTime ?? true;
+  const isDefaultTime = pii.isDefaultTime === true;
   
   const celestialData = {
     numerology: payload?.numerology,
@@ -123,6 +123,7 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
                 if (window.confirm("Are you sure you want to disconnect and clear the current calculation matrix?")) {
                   localStorage.removeItem('aether_guest');
                   localStorage.removeItem('aether_google_auth');
+                  clearOracleCache();
                   onRecalibrate();
                 }
               }}

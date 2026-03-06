@@ -8,8 +8,8 @@ interface ProfileIntakeProps {
 }
 
 export default function ProfileIntake({ onComplete, onSubmit, onCalculate }: ProfileIntakeProps) {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState(localStorage.getItem('aether_user_fname') || '');
+  const [lastName, setLastName] = useState(localStorage.getItem('aether_user_lname') || '');
   const [birthYear, setBirthYear] = useState('');
   const [birthMonth, setBirthMonth] = useState('');
   const [birthDay, setBirthDay] = useState('');
