@@ -316,7 +316,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       theoretical: {
         date: cotsworthDateString,
         time: `${birthTime} UTC`,
-        numerology: { lifePath: shiftedLifePath },
+        numerology: { 
+            lifePath: shiftedLifePath,
+            interpretation: `Theoretical Core Alignment (Life Path ${shiftedLifePath}): ${numerologyCodex[shiftedLifePath] || "Unmapped Frequency."}`
+        },
         matrices: {
           tropical: theoTropical.map(({ longitude, ...rest }) => rest),
           aspects: [], patterns: [], voids: [],
