@@ -75,6 +75,12 @@ const sovereignMatrix = {
       description: "As a Master Builder (22) operating a Grand Mutable Cross, your psyche generates immense frictional heat. Metatron's Cube is your geometric Motherboard. It provides the Structural Integrity to hold that tension, organizing the chaos of your cross into a stable, hyper-dimensional interface.",
       resonance: "The Architect's Toolkit"
     },
+    globalGrid: [
+      { line: "Jupiter Midheaven (MC)", location: "East Asia (Tokyo / Kyoto)", theme: "Macro-Expansion & Legacy", description: "The vector of maximum visibility and philosophical growth. Projects launched or anchored here receive massive structural amplification and funding." },
+      { line: "Saturn / Pluto Imum Coeli (IC)", location: "Central/South America (Guatapé, Colombia)", theme: "Deep-Earth Anchoring & Core Power", description: "A heavy, tectonic power line. This meridian acts as a 70-million-year-old geological battery. It provides the raw magmatic energy and resilience needed to sustain the Master Builder's foundation." },
+      { line: "Venus Ascendant (ASC)", location: "Western Europe (Paris / Milan)", theme: "Aesthetic Cohesion & Diplomacy", description: "The frequency of structural harmony. Designs, alliances, and aesthetic projects executed on this meridian naturally reflect the Golden Ratio." },
+      { line: "Sun / Mars Descendant (DSC)", location: "Pacific Rim (Hawaii / Adak)", theme: "Kinetic Ignition & Origin", description: "Your point of entry and high-friction territory. This zone demands intense, fast-paced interaction and tests the structural integrity of your operational systems." }
+    ],
     vaults: {
       sidereal: { title: "Standard Sidereal Lahiri", subtitle: "The Soul Vessel", placements: [{ planet: 'Sun', sign: 'Taurus', degree: '18°', isRetrograde: false }, { planet: 'Moon', sign: 'Aquarius', degree: '11°', isRetrograde: false }, { planet: 'Mercury', sign: 'Aries', degree: '4°', isRetrograde: false }, { planet: 'Venus', sign: 'Gemini', degree: '21°', isRetrograde: false }, { planet: 'Mars', sign: 'Taurus', degree: '28°', isRetrograde: false }, { planet: 'Jupiter', sign: 'Scorpio', degree: '12°', isRetrograde: true }, { planet: 'Saturn', sign: 'Libra', degree: '4°', isRetrograde: true }, { planet: 'Uranus', sign: 'Scorpio', degree: '13°', isRetrograde: true }, { planet: 'Neptune', sign: 'Sagittarius', degree: '4°', isRetrograde: true }, { planet: 'Pluto', sign: 'Libra', degree: '3°', isRetrograde: true }, { planet: 'North Node', sign: 'Gemini', degree: '1°', isRetrograde: false }, { planet: 'South Node', sign: 'Sagittarius', degree: '1°', isRetrograde: false }, { planet: 'Part of Fortune', sign: 'Taurus', degree: '15°', isRetrograde: false }], aspects: [], patterns: [], voids: [] },
       draconic: { title: "Draconic", subtitle: "The Spark", placements: [{ planet: 'Sun', sign: 'Gemini', degree: '17°', isRetrograde: false }, { planet: 'Moon', sign: 'Pisces', degree: '10°', isRetrograde: false }, { planet: 'Mercury', sign: 'Taurus', degree: '3°', isRetrograde: false }, { planet: 'Venus', sign: 'Cancer', degree: '20°', isRetrograde: false }, { planet: 'Mars', sign: 'Gemini', degree: '27°', isRetrograde: false }, { planet: 'Jupiter', sign: 'Sagittarius', degree: '11°', isRetrograde: true }, { planet: 'Saturn', sign: 'Libra', degree: '3°', isRetrograde: true }, { planet: 'Uranus', sign: 'Sagittarius', degree: '12°', isRetrograde: true }, { planet: 'Neptune', sign: 'Sagittarius', degree: '3°', isRetrograde: true }, { planet: 'Pluto', sign: 'Libra', degree: '2°', isRetrograde: true }, { planet: 'North Node', sign: 'Aries', degree: '0°', isRetrograde: false }, { planet: 'South Node', sign: 'Libra', degree: '0°', isRetrograde: false }], aspects: [], patterns: [], voids: [] },
@@ -275,6 +281,18 @@ function calculateCotsworthDate(year: number, month: number, day: number) {
 }
 
 // ============================================================================
+// PART 4: ASTRO-CARTOGRAPHY (ACG) GENERATOR
+// ============================================================================
+function generateGlobalGrid(placements: any[]) {
+  // A simplified deterministic ACG fallback for guest travelers
+  return [
+    { line: "Solar Zenith (MC)", location: "Prime Meridian Sector", theme: "Visibility & Authority", description: "The zone of maximum public exposure and career elevation based on your solar arc." },
+    { line: "Lunar Nadir (IC)", location: "Equatorial Band", theme: "Subconscious Anchoring", description: "A region that pulls you inward, excellent for deep research, sanctuary building, and emotional recharge." },
+    { line: "Kinetic Horizon (ASC)", location: "Western Hemisphere", theme: "Physical Ignition", description: "Locations on this longitude stimulate your physical vitality and urge for immediate action." }
+  ];
+}
+
+// ============================================================================
 // PART 5: MAIN SERVERLESS HANDLER
 // ============================================================================
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -328,6 +346,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         voids: detectVoids(tropicalPlacements),
         starseed: detectStarseed(tropicalPlacements),
         sacredGeometry: detectSacredGeometry(calculatedPatterns),
+        globalGrid: generateGlobalGrid(tropicalPlacements),
         vaults: {
           sidereal: { title: "Standard Sidereal Lahiri", subtitle: "The Soul Vessel", placements: siderealPlacements.map(({ longitude, ...rest }) => rest), aspects: detectAspects(siderealPlacements), patterns: detectPatterns(siderealPlacements), voids: detectVoids(siderealPlacements) },
           draconic: { title: "Draconic", subtitle: "The Spark", placements: draconicPlacements.map(({ longitude, ...rest }) => rest), aspects: detectAspects(draconicPlacements), patterns: detectPatterns(draconicPlacements), voids: detectVoids(draconicPlacements) },

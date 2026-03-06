@@ -4,10 +4,11 @@ import ProfileIntake from './components/ProfileIntake';
 import TransitionMatrix from './components/TransitionMatrix';
 import Dashboard from './components/Dashboard';
 import TheoreticalAxiom from './components/TheoreticalAxiom';
+import GlobalGrid from './components/GlobalGrid';
 import ErrorBoundary from './components/ErrorBoundary';
 import { checkCacheTTL, clearAetherCache, saveToCache, getFromCache } from './utils/cacheManager';
 
-type AppState = 'auth' | 'intake' | 'transition' | 'dashboard' | 'axiom';
+type AppState = 'auth' | 'intake' | 'transition' | 'dashboard' | 'axiom' | 'global';
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>('auth');
@@ -21,6 +22,12 @@ export default function App() {
         setAppState('dashboard');
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const handleGlobalGridNav = () => setAppState('global');
+    window.addEventListener('navigateGlobalGrid', handleGlobalGridNav);
+    return () => window.removeEventListener('navigateGlobalGrid', handleGlobalGridNav as EventListener);
   }, []);
 
   const handleLogin = () => setAppState('intake');
@@ -70,6 +77,12 @@ export default function App() {
               onBack={() => setAppState('dashboard')} 
             />
           </ErrorBoundary>
+        )}
+        {appState === 'global' && payload && (
+          <GlobalGrid 
+            payload={payload} 
+            onBack={() => setAppState('dashboard')} 
+          />
         )}
       </div>
     </ErrorBoundary>

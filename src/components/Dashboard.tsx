@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
@@ -83,6 +83,12 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
                 <Beaker className="w-4 h-4" /> Theoretical Axiom
               </button>
             )}
+            <button onClick={() => {
+              const event = new CustomEvent('navigateGlobalGrid');
+              window.dispatchEvent(event);
+            }} className="flex items-center justify-center gap-2 bg-emerald-900/20 hover:bg-emerald-900/40 text-emerald-400 border border-emerald-500/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto">
+              <Globe className="w-4 h-4" /> Global Grid
+            </button>
             <button onClick={() => {
                 if (window.confirm("Are you sure you want to disconnect and clear the current calculation matrix?")) {
                   localStorage.removeItem('aether_guest');
