@@ -107,14 +107,14 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
         {viewMode === 'blueprint' ? (
           <div className="flex flex-col gap-4 md:gap-6 animate-in fade-in duration-500">
             <NumerologyCard data={celestialData?.numerology} />
-            <IdentityMatrixCard title="Tropical Placidus" subtitle="The Persona" data={celestialData} isDefaultTime={isDefaultTime} imageSrc="/img-mind.jpg" isPrimary />
+            <IdentityMatrixCard title="Tropical Placidus" subtitle="The Persona" data={celestialData} isDefaultTime={isDefaultTime} imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-mind.jpg" isPrimary />
             
             {celestialData?.vaults && (
               <div className="pt-8 space-y-4 border-t border-ash-grey/10">
                 <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4 text-center">Encrypted Sectors</h3>
-                <IdentityMatrixCard title="Standard Sidereal Lahiri" subtitle="The Soul Vessel" data={celestialData.vaults.sidereal} imageSrc="/img-soul.jpg" isEncrypted />
-                <IdentityMatrixCard title="Draconic" subtitle="The Spark" data={celestialData.vaults.draconic} imageSrc="/img-spark.jpg" isEncrypted />
-                <IdentityMatrixCard title="Heliocentric" subtitle="The Source" data={celestialData.vaults.heliocentric} imageSrc="/img-source.jpg" isEncrypted />
+                <IdentityMatrixCard title="Standard Sidereal Lahiri" subtitle="The Soul Vessel" data={celestialData.vaults.sidereal} imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-soul.jpg" isEncrypted />
+                <IdentityMatrixCard title="Draconic" subtitle="The Spark" data={celestialData.vaults.draconic} imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-spark.jpg" isEncrypted />
+                <IdentityMatrixCard title="Heliocentric" subtitle="The Source" data={celestialData.vaults.heliocentric} imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-source.jpg" isEncrypted />
               </div>
             )}
           </div>
