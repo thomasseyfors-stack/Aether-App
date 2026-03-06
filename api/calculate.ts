@@ -3,9 +3,9 @@ export const maxDuration = 60;
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// ------------------------------------------------------------------------
-// THE SOVEREIGN CACHE: High-Fidelity Pre-Calculated Matrix
-// ------------------------------------------------------------------------
+// ============================================================================
+// PART 1: THE SOVEREIGN CACHE (High-Fidelity Pre-Calculated Matrix)
+// ============================================================================
 const sovereignMatrix = {
   matrices: {
     tropical: [
@@ -175,29 +175,9 @@ function calculateCotsworthDate(year: number, month: number, day: number) {
   return `${year}-${cMonth.toString().padStart(2, '0')}-${cDay.toString().padStart(2, '0')}`;
 }
 
-function reduceNumber(num: number): number {
-  if (num === 11 || num === 22 || num === 33) return num;
-  if (num < 10) return num;
-  return reduceNumber(num.toString().split('').reduce((a, b) => a + parseInt(b, 10), 0));
-}
-function calcLifePath(m: number, d: number, y: number) { return reduceNumber(reduceNumber(m) + reduceNumber(d) + reduceNumber(y)); }
-
-const pythagoreanMap: Record<string, number> = { a:1, j:1, s:1, b:2, k:2, t:2, c:3, l:3, u:3, d:4, m:4, v:4, e:5, n:5, w:5, f:6, o:6, x:6, g:7, p:7, y:7, h:8, q:8, z:8, i:9, r:9 };
-function getWordValue(word: string, filter: 'all' | 'vowels' | 'consonants') {
-  const vowels = ['a','e','i','o','u'];
-  let sum = 0;
-  for (const char of word.toLowerCase()) {
-    if (pythagoreanMap[char]) {
-      const isVowel = vowels.includes(char) || (char === 'y' && filter === 'vowels');
-      if (filter === 'all' || (filter === 'vowels' && isVowel) || (filter === 'consonants' && !isVowel)) sum += pythagoreanMap[char];
-    }
-  }
-  return sum;
-}
-
-// ------------------------------------------------------------------------
-// THE SOVEREIGN NUMEROLOGY CODEX (Off-Grid Interpreter)
-// ------------------------------------------------------------------------
+// ============================================================================
+// PART 2: SOVEREIGN NUMEROLOGY CODEX
+// ============================================================================
 const numerologyCodex: Record<number, string> = {
   1: "The Monolith: A singular pillar of kinetic initiation, sovereign leadership, and pure forward momentum.",
   2: "The Bridge: A structural load-bearer specializing in dualistic harmony, diplomacy, and energetic connection.",
@@ -212,6 +192,30 @@ const numerologyCodex: Record<number, string> = {
   22: "The Master Builder: The highest architectural frequency. The capacity to ground massive, theoretical concepts into concrete, physical reality.",
   33: "The Master Teacher: A rare harmonic resonance dedicated to unconditional structural support and the elevation of the entire grid."
 };
+
+function reduceNumber(num: number): number {
+  if (num === 11 || num === 22 || num === 33) return num;
+  if (num < 10) return num;
+  return reduceNumber(num.toString().split('').reduce((a, b) => a + parseInt(b, 10), 0));
+}
+
+function calcLifePath(m: number, d: number, y: number) { 
+  return reduceNumber(reduceNumber(m) + reduceNumber(d) + reduceNumber(y)); 
+}
+
+const pythagoreanMap: Record<string, number> = { a:1, j:1, s:1, b:2, k:2, t:2, c:3, l:3, u:3, d:4, m:4, v:4, e:5, n:5, w:5, f:6, o:6, x:6, g:7, p:7, y:7, h:8, q:8, z:8, i:9, r:9 };
+
+function getWordValue(word: string, filter: 'all' | 'vowels' | 'consonants') {
+  const vowels = ['a','e','i','o','u'];
+  let sum = 0;
+  for (const char of word.toLowerCase()) {
+    if (pythagoreanMap[char]) {
+      const isVowel = vowels.includes(char) || (char === 'y' && filter === 'vowels');
+      if (filter === 'all' || (filter === 'vowels' && isVowel) || (filter === 'consonants' && !isVowel)) sum += pythagoreanMap[char];
+    }
+  }
+  return sum;
+}
 
 function assembleNumerologyReading(lp: number, dest: number, su: number, pers: number): string {
   const lpText = numerologyCodex[lp] || "Unmapped Frequency.";
