@@ -11,6 +11,22 @@ export const ALL_ZODIAC_SIGNS = [
   'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
 ];
 
+// ---------------------------------------------------------------------------
+// THE GLYPH DICTIONARIES: Universal Esoteric Unicode
+// ---------------------------------------------------------------------------
+const planetSymbols: Record<string, string> = {
+  'Sun': '☉', 'Moon': '☽', 'Mercury': '☿', 'Venus': '♀', 'Mars': '♂',
+  'Jupiter': '♃', 'Saturn': '♄', 'Uranus': '♅', 'Neptune': '♆', 'Pluto': '♇',
+  'Earth': '⊕', 'Chiron': '⚷', 'North Node': '☊', 'South Node': '☋', 
+  'Part of Fortune': '⊗', 'Ceres': '⚳', 'Pallas': '⚴', 'Juno': '⚵', 'Vesta': '⚶'
+};
+
+const zodiacSymbols: Record<string, string> = {
+  'Aries': '♈', 'Taurus': '♉', 'Gemini': '♊', 'Cancer': '♋', 
+  'Leo': '♌', 'Virgo': '♍', 'Libra': '♎', 'Scorpio': '♏', 
+  'Sagittarius': '♐', 'Capricorn': '♑', 'Aquarius': '♒', 'Pisces': '♓'
+};
+
 // Structural Helper: Sorts raw celestial data into hierarchical pillars
 const categorizePlacements = (placements: any[] = []) => {
   const luminaries: any[] = [];
@@ -246,7 +262,7 @@ export function IdentityMatrixCard({ title, subtitle, data, isDefaultTime = fals
   );
 }
 
-// Sub-Component: Placement Grid Rendering
+// Sub-Component: Placement Grid Rendering (Upgraded with Esoteric Symbology)
 function PlacementSection({ title, icon, placements, fallback }: { title: string, icon: React.ReactNode, placements: any[], fallback?: string }) {
   return (
     <div>
@@ -257,13 +273,20 @@ function PlacementSection({ title, icon, placements, fallback }: { title: string
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
           {placements.map((p: any, idx: number) => (
             <div key={idx} className="bg-black/30 p-2 md:p-3 rounded-lg border border-ash-grey/10 flex justify-between items-center">
-              <div className="flex items-center gap-1">
-                <span className="text-starlight-white text-xs md:text-sm">{p.planet}</span>
-                {p.isRetrograde && <span className="text-nebula-purple text-[8px] font-bold" title="Retrograde">Rx</span>}
+              <div className="flex items-center gap-1 md:gap-2">
+                {/* Planet Glyph + Name */}
+                <span className="text-starlight-white text-xs md:text-sm flex items-center gap-1">
+                  <span className="text-nebula-purple font-serif text-sm md:text-base">{planetSymbols[p.planet] || ''}</span>
+                  {p.planet}
+                </span>
+                {p.isRetrograde && <span className="text-red-400 text-[8px] font-bold border border-red-900/50 rounded px-1" title="Retrograde">Rx</span>}
               </div>
               <div className="text-right">
-                <span className="text-astral-gold text-[10px] md:text-xs block uppercase tracking-wider">{p.sign}</span>
-                <span className="text-ash-grey text-[10px]">{p.degree}</span>
+                {/* Zodiac Sign + Glyph */}
+                <span className="text-astral-gold text-[10px] md:text-xs uppercase tracking-wider flex items-center justify-end gap-1">
+                  {p.sign} <span className="text-astral-gold font-serif text-sm">{zodiacSymbols[p.sign] || ''}</span>
+                </span>
+                <span className="text-ash-grey text-[10px] block">{p.degree}</span>
               </div>
             </div>
           ))}
