@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
@@ -64,20 +64,42 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
     vaults: payload?.matrices?.vaults
   };
 
+  // Tactical Data Exfiltration
+  const executeDataExtraction = () => {
+    if (!payload) return;
+    const dataStr = JSON.stringify(payload, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Celestial_Codex_Matrix.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-obsidian text-starlight-white p-4 md:p-6 font-sans w-full max-w-full overflow-x-hidden">
       <div className="max-w-3xl mx-auto space-y-4 md:space-y-6">
-        <header className="border-b border-nebula-purple/30 pb-4 md:pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+        <header className="border-b border-ash-grey/20 pb-4 md:pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div className="flex items-center gap-4">
             <AetherLogo className="w-12 h-12 md:w-16 md:h-16" />
             <div>
-              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold tracking-widest uppercase mb-1 md:mb-2">Aether Grid Active</h1>
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-starlight-white tracking-widest uppercase mb-1 md:mb-2 flex items-center gap-3">
+                <Layers className="w-6 h-6 md:w-8 md:h-8 text-nebula-purple" /> Master Blueprint
+              </h1>
               <p className="text-ash-grey text-sm tracking-widest uppercase">
-                Telemetry Synchronized for {pii.firstName ?? 'Traveler'}
+                {pii.firstName} {pii.lastName} // Origin Coordinates Locked
               </p>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+            {/* Tactical Data Exfiltration Button */}
+            <button onClick={executeDataExtraction} className="flex items-center justify-center gap-2 bg-astral-gold/20 hover:bg-astral-gold/40 text-astral-gold border border-astral-gold/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto">
+              <Download className="w-4 h-4" /> Extract Codex
+            </button>
+
             {onEnterAxiom && (
               <button onClick={onEnterAxiom} className="flex items-center justify-center gap-2 bg-nebula-purple/20 hover:bg-nebula-purple/40 text-nebula-purple border border-nebula-purple/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto">
                 <Beaker className="w-4 h-4" /> Theoretical Axiom
@@ -95,7 +117,7 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
                   localStorage.removeItem('aether_google_auth');
                   onRecalibrate();
                 }
-              }} className="flex items-center justify-center gap-2 bg-red-900/20 hover:bg-red-900/40 text-red-400 border border-red-500/50 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto">
+              }} className="flex items-center justify-center gap-2 bg-obsidian hover:bg-black/50 text-ash-grey border border-ash-grey/20 px-4 py-2 rounded-lg transition-colors uppercase tracking-widest text-xs font-bold w-full sm:w-auto">
               <RefreshCcw className="w-4 h-4" /> Recalibrate
             </button>
           </div>
@@ -111,25 +133,54 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
           </button>
         </div>
 
+        {/* --- DECOMPRESSED VERTICAL STACK --- */}
         {viewMode === 'blueprint' ? (
           <div className="flex flex-col gap-4 md:gap-6 animate-in fade-in duration-500">
-            {/* The 3-Pillar Macro Telemetry Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              <NumerologyCard data={celestialData?.numerology} />
-              <StarseedCard data={celestialData?.placements ? payload?.matrices?.starseed : null} />
-              <SacredGeometryCard data={celestialData?.placements ? payload?.matrices?.sacredGeometry : null} />
-            </div>
             
-            <IdentityMatrixCard title="Tropical Placidus" subtitle="The Persona" data={celestialData} isDefaultTime={isDefaultTime} imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-mind-abc.jpg" isPrimary />
+            <NumerologyCard data={celestialData?.numerology} />
+            <StarseedCard data={celestialData?.placements ? payload?.matrices?.starseed : null} />
+            <SacredGeometryCard data={celestialData?.placements ? payload?.matrices?.sacredGeometry : null} />
             
-            {celestialData?.vaults && (
-              <div className="pt-8 space-y-4 border-t border-ash-grey/10">
-                <h3 className="text-ash-grey text-xs tracking-widest uppercase mb-4 text-center">Encrypted Sectors</h3>
-                <IdentityMatrixCard title="Standard Sidereal Lahiri" subtitle="The Soul Vessel" data={celestialData.vaults.sidereal} imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-soul.jpg" isEncrypted />
-                <IdentityMatrixCard title="Draconic" subtitle="The Spark" data={celestialData.vaults.draconic} imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-spark.jpg" isEncrypted />
-                <IdentityMatrixCard title="Heliocentric" subtitle="The Source" data={celestialData.vaults.heliocentric} imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-source.jpg" isEncrypted />
+            {/* --- IDENTITY MATRICES (PASTE REAL BLOB URLS HERE) --- */}
+            <IdentityMatrixCard 
+              title="Tropical Placidus" 
+              subtitle="The Persona" 
+              data={celestialData} 
+              isDefaultTime={isDefaultTime} 
+              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-mind.jpg" 
+              isPrimary 
+            />
+
+            <div className="relative mt-8 md:mt-12 mb-4 md:mb-6">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-ash-grey/20"></div></div>
+              <div className="relative flex justify-center">
+                <span className="bg-obsidian px-4 text-ash-grey text-xs md:text-sm uppercase tracking-widest font-bold flex items-center gap-2 border border-ash-grey/20 rounded-full py-1">
+                  <Lock className="w-3 h-3 md:w-4 md:h-4" /> Encrypted Sectors
+                </span>
               </div>
-            )}
+            </div>
+
+            <IdentityMatrixCard 
+              title="Standard Sidereal Lahiri" 
+              subtitle="The Soul Vessel" 
+              data={celestialData.vaults?.sidereal} 
+              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-soul.jpg" 
+              isEncrypted 
+            />
+            <IdentityMatrixCard 
+              title="Draconic" 
+              subtitle="The Spark" 
+              data={celestialData.vaults?.draconic} 
+              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-spark.jpg" 
+              isEncrypted 
+            />
+            <IdentityMatrixCard 
+              title="Heliocentric" 
+              subtitle="The Source" 
+              data={celestialData.vaults?.heliocentric} 
+              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-source.jpg" 
+              isEncrypted 
+            />
           </div>
         ) : (
           <ErrorBoundary>
