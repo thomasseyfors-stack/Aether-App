@@ -79,7 +79,7 @@ export default function HorizonRadar({ payload }: { payload: any }) {
           <p className="text-starlight-white font-serif italic text-sm md:text-base leading-relaxed max-w-2xl">"{enhancements.affirmation}"</p>
           
           {/* We grab the native colors from the codex first, or fallback to the AI enhancements */}
-          {(payload?.numerology?.details?.colors || enhancements.colors).length > 0 && (
+          {(payload?.numerology?.details?.colors || enhancements.colors)?.length > 0 && (
             <div className="mt-4 flex flex-wrap justify-center gap-3">
               <span className="text-ash-grey text-[10px] uppercase tracking-widest flex items-center gap-1"><Palette className="w-3 h-3" /> Resonant Colors:</span>
               {(payload?.numerology?.details?.colors || enhancements.colors).map((color: string, idx: number) => (

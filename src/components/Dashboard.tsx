@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe, Download, AlertTriangle, Palette } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe, Download, AlertTriangle, Palette, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
@@ -411,14 +411,19 @@ export function AscendantData({ angles }: { angles: any }) {
   if (!angles) return null;
 
   const AngleBox = ({ keyName, data }: { keyName: string, data: any }) => {
+    // 1. Extract the specific lore and colors from the offline Codex
     const codex = PLACEMENT_CODEX[keyName];
     const zCodex = ZODIAC_CODEX[data?.sign];
 
     return (
-      <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20 flex flex-col h-full">
+      <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20 flex flex-col h-full shadow-inner relative overflow-hidden group hover:border-astral-gold/50 transition-colors">
+        
+        {/* Subtle background glow on hover */}
+        <div className="absolute top-0 right-0 w-16 h-16 bg-astral-gold/5 rounded-bl-full -z-10 group-hover:bg-astral-gold/10 transition-colors"></div>
+
         <div className="mb-2">
           <p className="text-ash-grey text-[9px] md:text-[10px] font-bold uppercase tracking-wider mb-0.5">{keyName}</p>
-          <p className="text-nebula-purple text-[8px] md:text-[9px] uppercase tracking-widest">{codex?.title}</p>
+          <p className="text-nebula-purple text-[8px] md:text-[9px] uppercase tracking-widest leading-tight">{codex?.title}</p>
         </div>
         
         <div className="flex flex-wrap items-center gap-1.5 md:gap-2 w-full mt-auto">
@@ -426,9 +431,14 @@ export function AscendantData({ angles }: { angles: any }) {
             {data?.sign ?? '---'} 
           </p>
         </div>
-        <div className="flex justify-between items-center mt-1">
-          <p className="text-astral-gold text-[10px] md:text-xs shrink-0">{data?.degree ?? '0°'}</p>
-          {zCodex && <span className="text-[8px] text-ash-grey bg-black/50 border border-ash-grey/20 px-1 rounded">{zCodex.color}</span>}
+        
+        <div className="flex justify-between items-center mt-2 pt-2 border-t border-ash-grey/10">
+          <p className="text-astral-gold text-[10px] md:text-xs shrink-0 font-mono">{data?.degree ?? '0°'}</p>
+          {zCodex && (
+            <span className="text-[8px] uppercase tracking-widest text-ash-grey bg-black/50 border border-ash-grey/20 px-1.5 py-0.5 rounded">
+              {zCodex.color}
+            </span>
+          )}
         </div>
       </div>
     );
@@ -436,8 +446,10 @@ export function AscendantData({ angles }: { angles: any }) {
 
   return (
     <div className="border-t border-ash-grey/10 pt-4 md:pt-6 mt-2">
-      <h3 className="text-ash-grey text-[10px] md:text-xs tracking-widest uppercase mb-3 md:mb-4">Structural Angles & Karmic Coordinates</h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
+      <h3 className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-3 md:mb-4 flex items-center gap-2">
+        <Compass className="w-4 h-4 text-astral-gold" /> Structural Angles & Karmic Coordinates
+      </h3>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
         <AngleBox keyName="Ascendant" data={angles.ascendant} />
         <AngleBox keyName="Descendant" data={angles.descendant} />
         <AngleBox keyName="Midheaven" data={angles.midheaven} />
@@ -445,7 +457,7 @@ export function AscendantData({ angles }: { angles: any }) {
         <AngleBox keyName="North Node" data={angles.northNode} />
         <AngleBox keyName="South Node" data={angles.southNode} />
       </div>
-      <p className="text-ash-grey text-[10px] mt-4 text-center italic">Coordinate framework mathematically secured.</p>
+      <p className="text-ash-grey text-[10px] mt-4 text-center italic opacity-70">Coordinate framework mathematically secured via Offline Matrix.</p>
     </div>
   );
 }
