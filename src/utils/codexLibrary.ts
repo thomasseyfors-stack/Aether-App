@@ -105,3 +105,60 @@ export const PATTERN_CODEX: Record<string, any> = {
   "Trine (Air)": { title: "Data Synchronicity", description: "A frictionless flow of intellectual energy, optimizing high-speed communication, logic loops, and the bridging of disparate systems." },
   "Trine (Water)": { title: "Emotional Conduction", description: "A frictionless flow of intuitive energy, allowing for deep psychological reconnaissance and emotional alchemy without resistance." }
 };
+
+// ============================================================================
+// PART 5: ASSET URL MATRIX
+// ============================================================================
+export const ASSET_URL_MATRIX: Record<string, string> = {
+  // Numerology Folder
+  "Life Path 1": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%201.png",
+  "Life Path 2": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%202.png",
+  "Life Path 3": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%203.png",
+  "Life Path 4": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%204.png",
+  "Life Path 5": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%205.png",
+  "Life Path 6": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%206.png",
+  "Life Path 7": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%207.png",
+  "Life Path 8": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%208.png",
+  "Life Path 9": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%209.png",
+  "Life Path 11": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%2011.png",
+  "Life Path 22": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%2022.png",
+  "Life Path 33": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Numerology/Aether%20Energy%20-%20Numerology%20-%20Life%20Path%2033.png",
+  
+  // Zodiacs Folder
+  "Aquarius": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Aquarius.png",
+  "Aries": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Aries.png", 
+  "Cancer": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Cancer.png",
+  "Capricorn": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Capricorn.png",
+  "Gemini": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Gemini.png",
+  "Leo": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Leo.png",
+  "Libra": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Libra.png",
+  "Ophiuchus": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Ophiuchus.png",
+  "Pisces": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Pisces.png",
+  "Sagittarius": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Sagittarius.png",
+  "Scorpio": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Scorpio.png",
+  "Taurus": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Taurus.png",
+  "Virgo": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Zodiacs/Aether%20Energy%20-%20Zodiac%20-%20Virgo.png",
+
+  // Starseeds Folder
+  "Andromedan": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Starseeds/Aether%20Energy%20-%20Starseed%20-%20Andromedan%20%28The%20Freedom%20Seekers%29.png",
+  "Arcturian": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Starseeds/Aether%20Energy%20-%20Starseed%20-%20Arcturian%20%28The%20Visionaries%29.png",
+  "Lemurian & Atlantean": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Starseeds/Aether%20Energy%20-%20Starseed%20-%20Lemurian%20%26%20Atlantean%20%28The%20Earth%20Keepers%20%26%20Alchemists%29.png",
+  "Lyran": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Starseeds/Aether%20Energy%20-%20Starseed%20-%20Lyran%20%28The%20Pioneers%29.png",
+  "Mintakan": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Starseeds/Aether%20Energy%20-%20Starseed%20-%20Mintakan%20%28The%20Original%20Lightworkers%29.png",
+  "Orion": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Starseeds/Aether%20Energy%20-%20Starseed%20-%20Orion%20%28The%20Alchemists%29.png",
+  "Pleiadian": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Starseeds/Aether%20Energy%20-%20Starseed%20-%20Pleiadian%20%28The%20Healers%29.png",
+  "Sirian": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Starseeds/Aether%20Energy%20-%20Starseed%20-%20Sirian%20%28The%20Knowledge%20Keepers%29.png",
+  "Venusian": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Starseeds/Aether%20Energy%20-%20Starseed%20-%20Venusian%20%28The%20Harmonizers%29.png",
+  
+  // Sacred Geometry Folder
+  "Metatron's Cube": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Sacred%20Geometry/Aether%20Energy%20-%20Sacred%20Geometry%20-%20Metatron%E2%80%99s%20Cube.png",
+  "The Circle & The Monad": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Sacred%20Geometry/Aether%20Energy%20-%20Sacred%20Geometry%20-%20The%20Circle%20%28The%20Monad-The%20Void%29.png",
+  "The Hexagon": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Sacred%20Geometry/Aether%20Energy%20-%20Sacred%20Geometry%20-%20The%20Hexagon%20%28The%20Double-6%20Seal%29.png",
+  "The Merkaba": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Sacred%20Geometry/Aether%20Energy%20-%20Sacred%20Geometry%20-%20The%20Merkaba%20%28The%20Star%20Tetrahedron%29.png",
+  "The Pyramid": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Sacred%20Geometry/Aether%20Energy%20-%20Sacred%20Geometry%20-%20The%20Pyramid.png",
+  "The Seed of Life & The Flower of Life": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Sacred%20Geometry/Aether%20Energy%20-%20Sacred%20Geometry%20-%20The%20Seed%20of%20Life%20%26%20The%20Flower%20of%20Life.png",
+  "The Square": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Sacred%20Geometry/Aether%20Energy%20-%20Sacred%20Geometry%20-%20The%20Square%20%28The%20Base-4%20Grounding%20Wire%29.png",
+  "The Torus": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Sacred%20Geometry/Aether%20Energy%20-%20Sacred%20Geometry%20-%20The%20Torus%20%28The%20Infinite%20Loop%29.png",
+  "The Tree of Life": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Sacred%20Geometry/Aether%20Energy%20-%20Sacred%20Geometry%20-%20The%20Tree%20of%20Life%20%28The%20Biological%20Motherboard%29.png",
+  "The Triangle": "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Sacred%20Geometry/Aether%20Energy%20-%20Sacred%20Geometry%20-%20The%20Triangle%20%28The%20Catalyst%29.png"
+};

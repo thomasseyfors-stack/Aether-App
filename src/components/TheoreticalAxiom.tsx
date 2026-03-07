@@ -152,7 +152,7 @@ export default function TheoreticalAxiom({ payload, onBack }: { payload: any, on
                 patterns: theoretical.matrices.patterns,
                 voids: theoretical.matrices.voids
               }} 
-              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-axiom.jpg" 
+              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-axiom.jpg" 
               isPrimary={true} 
             />
 

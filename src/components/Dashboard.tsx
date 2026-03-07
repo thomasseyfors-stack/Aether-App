@@ -138,7 +138,7 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
               subtitle="The Persona" 
               data={celestialData} 
               isDefaultTime={isDefaultTime} 
-              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-mind.jpg" 
+              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-mind.jpg" 
               isPrimary 
             />
 
@@ -155,21 +155,21 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
               title="Standard Sidereal Lahiri" 
               subtitle="The Soul Vessel" 
               data={celestialData.vaults?.sidereal} 
-              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-soul.jpg" 
+              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-soul.jpg" 
               isEncrypted 
             />
             <IdentityMatrixCard 
               title="Draconic" 
               subtitle="The Spark" 
               data={celestialData.vaults?.draconic} 
-              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-spark.jpg" 
+              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-spark.jpg" 
               isEncrypted 
             />
             <IdentityMatrixCard 
               title="Heliocentric" 
               subtitle="The Source" 
               data={celestialData.vaults?.heliocentric} 
-              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-source.jpg" 
+              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-source.jpg" 
               isEncrypted 
             />
           </div>

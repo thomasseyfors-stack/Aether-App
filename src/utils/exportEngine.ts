@@ -8,11 +8,11 @@ export function exportCodexPDF(payload: any, pii: any) {
   // ============================================================================
   // PASTE YOUR VERCEL BLOB URLS HERE FOR THE PDF THUMBNAILS
   // ============================================================================
-  const IMG_MIND = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-mind.jpg";
-  const IMG_SOUL = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-soul.jpg";
-  const IMG_SPARK = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-spark.jpg";
-  const IMG_SOURCE = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-source.jpg";
-  const IMG_AXIOM = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-axiom.jpg";
+  const IMG_MIND = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-mind.jpg";
+  const IMG_SOUL = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-soul.jpg";
+  const IMG_SPARK = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-spark.jpg";
+  const IMG_SOURCE = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-source.jpg";
+  const IMG_AXIOM = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-axiom.jpg";
 
   const printWindow = window.open('', '_blank');
   if (!printWindow) {
