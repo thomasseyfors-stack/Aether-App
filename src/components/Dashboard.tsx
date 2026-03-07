@@ -298,6 +298,56 @@ export function IdentityMatrixCard({ title, subtitle, data, isDefaultTime = fals
   );
 }
 
+// ==========================================
+// TACTICAL UI COMPONENTS
+// ==========================================
+function PlanetModal({ planet, lore, onClose }: { planet: any, lore: any, onClose: () => void }) {
+  if (!planet) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in" onClick={onClose}>
+      <div className="bg-obsidian border border-astral-gold/50 rounded-xl p-6 max-w-sm w-full shadow-[0_0_40px_rgba(245,208,97,0.15)] relative overflow-hidden" onClick={e => e.stopPropagation()}>
+        {/* Decorative Background Element */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-astral-gold/5 rounded-bl-full -z-10"></div>
+        
+        <h3 className="text-astral-gold text-2xl font-bold uppercase tracking-widest mb-1">{planet.planet}</h3>
+        <p className="text-nebula-purple text-[10px] md:text-xs font-semibold uppercase tracking-widest mb-4 border-b border-ash-grey/20 pb-3">
+          {lore?.title || 'Celestial Body'}
+        </p>
+        
+        <p className="text-starlight-white text-sm leading-relaxed mb-6">
+          {lore?.description || 'Encrypted data stream unavailable.'}
+        </p>
+        
+        <div className="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-ash-grey/10">
+          <span className="text-astral-gold uppercase tracking-wider text-sm font-bold">{planet.sign}</span>
+          <span className="text-ash-grey font-mono text-sm">{planet.degree}</span>
+        </div>
+        
+        <button onClick={onClose} className="mt-6 w-full bg-ash-grey/10 hover:bg-astral-gold/20 hover:text-astral-gold text-starlight-white font-bold py-2.5 rounded transition-colors uppercase tracking-widest text-xs border border-transparent hover:border-astral-gold/30">
+          Acknowledge
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CollapsibleVault({ title, icon, children, defaultOpen = true }: { title: string, icon: any, children: React.ReactNode, defaultOpen?: boolean }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="mb-4 border border-ash-grey/10 bg-black/20 rounded-lg p-3 md:p-4 transition-colors hover:border-ash-grey/20">
+      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex items-center justify-between text-left group">
+        <h3 className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase flex items-center gap-2 group-hover:text-astral-gold transition-colors">
+          {icon} {title}
+        </h3>
+        <div className="bg-black/40 p-1 rounded group-hover:bg-astral-gold/10 transition-colors">
+          {isOpen ? <ChevronUp className="w-4 h-4 text-ash-grey group-hover:text-astral-gold" /> : <ChevronDown className="w-4 h-4 text-ash-grey group-hover:text-astral-gold" />}
+        </div>
+      </button>
+      {isOpen && <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">{children}</div>}
+    </div>
+  );
+}
+
 export function PlacementSection({ title, icon, placements, fallback }: any) {
   if (!placements || placements.length === 0) return null;
 
