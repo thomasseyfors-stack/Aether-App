@@ -295,37 +295,157 @@ function detectVoids(placements: any[]) {
 }
 
 function detectStarseed(placements: any[]) {
-  let scores = { Orion: 0, Sirian: 0, Ophiuchus: 0, Draconian: 0 };
+  let scores = { Orion: 0, Sirian: 0, Pleiadian: 0, Lyran: 0, Andromedan: 0 };
+  
   placements.forEach(p => {
-    if (['Gemini', 'Taurus', 'Leo'].includes(p.sign)) scores.Orion++;
-    if (['Pisces', 'Cancer'].includes(p.sign)) scores.Sirian++;
-    if (['Scorpio', 'Sagittarius'].includes(p.sign)) scores.Ophiuchus++;
-    if (['Aries', 'Libra'].includes(p.sign)) scores.Draconian++;
+    if (['Gemini', 'Taurus'].includes(p.sign)) scores.Orion++;
+    if (['Pisces', 'Cancer', 'Scorpio'].includes(p.sign)) scores.Sirian++;
+    if (['Virgo', 'Capricorn'].includes(p.sign)) scores.Pleiadian++;
+    if (['Aries', 'Leo', 'Sagittarius'].includes(p.sign)) scores.Lyran++;
+    if (['Aquarius', 'Libra'].includes(p.sign)) scores.Andromedan++;
   });
+  
   const max = Math.max(...Object.values(scores));
   
-  if (scores.Orion === max) return { origin: "Orion Sector", title: "The 11-11 Transmitter", description: ["Your system is engineered for structural logic and high-voltage processing.", "You naturally integrate extreme polarities into a functional system.", "You act as a stabilizing bridge between the Earth and the Cosmos."], traits: ["System Architecture", "Parallel Processing", "Geometric Translation"] };
-  if (scores.Ophiuchus === max) return { origin: "Ophiuchus / Galactic Center", title: "Master of the Void", description: ["Your energy is drawn directly from the Great Rift.", "You possess the alchemical ability to walk through the 'Underworld' of a problem.", "You consistently emerge with the hidden, actionable solution."], traits: ["Void Navigation", "Deep-System Regeneration", "Shadow Extraction"] };
-  if (scores.Draconian === max) return { origin: "Draco (The Ancient North)", title: "Guardian of the Zero-Point", description: ["You carry the 'Imperishable' frequency.", "You are tasked with protecting deep-time memory and ancestral codes.", "You defend the central axis of the cosmic grid from corruption."], traits: ["Deep-Time Memory", "Kundalini Activation", "Structural Defense"] };
+  if (scores.Orion === max) return { 
+    origin: "Orion Sector / Atlantean Resonance", 
+    title: "The Architect & System Builder", 
+    description: [
+      "Orions are the structural engineers of the cosmos, driven by logic, intellect, and the integration of extreme polarities.",
+      "You are tasked with bringing order to chaos, analyzing complex systems, and rebuilding the structural grid of the planet.",
+      "Atlantean resonance indicates a mastery of energy, high-level governance, and intellectual authority."
+    ], 
+    traits: ["System Architecture", "Polarity Integration", "Technological Mastery"],
+    resonance: "Electric Yellow, Black, Crimson Red, and Royal Blue"
+  };
   
-  return { origin: "Sirius / Mintaka", title: "The Quantum Navigator", description: ["You act as the etheric bridge for collective consciousness.", "Your reality is governed by rapid intuition and deep-state reconnaissance.", "You excel at holographic frequency reception and emotional alchemy."], traits: ["Holographic Access", "Signal Amplification", "Fluid Adaptation"] };
+  if (scores.Sirian === max) return { 
+    origin: "Sirius / Mintaka & Lemurian Resonance", 
+    title: "The Quantum Navigator", 
+    description: [
+      "Sirians are the knowledge keepers and etheric bridges, deeply connected to water, fluid adaptation, and holographic reality.",
+      "Your reality is governed by rapid intuition, deep-state reconnaissance, and profound emotional alchemy.",
+      "Lemurian resonance connects you to the Earth's original bio-grid, intuitive softness, and crystalline nature."
+    ], 
+    traits: ["Holographic Access", "Signal Amplification", "Fluid Adaptation"],
+    resonance: "Deep Indigo, Silver, Cyan, and Pearlescent White"
+  };
+
+  if (scores.Pleiadian === max) return { 
+    origin: "The Pleiades (Seven Sisters)", 
+    title: "The Healer & Heart-Opener", 
+    description: [
+      "Pleiadians operate primarily from the heart chakra, focused on cultivating unconditional love and divine feminine energy.",
+      "You are highly sensitive to dense, chaotic energy and are here to download emotional healing into the Earth grid.",
+      "You excel at cultivating sanctuaries, communication, and environmental harmony."
+    ], 
+    traits: ["Emotional Alchemy", "Crown/Heart Integration", "Sanctuary Building"],
+    resonance: "Soft Blue, Violet, Magenta, and Pink"
+  };
+
+  if (scores.Lyran === max) return { 
+    origin: "Lyra (The Ancients)", 
+    title: "The Pioneer & Trailblazer", 
+    description: [
+      "Lyrans are the oldest humanoid souls, bringing raw kinetic fire, independence, and fearless forward momentum.",
+      "You are fiercely protective, physically strong, and operate as a vanguard for new timelines and structures.",
+      "Your energy clears the brush so that others may build safely behind you."
+    ], 
+    traits: ["Kinetic Ignition", "Fearless Independence", "Ancestral Vanguard"],
+    resonance: "Copper, Ruby Red, and Deep Orange"
+  };
+
+  return { 
+    origin: "Andromeda / Venusian Resonance", 
+    title: "The Galactic Nomad & Harmonizer", 
+    description: [
+      "Andromedans are fluid, unrestricted freedom seekers who shatter rigid, archaic systems through innovation.",
+      "You operate across vast networks, acting as a disruptive catalyst while maintaining a deeply humanitarian core.",
+      "Venusian resonance ensures your disruptions ultimately serve aesthetic harmony, diplomacy, and ultimate beauty."
+    ], 
+    traits: ["Systemic Disruption", "Aesthetic Cohesion", "Unrestricted Freedom"],
+    resonance: "Emerald Green, Shimmering Gold, and Rose Gold"
+  };
 }
 
 function detectSacredGeometry(patterns: any[]) {
   const patternNames = patterns.map(p => p.name);
+  
   if (patternNames.some(n => n.includes('Cross'))) {
-    return { shape: "The Tesseract (Metatron's Cube)", principle: "Structural Stabilization & 4D Containment", description: ["Your astrological cross generates immense oppositional friction.", "Metatron's Cube provides the Structural Integrity to hold that tension.", "It organizes the chaos into the 5 Platonic Solids, acting as the geometric Motherboard of the universe."], resonance: "Earth / Ether" };
+    return { 
+      shape: "The Tesseract (Metatron's Cube)", 
+      principle: "Structural Stabilization & 4D Containment", 
+      description: [
+        "Your astrological cross generates immense oppositional friction.", 
+        "Metatron's Cube provides the Structural Integrity to hold that tension.", 
+        "It acts as the geometric Motherboard of the universe, allowing you to organize chaos into the 5 Platonic Solids."
+      ], 
+      resonance: "Gold, Platinum, and Deep Space Black" 
+    };
   }
+  
+  if (patternNames.some(n => n.includes('Stellium'))) {
+    return { 
+      shape: "The Spiral (Fibonacci / Golden Ratio)", 
+      principle: "Evolutionary Expansion", 
+      description: [
+        "A Stellium concentrates massive gravity in one sector.", 
+        "The Spiral represents the natural, unforced unfolding of this concentrated energy into the surrounding environment.", 
+        "It ensures continuous growth, pulling you deeper to the core while expanding your external reach."
+      ], 
+      resonance: "Deep Purple and Magenta" 
+    };
+  }
+
   if (patternNames.some(n => n.includes('Fire Trine'))) {
-    return { shape: "The Star Tetrahedron", principle: "Kinetic Ignition & Willpower", description: ["This is the geometric equivalent of Fire.", "It is the engine of action, allowing your high-velocity ideas to penetrate physical reality.", "It represents the 'Lightning Flash' of direct emanation."], resonance: "Fire / Action" };
+    return { 
+      shape: "The Star Tetrahedron (Merkaba Light Body)", 
+      principle: "Kinetic Ignition & Multidimensional Travel", 
+      description: [
+        "The geometric equivalent of Fire and Air acting in unison.", 
+        "It is the engine of action, allowing your high-velocity ideas to penetrate physical reality.", 
+        "It represents the 'Lightning Flash' of direct emanation, providing a protective localized energy field."
+      ], 
+      resonance: "Brilliant Silver, Cyan, and Electric Blue" 
+    };
   }
+  
   if (patternNames.some(n => n.includes('Earth Trine'))) {
-    return { shape: "The Hexahedron (Cube)", principle: "Material Grounding & Stability", description: ["This is the basic building block of the physical universe.", "It anchors your theoretical visions into undeniable, load-bearing reality.", "It provides the bedrock required for permanent construction."], resonance: "Earth / Structure" };
+    return { 
+      shape: "The Hexahedron (The Cube)", 
+      principle: "Material Grounding & Stability", 
+      description: [
+        "This is the basic building block of the physical universe.", 
+        "It anchors your theoretical visions into undeniable, load-bearing reality.", 
+        "It provides the dense, unshakeable bedrock required for permanent architectural construction."
+      ], 
+      resonance: "Deep Brown, Forest Green, and Ocher" 
+    };
   }
+  
   if (patternNames.some(n => n.includes('Yod'))) {
-    return { shape: "The Acheulean Hand-Axe", principle: "The Primal Tool & Sovereign Will", description: ["The first geometric imposition of the human mind onto the chaos of the physical world.", "It represents the raw, heavy work required to carve out your unique destiny.", "It acts as a grounding anchor for high-frequency data."], resonance: "Root / Physical Anchor" };
+    return { 
+      shape: "The Triangle / Acheulean Hand-Axe", 
+      principle: "The Primal Tool & Sovereign Will", 
+      description: [
+        "The first geometric imposition of the human mind onto the chaos of the physical world.", 
+        "It represents the raw, heavy work required to carve out your unique destiny and clear karmic debris.", 
+        "It acts as a primary engine of forward momentum and a grounding anchor for high-frequency data."
+      ], 
+      resonance: "Bright Red and Yellow" 
+    };
   }
-  return { shape: "The Torus Vortex", principle: "Self-Sustaining Autonomy", description: ["The fundamental shape of energy flow across all scales of reality.", "It wraps your energies into a cohesive sphere, acting as an environmental shield.", "It ensures you generate your own renewable power from the 'Zero Point' within."], resonance: "Electromagnetic Field" };
+  
+  return { 
+    shape: "The Torus (The Infinite Loop)", 
+    principle: "Self-Sustaining Autonomy & Gyroscopic Stabilization", 
+    description: [
+      "The fundamental shape of a magnetic field, ensuring your central axis remains completely immovable.", 
+      "It wraps your energies into a cohesive, fluid sphere, acting as an environmental shield against chaotic drag.", 
+      "It ensures you generate your own renewable power from the 'Zero Point' within."
+    ], 
+    resonance: "Magnetic Purple and Vibrant Aqua" 
+  };
 }
 
 function calculateAngles(targetTime: number, lat: number, lon: number) {
