@@ -102,19 +102,79 @@ const sovereignMatrix = {
 // ============================================================================
 // PART 2: SOVEREIGN NUMEROLOGY CODEX
 // ============================================================================
-const numerologyCodex: Record<number, string> = {
-  1: "The Monolith: A singular pillar of kinetic initiation, sovereign leadership, and pure forward momentum.",
-  2: "The Bridge: A structural load-bearer specializing in dualistic harmony, diplomacy, and energetic connection.",
-  3: "The Catalyst: A dynamic frequency of expression, high-velocity communication, and expansive conceptual geometry.",
-  4: "The Foundation: Absolute bedrock. Represents disciplined architecture, earthly grounding, and unshakeable methodology.",
-  5: "The Velocity: A highly adaptable conduit for change, spatial freedom, and rapid energetic restructuring.",
-  6: "The Sanctuary: A grid-stabilizer focused on harmony, protection, and maintaining the structural integrity of the collective.",
-  7: "The Deep Core: An analytical radar for esoteric truth, seeking the hidden mechanics and data behind the physical veil.",
-  8: "The Architect: A commanding force of material mastery, transmuting raw kinetic energy into enduring worldly structures.",
-  9: "The Apex: The culmination point. A humanitarian frequency operating on universal synthesis and structural completion.",
-  11: "The Antenna (Master Illuminator): A high-voltage conduit bridging the Aether and the Earth, channeling raw intuition into actionable data.",
-  22: "The Master Builder: The highest architectural frequency. The capacity to ground massive, theoretical concepts into concrete, physical reality.",
-  33: "The Master Teacher: A rare harmonic resonance dedicated to unconditional structural support and the elevation of the entire grid."
+const NUMEROLOGY_CODEX: Record<number, any> = {
+  1: {
+    title: "The Independent / The Leader",
+    description: "Fiercely individualistic, driven, and innovative. Ones are natural leaders and self-starters who thrive on paving their own way and taking the initiative.",
+    colors: ["Red"],
+    colorMeaning: "Represents raw kinetic force, passion, pioneering energy, and the spark of creation."
+  },
+  2: {
+    title: "The Peacemaker / The Diplomat",
+    description: "Highly sensitive, intuitive, and cooperative. Twos excel at bringing people together, mediating conflicts, and fostering deep, harmonious relationships.",
+    colors: ["Orange", "Peach"],
+    colorMeaning: "Represents emotional balance, warmth, partnership, and the blending of two distinct energies into one harmonic frequency."
+  },
+  3: {
+    title: "The Communicator / The Creative",
+    description: "Charismatic, expressive, and artistic. Threes are driven by a need for self-expression, often finding their purpose in writing, speaking, acting, or other creative arts.",
+    colors: ["Yellow"],
+    colorMeaning: "Represents solar radiance, joy, rapid communication, and high-energy creative output."
+  },
+  4: {
+    title: "The Builder / The Worker",
+    description: "Practical, grounded, and highly structured. Fours are the foundation builders of society, relying on logic, hard work, and discipline to achieve long-lasting security.",
+    colors: ["Green", "Brown"],
+    colorMeaning: "These are the ultimate grounding colors of the Earth. Green represents foundational growth, while brown provides the dense, rigid boundaries required to construct permanent, lasting structures."
+  },
+  5: {
+    title: "The Adventurer / The Freedom Seeker",
+    description: "Dynamic, adaptable, and restless. Fives crave variety, travel, and new experiences, often acting as catalysts for change and rejecting rigid routines.",
+    colors: ["Sky Blue", "Turquoise"],
+    colorMeaning: "Represents expansion, the unbound sky, open oceans, and the freedom of unrestricted movement."
+  },
+  6: {
+    title: "The Nurturer / The Caregiver",
+    description: "Compassionate, responsible, and protective. Sixes are naturally domestic and community-oriented, often dedicating their lives to serving, healing, or supporting others.",
+    colors: ["Indigo", "Deep Blue"],
+    colorMeaning: "Represents deep responsibility, the creation of a sanctuary, and a protective, healing resonance."
+  },
+  7: {
+    title: "The Seeker / The Philosopher",
+    description: "Analytical, mysterious, and deeply intellectual. Sevens are driven by a need to uncover the hidden truths of the universe, often drawn to science, philosophy, or esoterica.",
+    colors: ["Violet", "Purple"],
+    colorMeaning: "Represents the veil between worlds, esoteric knowledge, the unseen, and deep analytical wisdom."
+  },
+  8: {
+    title: "The Powerhouse / The Executive",
+    description: "Ambitious, authoritative, and goal-oriented. Eights are focused on the material world, mastering finance, business, leadership, and the balance of power.",
+    colors: ["Black", "Charcoal", "Silver"],
+    colorMeaning: "Represents material authority, executive control, financial gravity, and absolute resilience."
+  },
+  9: {
+    title: "The Humanitarian / The Old Soul",
+    description: "Altruistic, tolerant, and globally minded. Nines represent completion and universal love, often feeling a profound duty to make the world a better place through philanthropy or activism.",
+    colors: ["Gold", "White", "Soft Pastels"],
+    colorMeaning: "Represents universal completion, altruism, and the final spiritual synthesis of all other frequencies."
+  },
+  11: {
+    title: "The Illuminator / The Intuitive",
+    description: "Often considered a highly amplified version of the 2, the 11 possesses almost psychic intuition. They are visionaries and spiritual messengers who inspire others simply by existing.",
+    colors: ["Silver", "Platinum", "Bright White"],
+    colorMeaning: "These are high-voltage frequencies representing the lightning strike of intuition. Silver acts as a perfect mirror, reflecting high-frequency celestial data down into the physical mind."
+  },
+  22: {
+    title: "The Master Builder",
+    description: "The most powerful manifesting number. It combines the lofty, visionary inspiration of the 11 with the grounded, practical work ethic of the 4. Twenty-twos are capable of turning abstract, world-changing dreams into tangible 3D reality.",
+    colors: ["Copper", "Deep Earth Red", "Gold"],
+    colorMeaning: "Copper is the ultimate physical conductor of electricity. It perfectly represents the exact architectural mechanism required here: pulling massive, high-voltage blueprints from the ether and successfully grounding them into the dense material grid without short-circuiting the system."
+  },
+  33: {
+    title: "The Master Teacher",
+    description: "An amplified version of the 6. The 33 is focused on the spiritual uplifting of humanity. They are highly empathetic and selfless, operating purely on the frequency of unconditional love, healing, and guidance.",
+    colors: ["Pearlescent", "Iridescent", "Pale Blue"],
+    colorMeaning: "Represents pure, unconditional love, spiritual enlightenment, and the master healing frequency."
+  }
 };
 
 function reduceNumber(num: number): number {
@@ -122,7 +182,11 @@ function reduceNumber(num: number): number {
   if (num < 10) return num;
   return reduceNumber(num.toString().split('').reduce((a, b) => a + parseInt(b, 10), 0));
 }
-function calcLifePath(m: number, d: number, y: number) { return reduceNumber(reduceNumber(m) + reduceNumber(d) + reduceNumber(y)); }
+
+function calcLifePath(m: number, d: number, y: number) { 
+  return reduceNumber(reduceNumber(m) + reduceNumber(d) + reduceNumber(y)); 
+}
+
 const pythagoreanMap: Record<string, number> = { a:1, j:1, s:1, b:2, k:2, t:2, c:3, l:3, u:3, d:4, m:4, v:4, e:5, n:5, w:5, f:6, o:6, x:6, g:7, p:7, y:7, h:8, q:8, z:8, i:9, r:9 };
 
 function getWordValue(word: string, filter: 'all' | 'vowels' | 'consonants') {
@@ -138,11 +202,12 @@ function getWordValue(word: string, filter: 'all' | 'vowels' | 'consonants') {
 }
 
 function assembleNumerologyReading(lp: number, dest: number, su: number, pers: number): string[] {
-  const lpText = numerologyCodex[lp] || "Unmapped Frequency.";
-  const destText = numerologyCodex[dest] || "Unmapped Frequency.";
+  const lpData = NUMEROLOGY_CODEX[lp] || { title: "Unmapped Frequency", description: "Data unavailable." };
+  const destData = NUMEROLOGY_CODEX[dest] || { title: "Unmapped Frequency" };
+  
   return [
-    `Core Blueprint (Life Path ${lp}): ${lpText}`,
-    `Operational Trajectory (Destiny ${dest}): ${destText}`,
+    `Core Blueprint (Life Path ${lp}): ${lpData.title} — ${lpData.description}`,
+    `Operational Trajectory (Destiny ${dest}): ${destData.title}`,
     `Soul Urge (${su}): Acts as the internal reactor core, driving your deepest motivations.`,
     `Personality (${pers}): Functions as the external armor and structural interface.`,
     `When synchronized, these four coordinates form a highly stable, self-sustaining energetic engine.`
@@ -295,19 +360,47 @@ function calculateCotsworthDate(year: number, month: number, day: number) {
 // ============================================================================
 // PART 4: CULTURAL GRID GENERATOR
 // ============================================================================
-function generateCulturalGrid(year: number, month: number, day: number) {
+function generateCulturalGrid(year: number, month: number, day: number, sunSign: string = 'Aries') {
+  // 1. Chinese Zodiac
   const zodiacAnimals = ['Monkey', 'Rooster', 'Dog', 'Pig', 'Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat'];
   const animal = zodiacAnimals[year % 12];
+  
+  // 2. Burmese Mahabote
   const dayOfWeek = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
   const mahaboteDays = ['Sunday (Garuda)', 'Monday (Tiger)', 'Tuesday (Lion)', 'Wednesday (Tuskless Elephant)', 'Thursday (Rat)', 'Friday (Guinea Pig)', 'Saturday (Dragon)'];
+
+  // 3. Japanese 9 Star Ki (Calculating the principal year number)
+  const yearSum = year.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+  const reducedYear = yearSum > 9 ? yearSum.toString().split('').reduce((a, b) => a + parseInt(b), 0) : yearSum;
+  let kiNumber = 11 - (reducedYear > 9 ? reducedYear - 9 : reducedYear);
+  if (kiNumber > 9) kiNumber -= 9;
+  if (kiNumber < 1) kiNumber += 9;
+  const kiElements: Record<number, string> = { 1: "Water", 2: "Earth", 3: "Tree", 4: "Tree", 5: "Earth", 6: "Metal", 7: "Metal", 8: "Earth", 9: "Fire" };
   
+  // 4. Celtic Tree Astrology (Date approximation)
+  const getCelticTree = (m: number, d: number) => {
+    if ((m===12 && d>=24) || (m===1 && d<=20)) return "Birch";
+    if ((m===1 && d>=21) || (m===2 && d<=17)) return "Rowan";
+    if ((m===2 && d>=18) || (m===3 && d<=17)) return "Ash";
+    if ((m===3 && d>=18) || (m===4 && d<=14)) return "Alder";
+    if ((m===4 && d>=15) || (m===5 && d<=12)) return "Willow";
+    if ((m===5 && d>=13) || (m===6 && d<=9)) return "Hawthorn";
+    if ((m===6 && d>=10) || (m===7 && d<=7)) return "Oak";
+    if ((m===7 && d>=8) || (m===8 && d<=4)) return "Holly";
+    if ((m===8 && d>=5) || (m===9 && d<=1)) return "Hazel";
+    if ((m===9 && d>=2) || (m===9 && d<=29)) return "Vine";
+    if ((m===9 && d>=30) || (m===10 && d<=27)) return "Ivy";
+    if ((m===10 && d>=28) || (m===11 && d<=24)) return "Reed";
+    return "Elder";
+  };
+
   return [
-    { system: "Chinese Zodiac", region: "Ancient China", archetype: animal, title: `The Year of the ${animal}`, description: "Represents the ancestral and collective frequency of the year you were born." },
-    { system: "Japanese 9 Star Ki", region: "Japan", archetype: "Calculated Node", title: "The Navigational Core", description: "The energetic feng shui and directional flow of your soul's arrival." },
-    { system: "Burmese Mahabote", region: "Burma (Myanmar)", archetype: mahaboteDays[dayOfWeek], title: "The Planetary Guardian", description: "Derived from the day of the week, dictating your operational temperament and social instinct." },
-    { system: "Celtic Tree Astrology", region: "Celtic Europe", archetype: "Calculated Ogham Tree", title: "The Earth Anchor", description: "Your root resonance based on the ancient druidic lunar calendar." },
-    { system: "Mayan Tzolkin", region: "Mesoamerica", archetype: "Calculated Kin", title: "The Galactic Signature", description: "The specific solar-galactic frequency and tone of your incarnation." },
-    { system: "Egyptian Decans", region: "Ancient Egypt", archetype: "Calculated Decan", title: "The Stellar Overseer", description: "The 10-degree slice of the zodiac that acts as your spiritual guardian." }
+    { system: "Chinese Zodiac", region: "Ancient China", archetype: `Year of the ${animal}`, title: "The Ancestral Baseline", description: ["Represents the collective frequency of your birth year.", "Governs external social dynamics and ancestral inheritance."] },
+    { system: "Japanese 9 Star Ki", region: "Japan", archetype: `Node ${kiNumber} (${kiElements[kiNumber]})`, title: "The Navigational Core", description: ["The primary directional flow of your soul's arrival.", "Dictates your fundamental elemental interaction with the world."] },
+    { system: "Burmese Mahabote", region: "Burma (Myanmar)", archetype: mahaboteDays[dayOfWeek], title: "The Planetary Guardian", description: ["Derived from your exact day of the week of birth.", "Dictates your operational temperament and instinctual social reactions."] },
+    { system: "Celtic Tree Astrology", region: "Celtic Europe", archetype: getCelticTree(month, day), title: "The Earth Anchor", description: ["Your root resonance based on the ancient druidic lunar calendar.", "Connects your human operating system to terrestrial seasonal cycles."] },
+    { system: "Mayan Tzolkin", region: "Mesoamerica", archetype: "Solar Kin Resonance", title: "The Galactic Signature", description: ["The specific solar-galactic frequency of your incarnation.", "Determines the 'Tone' and pulse of your daily energetic output."] },
+    { system: "Egyptian Decans", region: "Ancient Egypt", archetype: `Decan of ${sunSign}`, title: "The Stellar Overseer", description: ["The 10-degree celestial slice that acts as your spiritual guardian.", "Governs the translation of your raw cosmic potential into human terms."] }
   ];
 }
 
@@ -326,7 +419,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const destiny = reduceNumber(getWordValue(fullName, 'all'));
     const soulUrge = reduceNumber(getWordValue(fullName, 'vowels'));
     const personality = reduceNumber(getWordValue(fullName, 'consonants'));
-    const numerology = { lifePath, destiny, soulUrge, personality, interpretation: assembleNumerologyReading(lifePath, destiny, soulUrge, personality) };
+    const numerology = { 
+      lifePath, destiny, soulUrge, personality, 
+      details: NUMEROLOGY_CODEX[lifePath] || null, // INJECT RICH DATA HERE
+      interpretation: assembleNumerologyReading(lifePath, destiny, soulUrge, personality) 
+    };
 
     const [hours, minutes] = birthTime.split(':').map(Number);
     const birthDateUTC = new Date(Date.UTC(Number(birthYear), Number(birthMonth) - 1, Number(birthDay), hours, minutes));
@@ -407,7 +504,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         voids: detectVoids(tropicalPlacements),
         starseed: detectStarseed(tropicalPlacements),
         sacredGeometry: detectSacredGeometry(calculatedPatterns),
-        culturalGrid: generateCulturalGrid(Number(birthYear), Number(birthMonth), Number(birthDay)),
+        culturalGrid: generateCulturalGrid(Number(birthYear), Number(birthMonth), Number(birthDay), tropicalPlacements.find((p:any) => p.planet === 'Sun')?.sign || 'Aries'),
         vaults: {
           sidereal: { title: "Standard Sidereal Lahiri", subtitle: "The Soul Vessel", placements: siderealPlacements.map(({ longitude, ...rest }) => rest), aspects: detectAspects(siderealPlacements), patterns: detectPatterns(siderealPlacements), voids: detectVoids(siderealPlacements) },
           draconic: { title: "Draconic", subtitle: "The Spark", placements: draconicPlacements.map(({ longitude, ...rest }) => rest), aspects: detectAspects(draconicPlacements), patterns: detectPatterns(draconicPlacements), voids: detectVoids(draconicPlacements) },
@@ -451,7 +548,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             soulUrge: soulUrge,     // Inherited from baseline
             personality: personality, // Inherited from baseline
             interpretation: [
-              `Theoretical Core Alignment (Life Path ${shiftedLifePath}): ${numerologyCodex[shiftedLifePath] || "Unmapped Frequency."}`,
+              `Theoretical Core Alignment (Life Path ${shiftedLifePath}): ${NUMEROLOGY_CODEX[shiftedLifePath]?.title || "Unmapped Frequency."}`,
               "In this theoretical Cotsworth timeline, the vibrational frequency of your structural origin completely shifts, while your Name/Destiny numbers remain anchored.",
               "This alters the baseline reality, forcing a recalculation of your energetic operational mode."
             ]
@@ -461,7 +558,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           angles: theoAngles,
           aspects: detectAspects(fullTheoTropical), patterns: theoPatterns, voids: detectVoids(fullTheoTropical),
           starseed: detectStarseed(fullTheoTropical), sacredGeometry: detectSacredGeometry(theoPatterns),
-          culturalGrid: generateCulturalGrid(Number(cotsDateParts[0]), Number(cotsDateParts[1]), Number(cotsDateParts[2])),
+          culturalGrid: generateCulturalGrid(Number(cotsDateParts[0]), Number(cotsDateParts[1]), Number(cotsDateParts[2]), fullTheoTropical.find((p:any) => p.planet === 'Sun')?.sign || 'Aries'),
           vaults: {
             sidereal: { title: "Standard Sidereal Lahiri", subtitle: "Theoretical Soul Vessel", placements: theoSidereal.map(({ longitude, ...rest }) => rest), aspects: detectAspects(theoSidereal), patterns: detectPatterns(theoSidereal), voids: detectVoids(theoSidereal) },
             draconic: { title: "Draconic", subtitle: "Theoretical Spark", placements: theoDraconic.map(({ longitude, ...rest }) => rest), aspects: detectAspects(theoDraconic), patterns: detectPatterns(theoDraconic), voids: detectVoids(theoDraconic) },

@@ -5,10 +5,10 @@ import { GoogleGenAI, Type } from "@google/genai";
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
-  try {
-    const { matrixData } = req.body;
-    if (!matrixData) return res.status(400).json({ error: 'Missing matrix payload' });
+  const { matrixData } = req.body;
+  if (!matrixData) return res.status(400).json({ error: 'Missing matrix payload' });
 
+  try {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const response = await ai.models.generateContent({
@@ -63,18 +63,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } catch (error: any) {
     console.warn("Oracle Grid Disturbance Detected:", error.message);
     
-    // STRUCTURAL FAILSAFE: The Master Builder Decoy Payload
-    const interferenceMessage = "The Aether grid is currently experiencing high-density atmospheric interference due to heavy celestial traffic. The Oracle's connection to the primary generative core is temporarily obscured.\n\nYour mathematical geometries have been successfully locked and mapped above, but the deep interpretive signals require a clearer frequency. Hold your current trajectory and attempt recalibration at a later temporal coordinate.";
+    // STRUCTURAL FAILSAFE: DYNAMIC DECOY PAYLOAD
+    // Extract actual user data to make the offline failsafe customized to them
+    const sunSign = matrixData?.tropical?.find((p: any) => p.planet === 'Sun')?.sign || "Cosmic";
+    const isSovereign = matrixData?.starseed?.title?.includes("Shepherd");
+
+    const interferenceMessage = \`The Aether grid is currently experiencing high-density atmospheric interference due to heavy celestial traffic. Your mathematical geometries have been successfully locked, but the deep interpretive signals require a clearer frequency. Hold your current trajectory.\`;
+
+    const affirmation = isSovereign 
+      ? "My internal architecture is sound. I seamlessly transmute high-velocity Aetheric data into concrete, unshakeable reality." 
+      : \`I trust the unfolding process of my \${sunSign} energy, anchoring my unique visions into solid reality.\`;
+      
+    const identityTag = isSovereign ? "The Master Builder" : \`The \${sunSign} Operator\`;
 
     return res.status(200).json({
         interpretations: { tropical: interferenceMessage, sidereal: interferenceMessage, draconic: interferenceMessage, heliocentric: interferenceMessage },
-        luckyColors: ["Obsidian Black (Grounding/Structural)", "Electric Violet (High-Velocity Conduction)", "Aquamarine (Fluid Adaptability)"],
-        affirmation: "My internal architecture is sound. I seamlessly transmute high-velocity Aetheric data into concrete, unshakeable reality.",
+        luckyColors: ["Obsidian Black (Grounding)", "Electric Silver (Conduction)", "Deep Indigo (Intuition)"],
+        affirmation: affirmation,
         forecasts: [
-            { period: "Daily", theme: "Tactical Silence", description: "The primary grid is down. Rely on localized offline caching and practical intuition.", intensity: "Low", identityTag: "System Failsafe", attempt: "Focus strictly on immediate, tangible infrastructure repairs and physical organization.", avoid: "Do not attempt high-level theoretical projections while the radar is clouded." },
-            { period: "Weekly", theme: "Structural Reinforcement", description: "Atmospheric density will persist. This is a designated maintenance window.", intensity: "Medium", identityTag: "The Master Builder", attempt: "Optimize existing blueprints. Refine your physical workspace and fortify personal boundaries.", avoid: "Avoid launching entirely new initiatives until the signal-to-noise ratio improves." },
-            { period: "Monthly", theme: "Failure Mode Analysis", description: "A period designed to test the load-bearing capacity of your recent connections.", intensity: "High", identityTag: "The Persona", attempt: "Conduct rigorous stress tests on your current projects. Seek out vulnerabilities proactively.", avoid: "Do not ignore minor friction points; they indicate underlying structural weaknesses." },
-            { period: "Yearly", theme: "The Grand Synthesis", description: "The overarching objective is to bridge your high-velocity concepts with earthly anchoring.", intensity: "High", identityTag: "The Source", attempt: "Execute step-by-step methodologies. Build the mountain layer by layer.", avoid: "Resist the urge to abandon projects halfway due to sudden shifts in intellectual wind direction." }
+            { period: "Daily", theme: "Tactical Silence", description: "The primary grid is down. Rely on localized offline caching and practical intuition.", intensity: "Low", identityTag: "System Failsafe", attempt: "Focus strictly on immediate, tangible infrastructure repairs.", avoid: "Do not attempt high-level theoretical projections while the radar is clouded." },
+            { period: "Weekly", theme: "Structural Reinforcement", description: "Atmospheric density will persist. This is a designated maintenance window.", intensity: "Medium", identityTag: identityTag, attempt: "Optimize your existing blueprints and fortify personal boundaries.", avoid: "Avoid launching entirely new initiatives until the signal-to-noise ratio improves." },
+            { period: "Monthly", theme: "Failure Mode Analysis", description: "A period designed to test the load-bearing capacity of your recent connections.", intensity: "High", identityTag: identityTag, attempt: "Conduct rigorous stress tests on your current projects.", avoid: "Do not ignore minor friction points; they indicate underlying structural weaknesses." },
+            { period: "Yearly", theme: "The Grand Synthesis", description: \`The overarching objective is to bridge your high-velocity concepts with earthly anchoring.\`, intensity: "High", identityTag: identityTag, attempt: "Execute step-by-step methodologies.", avoid: "Resist the urge to abandon projects halfway due to sudden shifts in intellectual wind direction." }
         ]
     });
   }

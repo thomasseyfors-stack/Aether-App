@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe, Download, AlertTriangle } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe, Download, AlertTriangle, Palette } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
@@ -335,54 +335,69 @@ export function NumerologyCard({ data }: { data: any }) {
   if (!data) return <UnavailableCard title="Numerology Resonance" />;
 
   return (
-    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all">
+    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-nebula-purple"></span> Numerology Resonance
         </h2>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4">
-        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
-          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Life Path</p>
-          <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.lifePath ?? '?'}</p>
-          <p className="text-[8px] text-ash-grey/60 uppercase mt-1">Calculated via Date of Birth</p>
+      <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4 flex flex-col justify-center">
+        <p className="text-nebula-purple text-[10px] md:text-xs uppercase tracking-wider mb-1">Life Path {data.lifePath}</p>
+        <p className="text-lg md:text-xl font-bold text-starlight-white leading-tight mb-2">{data.details?.title ?? '?'}</p>
+        
+        {data.details?.colors && (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {data.details.colors.map((color: string, idx: number) => (
+              <span key={idx} className="text-[9px] uppercase tracking-widest border border-nebula-purple/30 bg-nebula-purple/10 text-nebula-purple px-2 py-1 rounded inline-block">
+                {color}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-3 gap-2 mb-4">
+        <div className="bg-black/30 p-2 rounded-lg border border-ash-grey/5 text-center flex flex-col justify-center">
+          <p className="text-ash-grey text-[8px] uppercase tracking-wider mb-0.5">Destiny</p>
+          <p className="text-sm font-bold text-astral-gold">{data.destiny}</p>
         </div>
-        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
-          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Destiny</p>
-          <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.destiny ?? '?'}</p>
-          <p className="text-[8px] text-ash-grey/60 uppercase mt-1">Calculated via Full Legal Name</p>
+        <div className="bg-black/30 p-2 rounded-lg border border-ash-grey/5 text-center flex flex-col justify-center">
+          <p className="text-ash-grey text-[8px] uppercase tracking-wider mb-0.5">Soul Urge</p>
+          <p className="text-sm font-bold text-astral-gold">{data.soulUrge}</p>
         </div>
-        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
-          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Soul Urge</p>
-          <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.soulUrge ?? '?'}</p>
-          <p className="text-[8px] text-ash-grey/60 uppercase mt-1">Calculated via Name Vowels</p>
-        </div>
-        <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-ash-grey/5">
-          <p className="text-ash-grey text-[10px] md:text-xs uppercase tracking-wider mb-1">Personality</p>
-          <p className="text-xl md:text-2xl lg:text-3xl font-bold text-astral-gold">{data?.personality ?? '?'}</p>
-          <p className="text-[8px] text-ash-grey/60 uppercase mt-1">Calculated via Name Consonants</p>
+        <div className="bg-black/30 p-2 rounded-lg border border-ash-grey/5 text-center flex flex-col justify-center">
+          <p className="text-ash-grey text-[8px] uppercase tracking-wider mb-0.5">Personality</p>
+          <p className="text-sm font-bold text-astral-gold">{data.personality}</p>
         </div>
       </div>
 
-      <div className="mt-4 border-t border-ash-grey/10 pt-4">
+      <div className="mt-auto border-t border-ash-grey/10 pt-4">
         <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-between w-full text-left text-sm text-starlight-white hover:text-astral-gold transition-colors uppercase tracking-wider">
           <span>Interpretation Matrix</span>
           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
         {isExpanded && (
-          <div className="mt-4 text-ash-grey text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300">
-            {Array.isArray(data?.interpretation) ? (
-              <ul className="space-y-3">
+          <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
+            {data.details?.colorMeaning && (
+              <div className="p-3 bg-black/40 border border-nebula-purple/20 rounded text-[11px] leading-relaxed mb-3 shadow-inner">
+                <span className="text-nebula-purple font-bold uppercase tracking-widest text-[9px] block mb-1 flex items-center gap-1">
+                  <Palette className="w-3 h-3" /> Color Resonance
+                </span>
+                {data.details.colorMeaning}
+              </div>
+            )}
+            {Array.isArray(data.interpretation) ? (
+              <ul className="space-y-2">
                 {data.interpretation.map((item: string, idx: number) => (
                   <li key={idx} className="flex items-start gap-2">
-                    <span className="text-astral-gold mt-1 text-xs">◆</span>
+                    <span className="text-astral-gold mt-0.5 text-xs">◆</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className="whitespace-pre-wrap">{data?.interpretation ?? 'Interpretation unavailable.'}</div>
+              <div className="whitespace-pre-wrap">{data.interpretation}</div>
             )}
           </div>
         )}

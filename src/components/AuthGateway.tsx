@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 import AetherLogo from './AetherLogo';
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "YOUR_CLIENT_ID.apps.googleusercontent.com";
 
-function AuthForm({ onLogin }: { onLogin: () => void }) {
+function AuthForm({ onLogin }: { onLogin: (authData: { type: string, email?: string }) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    const hasGoogleAuth = localStorage.getItem('aether_google_auth');
-    const isGuest = localStorage.getItem('aether_guest');
-    if (hasGoogleAuth === 'true' || isGuest === 'true') {
-      onLogin();
-    }
-  }, [onLogin]);
+  // Auto-bypass useEffect REMOVED to enforce the Front Door policy
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password) onLogin();
+    if (email && password) {
+      onLogin({ type: 'email', email });
+    }
   };
 
   const handleGoogleSignIn = useGoogleLogin({
@@ -31,14 +27,14 @@ function AuthForm({ onLogin }: { onLogin: () => void }) {
         localStorage.setItem('aether_google_auth', 'true');
         localStorage.setItem('aether_user_fname', userInfo.given_name || '');
         localStorage.setItem('aether_user_lname', userInfo.family_name || '');
-        onLogin();
+        
+        onLogin({ type: 'google', email: userInfo.email });
       } catch (err) {
         console.error(err);
-        localStorage.setItem('aether_google_auth', 'true');
-        onLogin();
+        onLogin({ type: 'google' });
       }
     },
-    prompt: 'select_account' // Forces the Google authentication window to appear
+    prompt: 'select_account'
   });
 
   return (
@@ -77,7 +73,7 @@ function AuthForm({ onLogin }: { onLogin: () => void }) {
           <span className="uppercase tracking-wider text-sm">Sign in with Google</span>
         </button>
 
-        <button type="button" onClick={() => { localStorage.setItem('aether_guest', 'true'); onLogin(); }} className="mt-4 w-full border border-ash-grey/20 text-ash-grey hover:text-starlight-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 hover:bg-ash-grey/10 transition-colors uppercase tracking-wider text-xs">
+        <button type="button" onClick={() => { localStorage.setItem('aether_guest', 'true'); onLogin({ type: 'guest' }); }} className="mt-4 w-full border border-ash-grey/20 text-ash-grey hover:text-starlight-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 hover:bg-ash-grey/10 transition-colors uppercase tracking-wider text-xs">
           Proceed as Guest / Anonymous
         </button>
       </div>
@@ -85,7 +81,7 @@ function AuthForm({ onLogin }: { onLogin: () => void }) {
   );
 }
 
-export default function AuthGateway({ onLogin }: { onLogin: () => void }) {
+export default function AuthGateway({ onLogin }: { onLogin: (authData: { type: string, email?: string }) => void }) {
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <AuthForm onLogin={onLogin} />

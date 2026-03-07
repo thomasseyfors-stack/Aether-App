@@ -15,22 +15,36 @@ export default function App() {
   const [payload, setPayload] = useState<any>(null);
 
   useEffect(() => {
-    if (checkCacheTTL()) {
-      const cachedPayload = getFromCache();
-      if (cachedPayload) {
-        setPayload(cachedPayload);
-        setAppState('dashboard');
-      }
-    }
-  }, []);
-
-  useEffect(() => {
+    // We call this just to clear out stale 24-hr data silently in the background.
+    // It NO LONGER forces the user to the dashboard. They must authenticate first.
+    checkCacheTTL();
+    
     const handleGlobalGridNav = () => setAppState('global');
     window.addEventListener('navigateGlobalGrid', handleGlobalGridNav);
-    return () => window.removeEventListener('navigateGlobalGrid', handleGlobalGridNav as EventListener);
+    return () => window.removeEventListener('navigateGlobalGrid', handleGlobalGridNav);
   }, []);
 
-  const handleLogin = () => setAppState('intake');
+  const handleLogin = (authData: { type: string, email?: string }) => {
+    const cachedPayload = getFromCache();
+    const savedFormData = JSON.parse(localStorage.getItem('aether_form_data') || '{}');
+    const cachedEmail = localStorage.getItem('aether_user_email');
+
+    // If it's a Guest, always force Profile Intake
+    if (authData.type === 'guest') {
+      setAppState('intake');
+      return;
+    }
+
+    // If returning user and email matches the cached email, bypass Intake!
+    if (cachedPayload && savedFormData.birthYear && authData.email && authData.email === cachedEmail) {
+      setPayload(cachedPayload);
+      setAppState('dashboard');
+    } else {
+      // New user or different email. Save the new email and force Intake.
+      if (authData.email) localStorage.setItem('aether_user_email', authData.email);
+      setAppState('intake');
+    }
+  };
   
   const handleIntakeSubmit = (data: any) => {
     setPayload(data);
@@ -67,7 +81,7 @@ export default function App() {
           <Dashboard 
             payload={payload} 
             onEnterAxiom={() => setAppState('axiom')} 
-            onRecalibrate={handleRecalibrate}
+            onReset={handleRecalibrate}
           />
         )}
         {appState === 'axiom' && (
@@ -79,10 +93,12 @@ export default function App() {
           </ErrorBoundary>
         )}
         {appState === 'global' && payload && (
-          <GlobalGrid 
-            payload={payload} 
-            onBack={() => setAppState('dashboard')} 
-          />
+          <ErrorBoundary>
+            <GlobalGrid 
+              payload={payload} 
+              onBack={() => setAppState('dashboard')} 
+            />
+          </ErrorBoundary>
         )}
       </div>
     </ErrorBoundary>
