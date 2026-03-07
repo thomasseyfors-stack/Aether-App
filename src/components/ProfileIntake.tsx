@@ -207,7 +207,7 @@ export default function ProfileIntake({ onComplete, onSubmit, onCalculate }: Pro
             </label>
             <input 
               type="text" 
-              placeholder="e.g., Adak, Alaska" 
+              placeholder="e.g., City, State" 
               value={searchQuery} 
               onChange={handleSearchChange} 
               className="w-full bg-black/50 border border-ash-grey/20 rounded-lg px-3 py-2 text-starlight-white focus:outline-none focus:border-astral-gold transition-colors" 

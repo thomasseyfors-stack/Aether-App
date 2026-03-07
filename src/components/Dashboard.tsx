@@ -197,21 +197,12 @@ const getPatternIcon = (name: string) => {
 };
 
 export function IdentityMatrixCard({ title, data, icon }: any) {
-  const [selectedPlanet, setSelectedPlanet] = useState<{planet: any, lore: any} | null>(null);
+  // Modal state stripped. Accordion logic delegated to sub-components.
 
   if (!data) return <UnavailableCard title={title} />;
 
   return (
     <section className="bg-obsidian border border-ash-grey/20 rounded-xl p-4 md:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col h-full">
-      {/* MODAL MOUNT POINT */}
-      {selectedPlanet && (
-        <PlanetModal 
-          planet={selectedPlanet.planet} 
-          lore={selectedPlanet.lore} 
-          onClose={() => setSelectedPlanet(null)} 
-        />
-      )}
-
       <div className="flex items-center justify-between mb-4 border-b border-ash-grey/10 pb-3">
         <h2 className="text-astral-gold font-bold uppercase tracking-widest text-sm md:text-base flex items-center gap-2">
           {icon} {title}
@@ -224,7 +215,7 @@ export function IdentityMatrixCard({ title, data, icon }: any) {
 
         <div className="mt-6">
           <CollapsibleVault title="Primary Architecture" icon={<Sun className="w-3 h-3"/>} defaultOpen={true}>
-            <PlacementSection placements={data.placements} onPlanetClick={(p: any, lore: any) => setSelectedPlanet({planet: p, lore})} />
+            <PlacementSection placements={data.placements} />
           </CollapsibleVault>
           
           {data.aspects && data.aspects.length > 0 && (
@@ -274,35 +265,6 @@ export function IdentityMatrixCard({ title, data, icon }: any) {
 // ==========================================
 // TACTICAL UI COMPONENTS
 // ==========================================
-function PlanetModal({ planet, lore, onClose }: { planet: any, lore: any, onClose: () => void }) {
-  if (!planet) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in" onClick={onClose}>
-      <div className="bg-obsidian border border-astral-gold/50 rounded-xl p-6 max-w-sm w-full shadow-[0_0_40px_rgba(245,208,97,0.15)] relative overflow-hidden" onClick={e => e.stopPropagation()}>
-        {/* Decorative Background Element */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-astral-gold/5 rounded-bl-full -z-10"></div>
-        
-        <h3 className="text-astral-gold text-2xl font-bold uppercase tracking-widest mb-1">{planet.planet}</h3>
-        <p className="text-nebula-purple text-[10px] md:text-xs font-semibold uppercase tracking-widest mb-4 border-b border-ash-grey/20 pb-3">
-          {lore?.title || 'Celestial Body'}
-        </p>
-        
-        <p className="text-starlight-white text-sm leading-relaxed mb-6">
-          {lore?.description || 'Encrypted data stream unavailable.'}
-        </p>
-        
-        <div className="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-ash-grey/10">
-          <span className="text-astral-gold uppercase tracking-wider text-sm font-bold">{planet.sign}</span>
-          <span className="text-ash-grey font-mono text-sm">{planet.degree}</span>
-        </div>
-        
-        <button onClick={onClose} className="mt-6 w-full bg-ash-grey/10 hover:bg-astral-gold/20 hover:text-astral-gold text-starlight-white font-bold py-2.5 rounded transition-colors uppercase tracking-widest text-xs border border-transparent hover:border-astral-gold/30">
-          Acknowledge
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function CollapsibleVault({ title, icon, children, defaultOpen = true }: { title: string, icon: any, children: React.ReactNode, defaultOpen?: boolean }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);

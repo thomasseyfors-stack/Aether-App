@@ -63,7 +63,7 @@ export default function GlobalGrid({ payload, onBack }: { payload: any, onBack: 
           </div>
         </header>
 
-        {culturalData && culturalData.length > 0 ? (
+        {Array.isArray(culturalData) && culturalData.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {culturalData.map((node: any, idx: number) => (
               <CulturalNode key={idx} node={node} />
