@@ -124,7 +124,7 @@ export default function TransitionMatrix({ payload, onSuccess, onCancel }: Trans
   }
 
   return (
-    <div className="min-h-screen bg-obsidian relative overflow-hidden flex flex-col items-center justify-center">
+    <div className="loading-overlay flex flex-col items-center justify-center">
       <BackgroundVisuals stage={stage} />
 
       <div className="relative z-10 flex flex-col items-center">

@@ -196,18 +196,23 @@ const getPatternIcon = (name: string) => {
   return '✧';
 };
 
-export function IdentityMatrixCard({ title, data, icon }: any) {
-  // Modal state stripped. Accordion logic delegated to sub-components.
+// 1. Added imageSrc to the incoming parameters
+export function IdentityMatrixCard({ title, data, icon, imageSrc }: any) {
+  const [selectedPlanet, setSelectedPlanet] = useState<{planet: any, lore: any} | null>(null);
 
   if (!data) return <UnavailableCard title={title} />;
 
   return (
-    <div 
-      className="rounded-xl overflow-hidden border border-ash-grey/20 relative shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex flex-col h-full"
-      style={{ backgroundImage: `url('/images/${title.toLowerCase().replace(/\s+/g, '-')}-banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+    // 2. Applied the Vercel URL as a background image
+    <section 
+      className="bg-obsidian border border-ash-grey/20 rounded-xl p-4 md:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col h-full"
+      style={imageSrc ? { backgroundImage: `url(${imageSrc})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
     >
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div> {/* Dark overlay for text readability */}
-      <div className="relative z-10 p-4 md:p-6 flex flex-col h-full">
+      {/* 3. Injected a dark, blurred overlay so your text remains readable over the dynamic image */}
+      {imageSrc && <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>}
+      
+      {/* 4. Wrapped the internal content in a relative container to sit above the background */}
+      <div className="relative z-10 flex-1 flex flex-col h-full">
         <div className="flex items-center justify-between mb-4 border-b border-ash-grey/10 pb-3">
           <h2 className="text-astral-gold font-bold uppercase tracking-widest text-sm md:text-base flex items-center gap-2">
             {icon} {title}
@@ -264,7 +269,7 @@ export function IdentityMatrixCard({ title, data, icon }: any) {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
