@@ -63,6 +63,7 @@ export default function GlobalGrid({ payload, onBack }: { payload: any, onBack: 
           </div>
         </header>
 
+        {/* Protective Perimeter Activated */}
         {Array.isArray(culturalData) && culturalData.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {culturalData.map((node: any, idx: number) => (
@@ -70,8 +71,8 @@ export default function GlobalGrid({ payload, onBack }: { payload: any, onBack: 
             ))}
           </div>
         ) : (
-          <div className="text-center p-12 bg-black/30 border border-ash-grey/10 rounded-xl">
-            <p className="text-ash-grey uppercase tracking-widest">Global Telemetry Unavailable</p>
+          <div className="p-4 border border-dashed border-ash-grey/20">
+            <p className="text-[10px] uppercase text-ash-grey italic">Initializing Matrix Core...</p>
           </div>
         )}
       </div>

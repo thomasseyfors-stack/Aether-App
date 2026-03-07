@@ -202,63 +202,69 @@ export function IdentityMatrixCard({ title, data, icon }: any) {
   if (!data) return <UnavailableCard title={title} />;
 
   return (
-    <section className="bg-obsidian border border-ash-grey/20 rounded-xl p-4 md:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col h-full">
-      <div className="flex items-center justify-between mb-4 border-b border-ash-grey/10 pb-3">
-        <h2 className="text-astral-gold font-bold uppercase tracking-widest text-sm md:text-base flex items-center gap-2">
-          {icon} {title}
-        </h2>
-      </div>
+    <div 
+      className="rounded-xl overflow-hidden border border-ash-grey/20 relative shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex flex-col h-full"
+      style={{ backgroundImage: `url('/images/${title.toLowerCase().replace(/\s+/g, '-')}-banner.jpg')`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+    >
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div> {/* Dark overlay for text readability */}
+      <div className="relative z-10 p-4 md:p-6 flex flex-col h-full">
+        <div className="flex items-center justify-between mb-4 border-b border-ash-grey/10 pb-3">
+          <h2 className="text-astral-gold font-bold uppercase tracking-widest text-sm md:text-base flex items-center gap-2">
+            {icon} {title}
+          </h2>
+        </div>
 
-      <div className="flex-1 space-y-2">
-        {/* The Angles bypass the vault to act as the permanent foundational anchor */}
-        <AscendantData angles={data.angles} />
+        <div className="flex-1 space-y-2">
+          {/* The Angles bypass the vault to act as the permanent foundational anchor */}
+          <AscendantData angles={data.angles} />
 
-        <div className="mt-6">
-          <CollapsibleVault title="Primary Architecture" icon={<Sun className="w-3 h-3"/>} defaultOpen={true}>
-            <PlacementSection placements={data.placements} />
-          </CollapsibleVault>
-          
-          {data.aspects && data.aspects.length > 0 && (
-            <CollapsibleVault title="Major Aspects" icon={<Activity className="w-3 h-3"/>} defaultOpen={false}>
-              <div className="space-y-2">
-                {data.aspects.map((aspect: any, idx: number) => (
-                  <div key={idx} className="flex justify-between items-center bg-black/30 p-2 rounded border border-ash-grey/5 hover:border-ash-grey/20 transition-colors">
-                    <span className="text-starlight-white text-xs font-medium">{aspect.planets}</span>
-                    <span className="text-astral-gold text-[10px] uppercase tracking-widest">{aspect.type}</span>
-                  </div>
-                ))}
-              </div>
+          <div className="mt-6">
+            <CollapsibleVault title="Primary Architecture" icon={<Sun className="w-3 h-3"/>} defaultOpen={true}>
+              <PlacementSection placements={data.placements} />
             </CollapsibleVault>
-          )}
-
-          {data.patterns && data.patterns.length > 0 && (
-            <CollapsibleVault title="Structural Patterns" icon={<Hexagon className="w-3 h-3"/>} defaultOpen={true}>
-              <div className="space-y-3">
-                {data.patterns.map((pattern: any, idx: number) => {
-                  const codexEntry = Object.entries(PATTERN_CODEX).find(([key]) => pattern.name.includes(key));
-                  const interpretation = codexEntry ? codexEntry[1].description : pattern.description;
-                  const esotericTitle = codexEntry ? codexEntry[1].title : 'Structural Geometry';
-
-                  return (
-                    <div key={idx} className="bg-black/30 p-3 rounded border border-ash-grey/5 hover:border-nebula-purple/30 transition-colors">
-                      <div className="flex justify-between items-start mb-1 gap-2">
-                        <h4 className="text-starlight-white font-bold text-sm flex items-center gap-2">
-                          <span className="text-astral-gold text-lg">{getPatternIcon(pattern.name)}</span> {pattern.name}
-                        </h4>
-                        <span className="text-[7px] md:text-[8px] uppercase tracking-widest text-nebula-purple bg-nebula-purple/10 border border-nebula-purple/30 px-1.5 py-0.5 rounded text-right shrink-0">
-                          {esotericTitle}
-                        </span>
-                      </div>
-                      <p className="text-ash-grey text-[10px] md:text-xs leading-relaxed mt-1">{interpretation}</p>
+            
+            {data.aspects && data.aspects.length > 0 && (
+              <CollapsibleVault title="Major Aspects" icon={<Activity className="w-3 h-3"/>} defaultOpen={false}>
+                <div className="space-y-2">
+                  {data.aspects.map((aspect: any, idx: number) => (
+                    <div key={idx} className="flex justify-between items-center bg-black/30 p-2 rounded border border-ash-grey/5 hover:border-ash-grey/20 transition-colors">
+                      <span className="text-starlight-white text-xs font-medium">{aspect.planets}</span>
+                      <span className="text-astral-gold text-[10px] uppercase tracking-widest">{aspect.type}</span>
                     </div>
-                  );
-                })}
-              </div>
-            </CollapsibleVault>
-          )}
+                  ))}
+                </div>
+              </CollapsibleVault>
+            )}
+
+            {data.patterns && data.patterns.length > 0 && (
+              <CollapsibleVault title="Structural Patterns" icon={<Hexagon className="w-3 h-3"/>} defaultOpen={true}>
+                <div className="space-y-3">
+                  {data.patterns.map((pattern: any, idx: number) => {
+                    const codexEntry = Object.entries(PATTERN_CODEX).find(([key]) => pattern.name.includes(key));
+                    const interpretation = codexEntry ? codexEntry[1].description : pattern.description;
+                    const esotericTitle = codexEntry ? codexEntry[1].title : 'Structural Geometry';
+
+                    return (
+                      <div key={idx} className="bg-black/30 p-3 rounded border border-ash-grey/5 hover:border-nebula-purple/30 transition-colors">
+                        <div className="flex justify-between items-start mb-1 gap-2">
+                          <h4 className="text-starlight-white font-bold text-sm flex items-center gap-2">
+                            <span className="text-astral-gold text-lg">{getPatternIcon(pattern.name)}</span> {pattern.name}
+                          </h4>
+                          <span className="text-[7px] md:text-[8px] uppercase tracking-widest text-nebula-purple bg-nebula-purple/10 border border-nebula-purple/30 px-1.5 py-0.5 rounded text-right shrink-0">
+                            {esotericTitle}
+                          </span>
+                        </div>
+                        <p className="text-ash-grey text-[10px] md:text-xs leading-relaxed mt-1">{interpretation}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CollapsibleVault>
+            )}
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
