@@ -187,110 +187,83 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
 // HIERARCHICAL MATRIX COMPONENTS
 // ---------------------------------------------------------------------------
 
-export function IdentityMatrixCard({ title, subtitle, data, isDefaultTime = false, imageSrc, isPrimary = false, isEncrypted = false }: any) {
-  const [isExpanded, setIsExpanded] = useState(isPrimary);
+// PATTERN SYMBOLS
+const getPatternIcon = (name: string) => {
+  if (name.includes('Cross')) return '⌖';
+  if (name.includes('Square') || name.includes('Stellium')) return '⊤';
+  if (name.includes('Trine')) return '△';
+  if (name.includes('Yod')) return '⇡';
+  return '✧';
+};
 
-  if (!data || !data.placements) return <UnavailableCard title={title} />;
+export function IdentityMatrixCard({ title, data, icon }: any) {
+  const [selectedPlanet, setSelectedPlanet] = useState<{planet: any, lore: any} | null>(null);
 
-  // SEPARATE MAJORS AND MINORS
-  const MAJORS = ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'Earth'];
-  const majorPlacements = data.placements.filter((p: any) => MAJORS.includes(p.planet));
-  const minorPlacements = data.placements.filter((p: any) => !MAJORS.includes(p.planet));
-
-  // PATTERN SYMBOLS
-  const getPatternIcon = (name: string) => {
-    if (name.includes('Cross')) return '⌖';
-    if (name.includes('Square') || name.includes('Stellium')) return '⊤';
-    if (name.includes('Trine')) return '△';
-    if (name.includes('Yod')) return '⇡';
-    return '✧';
-  };
+  if (!data) return <UnavailableCard title={title} />;
 
   return (
-    <section className="bg-obsidian border border-ash-grey/20 rounded-xl overflow-hidden shadow-lg transition-all">
-      <div className="flex flex-col md:flex-row">
-        {imageSrc && (
-          <div className="w-full md:w-1/4 lg:w-1/5 bg-black relative min-h-[120px] md:min-h-[auto] border-b md:border-b-0 md:border-r border-ash-grey/20">
-            <img src={imageSrc} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-60" />
-            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-obsidian via-obsidian/80 to-transparent"></div>
-          </div>
-        )}
-        <div className="flex-1 p-4 md:p-6">
-          <div className="flex items-start justify-between cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                {isEncrypted ? <Lock className="w-4 h-4 text-nebula-purple" /> : <Unlock className="w-4 h-4 text-astral-gold" />}
-                <p className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase">{subtitle}</p>
+    <section className="bg-obsidian border border-ash-grey/20 rounded-xl p-4 md:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col h-full">
+      {/* MODAL MOUNT POINT */}
+      {selectedPlanet && (
+        <PlanetModal 
+          planet={selectedPlanet.planet} 
+          lore={selectedPlanet.lore} 
+          onClose={() => setSelectedPlanet(null)} 
+        />
+      )}
+
+      <div className="flex items-center justify-between mb-4 border-b border-ash-grey/10 pb-3">
+        <h2 className="text-astral-gold font-bold uppercase tracking-widest text-sm md:text-base flex items-center gap-2">
+          {icon} {title}
+        </h2>
+      </div>
+
+      <div className="flex-1 space-y-2">
+        {/* The Angles bypass the vault to act as the permanent foundational anchor */}
+        <AscendantData angles={data.angles} />
+
+        <div className="mt-6">
+          <CollapsibleVault title="Primary Architecture" icon={<Sun className="w-3 h-3"/>} defaultOpen={true}>
+            <PlacementSection placements={data.placements} onPlanetClick={(p: any, lore: any) => setSelectedPlanet({planet: p, lore})} />
+          </CollapsibleVault>
+          
+          {data.aspects && data.aspects.length > 0 && (
+            <CollapsibleVault title="Major Aspects" icon={<Activity className="w-3 h-3"/>} defaultOpen={false}>
+              <div className="space-y-2">
+                {data.aspects.map((aspect: any, idx: number) => (
+                  <div key={idx} className="flex justify-between items-center bg-black/30 p-2 rounded border border-ash-grey/5 hover:border-ash-grey/20 transition-colors">
+                    <span className="text-starlight-white text-xs font-medium">{aspect.planets}</span>
+                    <span className="text-astral-gold text-[10px] uppercase tracking-widest">{aspect.type}</span>
+                  </div>
+                ))}
               </div>
-              <h2 className="text-lg md:text-xl font-bold text-starlight-white uppercase tracking-wider">{title}</h2>
-              {isDefaultTime && <p className="text-red-400 text-[10px] mt-1 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Time unknown. Angles unverified.</p>}
-            </div>
-            <button className="text-ash-grey hover:text-starlight-white transition-colors p-2">
-              {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-            </button>
-          </div>
+            </CollapsibleVault>
+          )}
 
-          {isExpanded && (
-            <div className="mt-6 space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
-              
-              <PlacementSection title="Major Planetary Bodies" icon={<Sun className="w-4 h-4 text-astral-gold" />} placements={majorPlacements} fallback="Awaiting geometric mapping." />
-              
-              {minorPlacements.length > 0 && (
-                <PlacementSection title="Minor Celestial Objects" icon={<Asterisk className="w-4 h-4 text-nebula-purple" />} placements={minorPlacements} fallback="Awaiting deep-space telemetry scan." />
-              )}
+          {data.patterns && data.patterns.length > 0 && (
+            <CollapsibleVault title="Structural Patterns" icon={<Hexagon className="w-3 h-3"/>} defaultOpen={true}>
+              <div className="space-y-3">
+                {data.patterns.map((pattern: any, idx: number) => {
+                  const codexEntry = Object.entries(PATTERN_CODEX).find(([key]) => pattern.name.includes(key));
+                  const interpretation = codexEntry ? codexEntry[1].description : pattern.description;
+                  const esotericTitle = codexEntry ? codexEntry[1].title : 'Structural Geometry';
 
-              {data.angles && <AscendantData angles={data.angles} />}
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-6 border-t border-ash-grey/10">
-                <div>
-                  <h3 className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-4 flex items-center gap-2">
-                    <Orbit className="w-4 h-4 text-astral-gold" /> Major Aspects
-                  </h3>
-                  {data.aspects && data.aspects.length > 0 ? (
-                    <div className="space-y-2">
-                      {data.aspects.map((aspect: any, idx: number) => (
-                        <div key={idx} className="bg-black/30 p-2 md:p-3 rounded border border-ash-grey/5 flex justify-between items-center text-[10px] md:text-xs">
-                          <span className="text-starlight-white font-medium">{aspect.type}</span>
-                          <span className="text-astral-gold">{aspect.planets}</span>
-                          <span className="text-ash-grey">{aspect.orb}</span>
-                        </div>
-                      ))}
+                  return (
+                    <div key={idx} className="bg-black/30 p-3 rounded border border-ash-grey/5 hover:border-nebula-purple/30 transition-colors">
+                      <div className="flex justify-between items-start mb-1 gap-2">
+                        <h4 className="text-starlight-white font-bold text-sm flex items-center gap-2">
+                          <span className="text-astral-gold text-lg">{getPatternIcon(pattern.name)}</span> {pattern.name}
+                        </h4>
+                        <span className="text-[7px] md:text-[8px] uppercase tracking-widest text-nebula-purple bg-nebula-purple/10 border border-nebula-purple/30 px-1.5 py-0.5 rounded text-right shrink-0">
+                          {esotericTitle}
+                        </span>
+                      </div>
+                      <p className="text-ash-grey text-[10px] md:text-xs leading-relaxed mt-1">{interpretation}</p>
                     </div>
-                  ) : <p className="text-ash-grey text-[10px] italic">Awaiting geometric mapping.</p>}
-                </div>
-
-                <div>
-                  <h3 className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-4 flex items-center gap-2">
-                    <CircleDot className="w-4 h-4 text-nebula-purple" /> Structural Patterns
-                  </h3>
-                  {data.patterns && data.patterns.length > 0 ? (
-                    <div className="space-y-3">
-                      {data.patterns.map((pattern: any, idx: number) => {
-                        // Dynamically match the pattern name against the offline dictionary
-                        const codexEntry = Object.entries(PATTERN_CODEX).find(([key]) => pattern.name.includes(key));
-                        const interpretation = codexEntry ? codexEntry[1].description : pattern.description;
-                        const esotericTitle = codexEntry ? codexEntry[1].title : 'Structural Geometry';
-
-                        return (
-                          <div key={idx} className="bg-black/30 p-3 rounded border border-ash-grey/5 hover:border-nebula-purple/30 transition-colors">
-                            <div className="flex justify-between items-start mb-1 gap-2">
-                              <h4 className="text-starlight-white font-bold text-sm flex items-center gap-2">
-                                <span className="text-astral-gold text-lg">{getPatternIcon(pattern.name)}</span> {pattern.name}
-                              </h4>
-                              <span className="text-[7px] md:text-[8px] uppercase tracking-widest text-nebula-purple bg-nebula-purple/10 border border-nebula-purple/30 px-1.5 py-0.5 rounded text-right shrink-0">
-                                {esotericTitle}
-                              </span>
-                            </div>
-                            <p className="text-ash-grey text-[10px] md:text-xs leading-relaxed mt-1">{interpretation}</p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : <p className="text-ash-grey text-[10px] italic opacity-70">Awaiting geometric mapping.</p>}
-                </div>
+                  );
+                })}
               </div>
-
-            </div>
+            </CollapsibleVault>
           )}
         </div>
       </div>
