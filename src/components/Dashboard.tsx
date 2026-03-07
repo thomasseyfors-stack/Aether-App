@@ -360,14 +360,19 @@ export function NumerologyCard({ data }: { data: any }) {
         </h2>
       </div>
       
-      <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4 flex flex-col justify-center">
-        <p className="text-nebula-purple text-[10px] md:text-xs uppercase tracking-wider mb-1">Life Path {data.lifePath}</p>
-        <p className="text-lg md:text-xl font-bold text-starlight-white leading-tight mb-2">{data.details?.title ?? '?'}</p>
+      <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4 flex flex-col justify-center items-center text-center">
+        {/* HIERARCHY INVERSION */}
+        <p className="text-4xl md:text-5xl font-bold text-starlight-white leading-tight mb-1 drop-shadow-md">
+          Life Path {data.lifePath}
+        </p>
+        <p className="text-nebula-purple text-xs md:text-sm font-semibold uppercase tracking-widest mb-4">
+          {data.details?.title ?? '?'}
+        </p>
         
         {data.details?.colors && (
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap justify-center gap-2 mt-2">
             {data.details.colors.map((color: string, idx: number) => (
-              <span key={idx} className="text-[9px] uppercase tracking-widest border border-nebula-purple/30 bg-nebula-purple/10 text-nebula-purple px-2 py-1 rounded inline-block">
+              <span key={idx} className="text-[10px] md:text-xs font-bold uppercase tracking-widest border border-nebula-purple/50 bg-nebula-purple/20 text-starlight-white px-3 py-1.5 rounded inline-block shadow-sm">
                 {color}
               </span>
             ))}
@@ -408,14 +413,14 @@ export function NumerologyCard({ data }: { data: any }) {
             {Array.isArray(data.interpretation) ? (
               <ul className="space-y-2">
                 {data.interpretation.map((item: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-2">
+                  <li key={idx} className="flex items-start gap-2 text-left">
                     <span className="text-astral-gold mt-0.5 text-xs">◆</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className="whitespace-pre-wrap">{data.interpretation}</div>
+              <div className="whitespace-pre-wrap text-left">{data.interpretation}</div>
             )}
           </div>
         )}
