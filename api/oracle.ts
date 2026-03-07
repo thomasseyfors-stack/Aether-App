@@ -68,13 +68,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const sunSign = matrixData?.tropical?.find((p: any) => p.planet === 'Sun')?.sign || "Cosmic";
     const isSovereign = matrixData?.starseed?.title?.includes("Shepherd");
 
-    const interferenceMessage = \`The Aether grid is currently experiencing high-density atmospheric interference due to heavy celestial traffic. Your mathematical geometries have been successfully locked, but the deep interpretive signals require a clearer frequency. Hold your current trajectory.\`;
+    const interferenceMessage = `The Aether grid is currently experiencing high-density atmospheric interference due to heavy celestial traffic. Your mathematical geometries have been successfully locked, but the deep interpretive signals require a clearer frequency. Hold your current trajectory.`;
 
     const affirmation = isSovereign 
       ? "My internal architecture is sound. I seamlessly transmute high-velocity Aetheric data into concrete, unshakeable reality." 
-      : \`I trust the unfolding process of my \${sunSign} energy, anchoring my unique visions into solid reality.\`;
+      : `I trust the unfolding process of my ${sunSign} energy, anchoring my unique visions into solid reality.`;
       
-    const identityTag = isSovereign ? "The Master Builder" : \`The \${sunSign} Operator\`;
+    const identityTag = isSovereign ? "The Master Builder" : `The ${sunSign} Operator`;
 
     return res.status(200).json({
         interpretations: { tropical: interferenceMessage, sidereal: interferenceMessage, draconic: interferenceMessage, heliocentric: interferenceMessage },
@@ -84,7 +84,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             { period: "Daily", theme: "Tactical Silence", description: "The primary grid is down. Rely on localized offline caching and practical intuition.", intensity: "Low", identityTag: "System Failsafe", attempt: "Focus strictly on immediate, tangible infrastructure repairs.", avoid: "Do not attempt high-level theoretical projections while the radar is clouded." },
             { period: "Weekly", theme: "Structural Reinforcement", description: "Atmospheric density will persist. This is a designated maintenance window.", intensity: "Medium", identityTag: identityTag, attempt: "Optimize your existing blueprints and fortify personal boundaries.", avoid: "Avoid launching entirely new initiatives until the signal-to-noise ratio improves." },
             { period: "Monthly", theme: "Failure Mode Analysis", description: "A period designed to test the load-bearing capacity of your recent connections.", intensity: "High", identityTag: identityTag, attempt: "Conduct rigorous stress tests on your current projects.", avoid: "Do not ignore minor friction points; they indicate underlying structural weaknesses." },
-            { period: "Yearly", theme: "The Grand Synthesis", description: \`The overarching objective is to bridge your high-velocity concepts with earthly anchoring.\`, intensity: "High", identityTag: identityTag, attempt: "Execute step-by-step methodologies.", avoid: "Resist the urge to abandon projects halfway due to sudden shifts in intellectual wind direction." }
+            { period: "Yearly", theme: "The Grand Synthesis", description: `The overarching objective is to bridge your high-velocity concepts with earthly anchoring.`, intensity: "High", identityTag: identityTag, attempt: "Execute step-by-step methodologies.", avoid: "Resist the urge to abandon projects halfway due to sudden shifts in intellectual wind direction." }
         ]
     });
   }

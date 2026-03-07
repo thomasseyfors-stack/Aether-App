@@ -6,7 +6,7 @@ import ErrorBoundary from './ErrorBoundary';
 import AetherLogo from './AetherLogo';
 import { generateCharacteristics } from '../utils/geminiClient';
 import { exportCodexPDF } from '../utils/exportEngine';
-import { PLACEMENT_CODEX, ZODIAC_CODEX } from '../utils/codexLibrary';
+import { PLACEMENT_CODEX, ZODIAC_CODEX, PLANETARY_CODEX, PATTERN_CODEX } from '../utils/codexLibrary';
 
 export const ALL_ZODIAC_SIGNS = [
   'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
@@ -265,16 +265,28 @@ export function IdentityMatrixCard({ title, subtitle, data, isDefaultTime = fals
                   </h3>
                   {data.patterns && data.patterns.length > 0 ? (
                     <div className="space-y-3">
-                      {data.patterns.map((pattern: any, idx: number) => (
-                        <div key={idx} className="bg-black/30 p-3 rounded border border-ash-grey/5">
-                          <h4 className="text-starlight-white font-bold text-sm flex items-center gap-2 mb-1">
-                            <span className="text-astral-gold text-lg">{getPatternIcon(pattern.name)}</span> {pattern.name}
-                          </h4>
-                          <p className="text-ash-grey text-[10px] md:text-xs leading-relaxed">{pattern.description}</p>
-                        </div>
-                      ))}
+                      {data.patterns.map((pattern: any, idx: number) => {
+                        // Dynamically match the pattern name against the offline dictionary
+                        const codexEntry = Object.entries(PATTERN_CODEX).find(([key]) => pattern.name.includes(key));
+                        const interpretation = codexEntry ? codexEntry[1].description : pattern.description;
+                        const esotericTitle = codexEntry ? codexEntry[1].title : 'Structural Geometry';
+
+                        return (
+                          <div key={idx} className="bg-black/30 p-3 rounded border border-ash-grey/5 hover:border-nebula-purple/30 transition-colors">
+                            <div className="flex justify-between items-start mb-1 gap-2">
+                              <h4 className="text-starlight-white font-bold text-sm flex items-center gap-2">
+                                <span className="text-astral-gold text-lg">{getPatternIcon(pattern.name)}</span> {pattern.name}
+                              </h4>
+                              <span className="text-[7px] md:text-[8px] uppercase tracking-widest text-nebula-purple bg-nebula-purple/10 border border-nebula-purple/30 px-1.5 py-0.5 rounded text-right shrink-0">
+                                {esotericTitle}
+                              </span>
+                            </div>
+                            <p className="text-ash-grey text-[10px] md:text-xs leading-relaxed mt-1">{interpretation}</p>
+                          </div>
+                        );
+                      })}
                     </div>
-                  ) : <p className="text-ash-grey text-[10px] italic">Awaiting geometric mapping.</p>}
+                  ) : <p className="text-ash-grey text-[10px] italic opacity-70">Awaiting geometric mapping.</p>}
                 </div>
               </div>
 
@@ -295,19 +307,24 @@ export function PlacementSection({ title, icon, placements, fallback }: any) {
         {icon} {title}
       </h3>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
-        {placements.map((p: any, idx: number) => (
-          <div key={idx} className="bg-black/30 p-2 md:p-3 rounded border border-ash-grey/5 flex flex-col justify-center gap-1">
-            <span className="text-starlight-white font-medium text-[11px] md:text-xs">{p.planet}</span>
-            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
-              <span className="text-astral-gold uppercase tracking-wider text-[10px] md:text-xs break-words">
-                {p.sign}
-              </span>
-              <span className="text-ash-grey font-mono text-[10px] md:text-xs whitespace-nowrap">
-                {p.degree}
-              </span>
+        {placements.map((p: any, idx: number) => {
+          const planetLore = PLANETARY_CODEX[p.planet];
+          return (
+            <div key={idx} className="bg-black/30 p-2 md:p-3 rounded border border-ash-grey/5 flex flex-col justify-center gap-1 group relative transition-colors hover:border-astral-gold/30" title={planetLore?.description}>
+              <span className="text-starlight-white font-medium text-[11px] md:text-xs">{p.planet}</span>
+              <span className="text-nebula-purple text-[7px] md:text-[8px] uppercase tracking-widest leading-none">{planetLore?.title || 'Celestial Body'}</span>
+              
+              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1 pt-1 border-t border-ash-grey/10">
+                <span className="text-astral-gold uppercase tracking-wider text-[10px] md:text-xs break-words">
+                  {p.sign}
+                </span>
+                <span className="text-ash-grey font-mono text-[10px] md:text-xs whitespace-nowrap">
+                  {p.degree}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

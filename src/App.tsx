@@ -81,7 +81,7 @@ export default function App() {
           <Dashboard 
             payload={payload} 
             onEnterAxiom={() => setAppState('axiom')} 
-            onReset={handleRecalibrate}
+            onRecalibrate={handleRecalibrate}
           />
         )}
         {appState === 'axiom' && (
