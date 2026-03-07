@@ -6,6 +6,7 @@ import ErrorBoundary from './ErrorBoundary';
 import AetherLogo from './AetherLogo';
 import { generateCharacteristics } from '../utils/geminiClient';
 import { exportCodexPDF } from '../utils/exportEngine';
+import { PLACEMENT_CODEX, ZODIAC_CODEX } from '../utils/codexLibrary';
 
 export const ALL_ZODIAC_SIGNS = [
   'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
@@ -409,30 +410,42 @@ export function NumerologyCard({ data }: { data: any }) {
 export function AscendantData({ angles }: { angles: any }) {
   if (!angles) return null;
 
-  const AngleBox = ({ title, data }: { title: string, data: any }) => (
-    <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20 flex flex-col justify-center">
-      <p className="text-ash-grey text-[9px] md:text-xs uppercase tracking-wider mb-1">{title}</p>
-      <div className="flex flex-wrap items-center gap-1.5 md:gap-2 w-full">
-        <p className="text-sm md:text-lg font-bold text-starlight-white break-words">
-          {data?.sign ?? '---'} 
-        </p>
+  const AngleBox = ({ keyName, data }: { keyName: string, data: any }) => {
+    const codex = PLACEMENT_CODEX[keyName];
+    const zCodex = ZODIAC_CODEX[data?.sign];
+
+    return (
+      <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20 flex flex-col h-full">
+        <div className="mb-2">
+          <p className="text-ash-grey text-[9px] md:text-[10px] font-bold uppercase tracking-wider mb-0.5">{keyName}</p>
+          <p className="text-nebula-purple text-[8px] md:text-[9px] uppercase tracking-widest">{codex?.title}</p>
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-1.5 md:gap-2 w-full mt-auto">
+          <p className="text-sm md:text-lg font-bold text-starlight-white break-words">
+            {data?.sign ?? '---'} 
+          </p>
+        </div>
+        <div className="flex justify-between items-center mt-1">
+          <p className="text-astral-gold text-[10px] md:text-xs shrink-0">{data?.degree ?? '0°'}</p>
+          {zCodex && <span className="text-[8px] text-ash-grey bg-black/50 border border-ash-grey/20 px-1 rounded">{zCodex.color}</span>}
+        </div>
       </div>
-      <p className="text-astral-gold text-[10px] md:text-xs mt-1 shrink-0">{data?.degree ?? '0°'}</p>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="border-t border-ash-grey/10 pt-4 md:pt-6 mt-2">
-      <h3 className="text-ash-grey text-[10px] md:text-xs tracking-widest uppercase mb-3 md:mb-4">Angular Coordinates</h3>
+      <h3 className="text-ash-grey text-[10px] md:text-xs tracking-widest uppercase mb-3 md:mb-4">Structural Angles & Karmic Coordinates</h3>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
-        <AngleBox title="Ascendant (ASC)" data={angles.ascendant} />
-        <AngleBox title="Descendant (DSC)" data={angles.descendant} />
-        <AngleBox title="Midheaven (MC)" data={angles.midheaven} />
-        <AngleBox title="Imum Coeli (IC)" data={angles.imumCoeli} />
-        <AngleBox title="North Node" data={angles.northNode} />
-        <AngleBox title="South Node" data={angles.southNode} />
+        <AngleBox keyName="Ascendant" data={angles.ascendant} />
+        <AngleBox keyName="Descendant" data={angles.descendant} />
+        <AngleBox keyName="Midheaven" data={angles.midheaven} />
+        <AngleBox keyName="Imum Coeli" data={angles.imumCoeli} />
+        <AngleBox keyName="North Node" data={angles.northNode} />
+        <AngleBox keyName="South Node" data={angles.southNode} />
       </div>
-      <p className="text-ash-grey text-[10px] mt-4 text-center italic">{angles.houses ?? 'House data computed.'}</p>
+      <p className="text-ash-grey text-[10px] mt-4 text-center italic">Coordinate framework mathematically secured.</p>
     </div>
   );
 }
