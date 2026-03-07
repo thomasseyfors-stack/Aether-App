@@ -348,34 +348,33 @@ function CollapsibleVault({ title, icon, children, defaultOpen = true }: { title
   );
 }
 
-export function PlacementSection({ title, icon, placements, fallback }: any) {
+export function PlacementSection({ placements, onPlanetClick }: any) {
   if (!placements || placements.length === 0) return null;
 
   return (
-    <div className="mb-4 md:mb-6">
-      <h3 className="text-ash-grey text-[10px] md:text-xs font-semibold tracking-widest uppercase mb-3 md:mb-4 flex items-center gap-2">
-        {icon} {title}
-      </h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
-        {placements.map((p: any, idx: number) => {
-          const planetLore = PLANETARY_CODEX[p.planet];
-          return (
-            <div key={idx} className="bg-black/30 p-2 md:p-3 rounded border border-ash-grey/5 flex flex-col justify-center gap-1 group relative transition-colors hover:border-astral-gold/30" title={planetLore?.description}>
-              <span className="text-starlight-white font-medium text-[11px] md:text-xs">{p.planet}</span>
-              <span className="text-nebula-purple text-[7px] md:text-[8px] uppercase tracking-widest leading-none">{planetLore?.title || 'Celestial Body'}</span>
-              
-              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1 pt-1 border-t border-ash-grey/10">
-                <span className="text-astral-gold uppercase tracking-wider text-[10px] md:text-xs break-words">
-                  {p.sign}
-                </span>
-                <span className="text-ash-grey font-mono text-[10px] md:text-xs whitespace-nowrap">
-                  {p.degree}
-                </span>
-              </div>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
+      {placements.map((p: any, idx: number) => {
+        const planetLore = PLANETARY_CODEX[p.planet];
+        return (
+          <div 
+            key={idx} 
+            onClick={() => onPlanetClick(p, planetLore)} 
+            className="bg-black/40 p-2 md:p-3 rounded border border-ash-grey/10 flex flex-col justify-center gap-1 group relative transition-all duration-300 hover:border-astral-gold/50 hover:bg-black/60 cursor-pointer hover:-translate-y-0.5 shadow-sm hover:shadow-[0_0_15px_rgba(245,208,97,0.1)]"
+          >
+            <span className="text-starlight-white font-medium text-[11px] md:text-xs group-hover:text-astral-gold transition-colors">{p.planet}</span>
+            <span className="text-nebula-purple text-[7px] md:text-[8px] uppercase tracking-widest leading-none">{planetLore?.title || 'Celestial Body'}</span>
+            
+            <div className="flex flex-wrap items-center justify-between mt-1 pt-1 border-t border-ash-grey/10">
+              <span className="text-ash-grey group-hover:text-starlight-white uppercase tracking-wider text-[10px] md:text-xs break-words transition-colors">
+                {p.sign}
+              </span>
+              <span className="text-ash-grey font-mono text-[9px] md:text-[10px] whitespace-nowrap opacity-50">
+                {p.degree}
+              </span>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
