@@ -283,18 +283,22 @@ function CollapsibleVault({ title, icon, children, defaultOpen = true }: { title
   );
 }
 
-export function PlacementSection({ placements, onPlanetClick }: any) {
+export function PlacementSection({ placements }: any) {
+  const [activePlanet, setActivePlanet] = useState<string | null>(null);
+
   if (!placements || placements.length === 0) return null;
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
       {placements.map((p: any, idx: number) => {
         const planetLore = PLANETARY_CODEX[p.planet];
+        const isExpanded = activePlanet === p.planet;
+
         return (
           <div 
             key={idx} 
-            onClick={() => onPlanetClick(p, planetLore)} 
-            className="bg-black/40 p-2 md:p-3 rounded border border-ash-grey/10 flex flex-col justify-center gap-1 group relative transition-all duration-300 hover:border-astral-gold/50 hover:bg-black/60 cursor-pointer hover:-translate-y-0.5 shadow-sm hover:shadow-[0_0_15px_rgba(245,208,97,0.1)]"
+            onClick={() => setActivePlanet(isExpanded ? null : p.planet)} 
+            className="bg-black/40 p-2 md:p-3 rounded border border-ash-grey/10 flex flex-col justify-center gap-1 group relative transition-all duration-300 hover:border-astral-gold/50 hover:bg-black/60 cursor-pointer shadow-sm hover:shadow-[0_0_15px_rgba(245,208,97,0.1)]"
           >
             <span className="text-starlight-white font-medium text-[11px] md:text-xs group-hover:text-astral-gold transition-colors">{p.planet}</span>
             <span className="text-nebula-purple text-[7px] md:text-[8px] uppercase tracking-widest leading-none">{planetLore?.title || 'Celestial Body'}</span>
@@ -307,6 +311,13 @@ export function PlacementSection({ placements, onPlanetClick }: any) {
                 {p.degree}
               </span>
             </div>
+
+            {/* Accordion Expansion Matrix */}
+            {isExpanded && planetLore?.description && (
+              <div className="mt-2 pt-2 border-t border-ash-grey/20 text-[9px] md:text-[10px] text-ash-grey leading-relaxed animate-in slide-in-from-top-1">
+                {planetLore.description}
+              </div>
+            )}
           </div>
         );
       })}
@@ -414,17 +425,20 @@ export function NumerologyCard({ data }: { data: any }) {
 }
 
 export function AscendantData({ angles }: { angles: any }) {
+  const [activeAngle, setActiveAngle] = useState<string | null>(null);
+
   if (!angles) return null;
 
   const AngleBox = ({ keyName, data }: { keyName: string, data: any }) => {
-    // 1. Extract the specific lore and colors from the offline Codex
     const codex = PLACEMENT_CODEX[keyName];
     const zCodex = ZODIAC_CODEX[data?.sign];
+    const isExpanded = activeAngle === keyName;
 
     return (
-      <div className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20 flex flex-col h-full shadow-inner relative overflow-hidden group hover:border-astral-gold/50 transition-colors">
-        
-        {/* Subtle background glow on hover */}
+      <div 
+        onClick={() => setActiveAngle(isExpanded ? null : keyName)}
+        className="bg-black/30 p-3 md:p-4 rounded-lg border border-astral-gold/20 flex flex-col h-full shadow-inner relative overflow-hidden group hover:border-astral-gold/50 transition-all cursor-pointer"
+      >
         <div className="absolute top-0 right-0 w-16 h-16 bg-astral-gold/5 rounded-bl-full -z-10 group-hover:bg-astral-gold/10 transition-colors"></div>
 
         <div className="mb-2">
@@ -446,6 +460,13 @@ export function AscendantData({ angles }: { angles: any }) {
             </span>
           )}
         </div>
+
+        {/* Accordion Expansion Matrix */}
+        {isExpanded && codex?.description && (
+          <div className="mt-3 pt-3 border-t border-ash-grey/20 text-[10px] md:text-xs text-ash-grey leading-relaxed animate-in slide-in-from-top-1">
+            {codex.description}
+          </div>
+        )}
       </div>
     );
   };
