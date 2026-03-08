@@ -1,63 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { generateChronometerForecast } from '../utils/geminiClient';
-import { Clock, AlertTriangle, Zap, ShieldAlert, Activity, Crosshair, Users } from 'lucide-react';
+import { Clock, AlertTriangle, Zap, ShieldAlert, Activity, Crosshair } from 'lucide-react';
 import { motion } from 'motion/react';
 
-const MOCK_TELEMETRY = {
-  "command": "GENERATE_TEMPORAL_FORECAST",
-  "forecast_target": "Thomas_Seyfors_001",
-  "input_telemetry": {
-    "quantitative_identity": {
-      "primary_hardware": {
-        "sun": "Gemini",
-        "moon": "Pisces",
-        "mercury": "Taurus",
-        "mars": "Gemini"
-      },
-      "systemic_weaknesses": ["Mutable Overload", "Boundary Dissolution"]
-    },
-    "live_ephemeris_data": {
-      "current_date": "2026-03-08",
-      "current_time": "2026-03-08T15:08:56-07:00",
-      "fast_transits": [
-        {"planet": "Moon", "sign": "Sagittarius", "aspect_to_natal": "Square Pisces Moon, Oppose Gemini Sun"},
-        {"planet": "Mercury", "sign": "Pisces", "aspect_to_natal": "Sextile Taurus Mercury"}
-      ],
-      "macro_transits": [
-        {"planet": "Pluto", "sign": "Aquarius", "aspect_to_natal": "Trine Gemini Sun"},
-        {"planet": "Saturn", "sign": "Aries", "aspect_to_natal": "Sextile Gemini Mars"}
-      ]
-    }
-  }
-};
-
 export default function ChronometerForecast({ payload }: { payload: any }) {
-  const [telemetryInput, setTelemetryInput] = useState(JSON.stringify(MOCK_TELEMETRY, null, 2));
   const [forecast, setForecast] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const handleAnalyze = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const parsedInput = JSON.parse(telemetryInput);
-      
-      const quantitativeIdentity = parsedInput.input_telemetry?.quantitative_identity || parsedInput.quantitative_identity;
-      const liveEphemerisData = parsedInput.input_telemetry?.live_ephemeris_data || parsedInput.live_ephemeris_data;
-
-      if (liveEphemerisData && !liveEphemerisData.current_time) {
-        liveEphemerisData.current_time = "2026-03-08T15:08:56-07:00";
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchForecast = async () => {
+      try {
+        setLoading(true);
+        // For the Chronometer, we need both the quantitative identity (payload) 
+        // and live ephemeris data. In this phase, we use the payload as a proxy
+        // or mock the live ephemeris data if it's not available in the payload.
+        const liveEphemerisData = { 
+          current_transits: "Simulated Live Data",
+          current_time: "2026-03-08T15:42:45-07:00"
+        }; 
+        const result = await generateChronometerForecast(payload, liveEphemerisData);
+        if (isMounted) {
+          setForecast(result);
+          setError(null);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError("Failed to generate Structural Forecast. The chronometer is experiencing temporal interference.");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
+    };
 
-      const result = await generateChronometerForecast(quantitativeIdentity, liveEphemerisData);
-      setForecast(result);
-    } catch (err: any) {
-      setError(err.message || "Failed to generate Structural Forecast. Check JSON syntax.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchForecast();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [payload]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-ash-grey">
+        <Clock className="w-8 h-8 animate-spin text-astral-gold mb-4" />
+        <p className="uppercase tracking-widest text-sm animate-pulse">Calculating Structural Forecast...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-900/20 border border-red-500/50 p-6 rounded-xl text-center">
+        <AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-3" />
+        <p className="text-red-400 uppercase tracking-widest text-sm">{error}</p>
+      </div>
+    );
+  }
+
+  if (!forecast) return null;
 
   const renderVector = (vector: any, title: string, icon: React.ReactNode) => {
     if (!vector) return null;
@@ -104,94 +109,38 @@ export default function ChronometerForecast({ payload }: { payload: any }) {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Input Section */}
-        <div className="lg:col-span-1 space-y-4">
-          <div className="bg-obsidian border border-ash-grey/20 rounded-xl p-6 shadow-lg">
-            <h2 className="text-astral-gold font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
-              <Clock className="w-4 h-4" /> Input Telemetry
-            </h2>
-            <p className="text-ash-grey text-xs mb-4">Input the quantitative identity and live ephemeris data (JSON format) to initialize the temporal forecast.</p>
-            <textarea
-              className="w-full h-64 bg-black/50 border border-ash-grey/20 rounded p-3 text-xs font-mono text-starlight-white focus:border-astral-gold focus:ring-1 focus:ring-astral-gold outline-none resize-none"
-              value={telemetryInput}
-              onChange={(e) => setTelemetryInput(e.target.value)}
-              spellCheck={false}
-            />
-            <button
-              onClick={handleAnalyze}
-              disabled={loading}
-              className="w-full mt-4 bg-astral-gold/10 hover:bg-astral-gold/20 text-astral-gold border border-astral-gold/30 py-3 rounded uppercase tracking-widest text-xs font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <><Activity className="w-4 h-4 animate-spin" /> Calculating Forecast...</>
-              ) : (
-                <><Zap className="w-4 h-4" /> Execute Forecast</>
-              )}
-            </button>
-            {error && (
-              <div className="mt-4 p-3 bg-red-900/20 border border-red-500/30 rounded text-red-400 text-xs">
-                {error}
-              </div>
-            )}
+      {forecast.forecast_target && (
+        <div className="bg-obsidian border border-ash-grey/20 rounded-xl p-4 text-center">
+          <p className="text-ash-grey text-xs uppercase tracking-widest font-bold">Forecast Target: <span className="text-astral-gold">{forecast.forecast_target}</span></p>
+        </div>
+      )}
+      <section className="bg-obsidian border border-ash-grey/20 rounded-xl p-6 shadow-lg">
+        <h2 className="text-astral-gold font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
+          <Zap className="w-4 h-4" /> Fast-Moving Transits (Tactical)
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            {renderVector(forecast.chronological_matrix?.daily_vector, "Daily Vector", <Activity className="w-3 h-3 text-nebula-purple" />)}
+          </div>
+          <div>
+            {renderVector(forecast.chronological_matrix?.weekly_vector, "Weekly Vector", <Activity className="w-3 h-3 text-nebula-purple" />)}
           </div>
         </div>
+      </section>
 
-        {/* Results Section */}
-        <div className="lg:col-span-2">
-          {!forecast && !loading && (
-            <div className="h-full flex flex-col items-center justify-center border border-dashed border-ash-grey/20 rounded-xl p-10 text-center">
-              <Clock className="w-12 h-12 text-ash-grey/40 mb-4" />
-              <p className="text-ash-grey uppercase tracking-widest text-sm">Awaiting Telemetry Data</p>
-            </div>
-          )}
-
-          {loading && (
-            <div className="h-full flex flex-col items-center justify-center border border-ash-grey/10 rounded-xl p-10 text-center bg-obsidian/50">
-              <Clock className="w-12 h-12 text-astral-gold animate-pulse mb-4" />
-              <p className="text-astral-gold uppercase tracking-widest text-sm animate-pulse">Calculating Structural Forecast...</p>
-            </div>
-          )}
-
-          {forecast && !loading && (
-            <div className="space-y-6">
-              {forecast.forecast_target && (
-                <div className="bg-obsidian border border-ash-grey/20 rounded-xl p-4 text-center">
-                  <p className="text-ash-grey text-xs uppercase tracking-widest font-bold">Forecast Target: <span className="text-astral-gold">{forecast.forecast_target}</span></p>
-                </div>
-              )}
-              <section className="bg-obsidian border border-ash-grey/20 rounded-xl p-6 shadow-lg">
-                <h2 className="text-astral-gold font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
-                  <Zap className="w-4 h-4" /> Fast-Moving Transits (Tactical)
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    {renderVector(forecast.chronological_matrix?.daily_vector, "Daily Vector", <Activity className="w-3 h-3 text-nebula-purple" />)}
-                  </div>
-                  <div>
-                    {renderVector(forecast.chronological_matrix?.weekly_vector, "Weekly Vector", <Activity className="w-3 h-3 text-nebula-purple" />)}
-                  </div>
-                </div>
-              </section>
-
-              <section className="bg-obsidian border border-ash-grey/20 rounded-xl p-6 shadow-lg">
-                <h2 className="text-emerald-400 font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4" /> Slow-Moving Macrosystem (Strategic)
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    {renderVector(forecast.chronological_matrix?.monthly_vector, "Monthly Architecture", <Activity className="w-3 h-3 text-emerald-400" />)}
-                  </div>
-                  <div>
-                    {renderVector(forecast.chronological_matrix?.yearly_vector, "Yearly Architecture", <Activity className="w-3 h-3 text-emerald-400" />)}
-                  </div>
-                </div>
-              </section>
-            </div>
-          )}
+      <section className="bg-obsidian border border-ash-grey/20 rounded-xl p-6 shadow-lg">
+        <h2 className="text-emerald-400 font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
+          <ShieldAlert className="w-4 h-4" /> Slow-Moving Macrosystem (Strategic)
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            {renderVector(forecast.chronological_matrix?.monthly_vector, "Monthly Architecture", <Activity className="w-3 h-3 text-emerald-400" />)}
+          </div>
+          <div>
+            {renderVector(forecast.chronological_matrix?.yearly_vector, "Yearly Architecture", <Activity className="w-3 h-3 text-emerald-400" />)}
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
