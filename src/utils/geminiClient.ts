@@ -66,3 +66,33 @@ export async function generateAetherAnalysis(payload: any): Promise<any> {
     throw err;
   }
 }
+
+export async function generateChronometerForecast(quantitativeIdentity: any, liveEphemerisData: any): Promise<any> {
+  try {
+    const res = await fetch('/api/chronometer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quantitativeIdentity, liveEphemerisData })
+    });
+    if (!res.ok) throw new Error("API Error");
+    return await res.json();
+  } catch (err) {
+    console.error("Chronometer Error:", err);
+    throw err;
+  }
+}
+
+export async function generateCrossGridAnalysis(originNode: any, receivingNode: any): Promise<any> {
+  try {
+    const res = await fetch('/api/crossGrid', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ originNode, receivingNode })
+    });
+    if (!res.ok) throw new Error("API Error");
+    return await res.json();
+  } catch (err) {
+    console.error("Cross-Grid Analysis Error:", err);
+    throw err;
+  }
+}

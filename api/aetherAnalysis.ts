@@ -129,9 +129,19 @@ Output Mandate:
               },
               required: ["logic", "tech", "empathy", "drive", "adaptability", "activeFrictionMultipliers"]
             },
-            groundingArchitecture: { type: Type.STRING }
+            groundingArchitecture: { type: Type.STRING },
+            visual_assets: {
+              type: Type.OBJECT,
+              properties: {
+                primary_zodiac_key: { type: Type.STRING },
+                sacred_geometry_key: { type: Type.STRING },
+                numerology_key: { type: Type.STRING },
+                identity_icon_key: { type: Type.STRING }
+              },
+              required: ["primary_zodiac_key", "sacred_geometry_key", "numerology_key", "identity_icon_key"]
+            }
           },
-          required: ["strengths", "weaknesses", "systemIntegrityScore", "characterStats", "groundingArchitecture"]
+          required: ["strengths", "weaknesses", "systemIntegrityScore", "characterStats", "groundingArchitecture", "visual_assets"]
         }
       }
     });

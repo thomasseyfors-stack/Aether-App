@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe, Download, AlertTriangle, Palette, Compass } from 'lucide-react';
+import { ChevronDown, ChevronUp, Lock, Unlock, Star, Moon, Sun, Activity, Beaker, Layers, Radio, RefreshCcw, Sparkles, CircleDot, Orbit, Asterisk, Network, Fingerprint, Wind, Hexagon, Globe, Download, AlertTriangle, Palette, Compass, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
 import AetherLogo from './AetherLogo';
 import AetherAnalysis from './AetherAnalysis';
+import ChronometerForecast from './ChronometerForecast';
+import CrossGridAnalyzer from './CrossGridAnalyzer';
 import { generateCharacteristics } from '../utils/geminiClient';
 import { exportCodexPDF } from '../utils/exportEngine';
 import { PLACEMENT_CODEX, ZODIAC_CODEX, PLANETARY_CODEX, PATTERN_CODEX, ASSET_URL_MATRIX } from '../utils/codexLibrary';
@@ -51,7 +53,7 @@ const categorizePlacements = (placements: any[] = []) => {
 };
 
 export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { payload: any, onEnterAxiom?: () => void, onRecalibrate: () => void }) {
-  const [viewMode, setViewMode] = useState<'blueprint' | 'radar' | 'analysis'>('blueprint');
+  const [viewMode, setViewMode] = useState<'blueprint' | 'radar' | 'analysis' | 'chronometer' | 'cross-grid'>('blueprint');
   
   const pii = payload?.pii || payload || {};
   const isDefaultTime = pii.isDefaultTime === true;
@@ -116,15 +118,21 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
         </header>
 
         {/* View Mode Toggle */}
-        <div className="flex bg-black/50 p-1 rounded-lg border border-ash-grey/10 w-full max-w-lg mx-auto overflow-x-auto">
-          <button onClick={() => setViewMode('blueprint')} className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'blueprint' ? 'bg-obsidian text-astral-gold shadow-md border border-astral-gold/30' : 'text-ash-grey hover:text-starlight-white'}`}>
+        <div className="flex flex-wrap bg-black/50 p-1 rounded-lg border border-ash-grey/10 w-full max-w-2xl mx-auto overflow-x-auto gap-1">
+          <button onClick={() => setViewMode('blueprint')} className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'blueprint' ? 'bg-obsidian text-astral-gold shadow-md border border-astral-gold/30' : 'text-ash-grey hover:text-starlight-white'}`}>
             <Layers className="w-4 h-4" /> The Blueprint
           </button>
-          <button onClick={() => setViewMode('radar')} className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'radar' ? 'bg-obsidian text-nebula-purple shadow-md border border-nebula-purple/30' : 'text-ash-grey hover:text-starlight-white'}`}>
+          <button onClick={() => setViewMode('radar')} className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'radar' ? 'bg-obsidian text-nebula-purple shadow-md border border-nebula-purple/30' : 'text-ash-grey hover:text-starlight-white'}`}>
             <Radio className="w-4 h-4" /> The Radar
           </button>
-          <button onClick={() => setViewMode('analysis')} className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'analysis' ? 'bg-obsidian text-emerald-400 shadow-md border border-emerald-500/30' : 'text-ash-grey hover:text-starlight-white'}`}>
+          <button onClick={() => setViewMode('analysis')} className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'analysis' ? 'bg-obsidian text-emerald-400 shadow-md border border-emerald-500/30' : 'text-ash-grey hover:text-starlight-white'}`}>
             <Activity className="w-4 h-4" /> OS Analysis
+          </button>
+          <button onClick={() => setViewMode('chronometer')} className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'chronometer' ? 'bg-obsidian text-blue-400 shadow-md border border-blue-500/30' : 'text-ash-grey hover:text-starlight-white'}`}>
+            <Clock className="w-4 h-4" /> Chronometer
+          </button>
+          <button onClick={() => setViewMode('cross-grid')} className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'cross-grid' ? 'bg-obsidian text-red-400 shadow-md border border-red-500/30' : 'text-ash-grey hover:text-starlight-white'}`}>
+            <Network className="w-4 h-4" /> Cross-Grid
           </button>
         </div>
 
@@ -188,6 +196,18 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
         {viewMode === 'analysis' && (
           <ErrorBoundary>
             <AetherAnalysis payload={payload} />
+          </ErrorBoundary>
+        )}
+
+        {viewMode === 'chronometer' && (
+          <ErrorBoundary>
+            <ChronometerForecast payload={payload} />
+          </ErrorBoundary>
+        )}
+
+        {viewMode === 'cross-grid' && (
+          <ErrorBoundary>
+            <CrossGridAnalyzer originNode={payload} />
           </ErrorBoundary>
         )}
       </div>
