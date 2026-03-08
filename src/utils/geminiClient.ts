@@ -51,3 +51,18 @@ export async function getRadarEnhancements(allMatrices: any): Promise<{ colors: 
     affirmation: data.affirmation || "Maintain current trajectory. Structural integrity is holding."
   };
 }
+
+export async function generateAetherAnalysis(payload: any): Promise<any> {
+  try {
+    const res = await fetch('/api/aetherAnalysis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payload })
+    });
+    if (!res.ok) throw new Error("API Error");
+    return await res.json();
+  } catch (err) {
+    console.error("Aether Analysis Error:", err);
+    throw err;
+  }
+}

@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
 import AetherLogo from './AetherLogo';
+import AetherAnalysis from './AetherAnalysis';
 import { generateCharacteristics } from '../utils/geminiClient';
 import { exportCodexPDF } from '../utils/exportEngine';
-import { PLACEMENT_CODEX, ZODIAC_CODEX, PLANETARY_CODEX, PATTERN_CODEX } from '../utils/codexLibrary';
+import { PLACEMENT_CODEX, ZODIAC_CODEX, PLANETARY_CODEX, PATTERN_CODEX, ASSET_URL_MATRIX } from '../utils/codexLibrary';
 
 export const ALL_ZODIAC_SIGNS = [
   'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
@@ -50,7 +51,7 @@ const categorizePlacements = (placements: any[] = []) => {
 };
 
 export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { payload: any, onEnterAxiom?: () => void, onRecalibrate: () => void }) {
-  const [viewMode, setViewMode] = useState<'blueprint' | 'radar'>('blueprint');
+  const [viewMode, setViewMode] = useState<'blueprint' | 'radar' | 'analysis'>('blueprint');
   
   const pii = payload?.pii || payload || {};
   const isDefaultTime = pii.isDefaultTime === true;
@@ -115,17 +116,20 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
         </header>
 
         {/* View Mode Toggle */}
-        <div className="flex bg-black/50 p-1 rounded-lg border border-ash-grey/10 w-full max-w-md mx-auto">
-          <button onClick={() => setViewMode('blueprint')} className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all ${viewMode === 'blueprint' ? 'bg-obsidian text-astral-gold shadow-md border border-astral-gold/30' : 'text-ash-grey hover:text-starlight-white'}`}>
+        <div className="flex bg-black/50 p-1 rounded-lg border border-ash-grey/10 w-full max-w-lg mx-auto overflow-x-auto">
+          <button onClick={() => setViewMode('blueprint')} className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'blueprint' ? 'bg-obsidian text-astral-gold shadow-md border border-astral-gold/30' : 'text-ash-grey hover:text-starlight-white'}`}>
             <Layers className="w-4 h-4" /> The Blueprint
           </button>
-          <button onClick={() => setViewMode('radar')} className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all ${viewMode === 'radar' ? 'bg-obsidian text-nebula-purple shadow-md border border-nebula-purple/30' : 'text-ash-grey hover:text-starlight-white'}`}>
+          <button onClick={() => setViewMode('radar')} className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'radar' ? 'bg-obsidian text-nebula-purple shadow-md border border-nebula-purple/30' : 'text-ash-grey hover:text-starlight-white'}`}>
             <Radio className="w-4 h-4" /> The Radar
+          </button>
+          <button onClick={() => setViewMode('analysis')} className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${viewMode === 'analysis' ? 'bg-obsidian text-emerald-400 shadow-md border border-emerald-500/30' : 'text-ash-grey hover:text-starlight-white'}`}>
+            <Activity className="w-4 h-4" /> OS Analysis
           </button>
         </div>
 
         {/* --- DECOMPRESSED VERTICAL STACK --- */}
-        {viewMode === 'blueprint' ? (
+        {viewMode === 'blueprint' && (
           <div className="flex flex-col gap-4 md:gap-6 animate-in fade-in duration-500">
             
             <NumerologyCard data={celestialData?.numerology} />
@@ -173,9 +177,17 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
               isEncrypted 
             />
           </div>
-        ) : (
+        )}
+        
+        {viewMode === 'radar' && (
           <ErrorBoundary>
             <HorizonRadar payload={payload} />
+          </ErrorBoundary>
+        )}
+
+        {viewMode === 'analysis' && (
+          <ErrorBoundary>
+            <AetherAnalysis payload={payload} />
           </ErrorBoundary>
         )}
       </div>
@@ -391,78 +403,86 @@ export function NumerologyCard({ data }: { data: any }) {
 
   if (!data) return <UnavailableCard title="Numerology Resonance" />;
 
+  const imageUrl = ASSET_URL_MATRIX[`Life Path ${data.lifePath}`];
+
   return (
-    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-nebula-purple"></span> Numerology Resonance
-        </h2>
-      </div>
-      
-      <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4 flex flex-col justify-center items-center text-center">
-        {/* HIERARCHY INVERSION */}
-        <p className="text-4xl md:text-5xl font-bold text-starlight-white leading-tight mb-1 drop-shadow-md">
-          Life Path {data.lifePath}
-        </p>
-        <p className="text-nebula-purple text-xs md:text-sm font-semibold uppercase tracking-widest mb-4">
-          {data.details?.title ?? '?'}
-        </p>
+    <section 
+      className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col relative overflow-hidden"
+      style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+    >
+      {imageUrl && <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>}
+      <div className="relative z-10 flex-1 flex flex-col h-full">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-nebula-purple"></span> Numerology Resonance
+          </h2>
+        </div>
         
-        {data.details?.colors && (
-          <div className="flex flex-wrap justify-center gap-2 mt-2">
-            {data.details.colors.map((color: string, idx: number) => (
-              <span key={idx} className="text-[10px] md:text-xs font-bold uppercase tracking-widest border border-nebula-purple/50 bg-nebula-purple/20 text-starlight-white px-3 py-1.5 rounded inline-block shadow-sm">
-                {color}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="grid grid-cols-3 gap-2 mb-4">
-        <div className="bg-black/30 p-2 rounded-lg border border-ash-grey/5 text-center flex flex-col justify-center">
-          <p className="text-ash-grey text-[8px] uppercase tracking-wider mb-0.5">Destiny</p>
-          <p className="text-sm font-bold text-astral-gold">{data.destiny}</p>
-        </div>
-        <div className="bg-black/30 p-2 rounded-lg border border-ash-grey/5 text-center flex flex-col justify-center">
-          <p className="text-ash-grey text-[8px] uppercase tracking-wider mb-0.5">Soul Urge</p>
-          <p className="text-sm font-bold text-astral-gold">{data.soulUrge}</p>
-        </div>
-        <div className="bg-black/30 p-2 rounded-lg border border-ash-grey/5 text-center flex flex-col justify-center">
-          <p className="text-ash-grey text-[8px] uppercase tracking-wider mb-0.5">Personality</p>
-          <p className="text-sm font-bold text-astral-gold">{data.personality}</p>
-        </div>
-      </div>
-
-      <div className="mt-auto border-t border-ash-grey/10 pt-4">
-        <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-between w-full text-left text-sm text-starlight-white hover:text-astral-gold transition-colors uppercase tracking-wider">
-          <span>Interpretation Matrix</span>
-          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
-        {isExpanded && (
-          <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
-            {data.details?.colorMeaning && (
-              <div className="p-3 bg-black/40 border border-nebula-purple/20 rounded text-[11px] leading-relaxed mb-3 shadow-inner">
-                <span className="text-nebula-purple font-bold uppercase tracking-widest text-[9px] block mb-1 flex items-center gap-1">
-                  <Palette className="w-3 h-3" /> Color Resonance
+        <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4 flex flex-col justify-center items-center text-center">
+          {/* HIERARCHY INVERSION */}
+          <p className="text-4xl md:text-5xl font-bold text-starlight-white leading-tight mb-1 drop-shadow-md">
+            Life Path {data.lifePath}
+          </p>
+          <p className="text-nebula-purple text-xs md:text-sm font-semibold uppercase tracking-widest mb-4">
+            {data.details?.title ?? '?'}
+          </p>
+          
+          {data.details?.colors && (
+            <div className="flex flex-wrap justify-center gap-2 mt-2">
+              {data.details.colors.map((color: string, idx: number) => (
+                <span key={idx} className="text-[10px] md:text-xs font-bold uppercase tracking-widest border border-nebula-purple/50 bg-nebula-purple/20 text-starlight-white px-3 py-1.5 rounded inline-block shadow-sm">
+                  {color}
                 </span>
-                {data.details.colorMeaning}
-              </div>
-            )}
-            {Array.isArray(data.interpretation) ? (
-              <ul className="space-y-2">
-                {data.interpretation.map((item: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-2 text-left">
-                    <span className="text-astral-gold mt-0.5 text-xs">◆</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="whitespace-pre-wrap text-left">{data.interpretation}</div>
-            )}
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="bg-black/30 p-2 rounded-lg border border-ash-grey/5 text-center flex flex-col justify-center">
+            <p className="text-ash-grey text-[8px] uppercase tracking-wider mb-0.5">Destiny</p>
+            <p className="text-sm font-bold text-astral-gold">{data.destiny}</p>
           </div>
-        )}
+          <div className="bg-black/30 p-2 rounded-lg border border-ash-grey/5 text-center flex flex-col justify-center">
+            <p className="text-ash-grey text-[8px] uppercase tracking-wider mb-0.5">Soul Urge</p>
+            <p className="text-sm font-bold text-astral-gold">{data.soulUrge}</p>
+          </div>
+          <div className="bg-black/30 p-2 rounded-lg border border-ash-grey/5 text-center flex flex-col justify-center">
+            <p className="text-ash-grey text-[8px] uppercase tracking-wider mb-0.5">Personality</p>
+            <p className="text-sm font-bold text-astral-gold">{data.personality}</p>
+          </div>
+        </div>
+
+        <div className="mt-auto border-t border-ash-grey/10 pt-4">
+          <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-between w-full text-left text-sm text-starlight-white hover:text-astral-gold transition-colors uppercase tracking-wider">
+            <span>Interpretation Matrix</span>
+            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+          {isExpanded && (
+            <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
+              {data.details?.colorMeaning && (
+                <div className="p-3 bg-black/40 border border-nebula-purple/20 rounded text-[11px] leading-relaxed mb-3 shadow-inner">
+                  <span className="text-nebula-purple font-bold uppercase tracking-widest text-[9px] block mb-1 flex items-center gap-1">
+                    <Palette className="w-3 h-3" /> Color Resonance
+                  </span>
+                  {data.details.colorMeaning}
+                </div>
+              )}
+              {Array.isArray(data.interpretation) ? (
+                <ul className="space-y-2">
+                  {data.interpretation.map((item: string, idx: number) => (
+                    <li key={idx} className="flex items-start gap-2 text-left">
+                      <span className="text-astral-gold mt-0.5 text-xs">◆</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="whitespace-pre-wrap text-left">{data.interpretation}</div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -549,52 +569,60 @@ export function StarseedCard({ data }: { data: any }) {
 
   if (!data) return null;
 
-  return (
-    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
-          <Network className="w-4 h-4 text-astral-gold" /> Starseed Origin
-        </h2>
-      </div>
-      
-      <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4">
-        <p className="text-nebula-purple text-[10px] md:text-xs uppercase tracking-wider mb-1">Primary Vector</p>
-        <p className="text-lg md:text-xl font-bold text-starlight-white leading-tight mb-2">{data.origin}</p>
-        <p className="text-astral-gold text-[10px] uppercase tracking-widest font-mono">{data.title}</p>
-      </div>
+  const imageUrl = ASSET_URL_MATRIX[data.origin];
 
-      <div className="mt-auto border-t border-ash-grey/10 pt-4">
-        <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-between w-full text-left text-sm text-starlight-white hover:text-astral-gold transition-colors uppercase tracking-wider">
-          <span>Origin Telemetry</span>
-          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
-        {isExpanded && (
-          <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
-            {/* STRUCTURAL UPGRADE: Bullet Point Rendering */}
-            {Array.isArray(data.description) ? (
-              <ul className="space-y-2">
-                {data.description.map((item: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="text-astral-gold mt-0.5 text-xs">◆</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>{data.description}</p>
-            )}
-            <div className="pt-3 border-t border-ash-grey/10">
-              <p className="text-starlight-white text-[10px] uppercase tracking-widest font-bold mb-2">Active Operational Traits:</p>
-              <div className="flex flex-wrap gap-2">
-                {data.traits?.map((trait: string, idx: number) => (
-                  <span key={idx} className="text-[9px] uppercase tracking-widest border border-ash-grey/20 bg-black/50 text-ash-grey px-2 py-1 rounded">
-                    {trait}
-                  </span>
-                ))}
+  return (
+    <section 
+      className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col relative overflow-hidden"
+      style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+    >
+      {imageUrl && <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>}
+      <div className="relative z-10 flex-1 flex flex-col h-full">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
+            <Network className="w-4 h-4 text-astral-gold" /> Starseed Origin
+          </h2>
+        </div>
+        
+        <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4">
+          <p className="text-nebula-purple text-[10px] md:text-xs uppercase tracking-wider mb-1">Primary Vector</p>
+          <p className="text-lg md:text-xl font-bold text-starlight-white leading-tight mb-2">{data.origin}</p>
+          <p className="text-astral-gold text-[10px] uppercase tracking-widest font-mono">{data.title}</p>
+        </div>
+
+        <div className="mt-auto border-t border-ash-grey/10 pt-4">
+          <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-between w-full text-left text-sm text-starlight-white hover:text-astral-gold transition-colors uppercase tracking-wider">
+            <span>Origin Telemetry</span>
+            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+          {isExpanded && (
+            <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
+              {/* STRUCTURAL UPGRADE: Bullet Point Rendering */}
+              {Array.isArray(data.description) ? (
+                <ul className="space-y-2">
+                  {data.description.map((item: string, idx: number) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-astral-gold mt-0.5 text-xs">◆</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>{data.description}</p>
+              )}
+              <div className="pt-3 border-t border-ash-grey/10">
+                <p className="text-starlight-white text-[10px] uppercase tracking-widest font-bold mb-2">Active Operational Traits:</p>
+                <div className="flex flex-wrap gap-2">
+                  {data.traits?.map((trait: string, idx: number) => (
+                    <span key={idx} className="text-[9px] uppercase tracking-widest border border-ash-grey/20 bg-black/50 text-ash-grey px-2 py-1 rounded">
+                      {trait}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </section>
   );
@@ -605,48 +633,56 @@ export function SacredGeometryCard({ data }: { data: any }) {
 
   if (!data) return null;
 
-  return (
-    <section className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
-          <Hexagon className="w-4 h-4 text-emerald-400" /> Sacred Geometry
-        </h2>
-      </div>
-      
-      <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4">
-        <p className="text-nebula-purple text-[10px] md:text-xs uppercase tracking-wider mb-1">Architectural Form</p>
-        <p className="text-lg md:text-xl font-bold text-starlight-white leading-tight mb-2">{data.shape}</p>
-        <p className="text-emerald-400 text-[10px] uppercase tracking-widest font-mono">{data.principle}</p>
-      </div>
+  const imageUrl = ASSET_URL_MATRIX[data.shape];
 
-      <div className="mt-auto border-t border-ash-grey/10 pt-4">
-        <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-between w-full text-left text-sm text-starlight-white hover:text-astral-gold transition-colors uppercase tracking-wider">
-          <span>Structural Analysis</span>
-          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
-        {isExpanded && (
-          <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
-            {/* STRUCTURAL UPGRADE: Bullet Point Rendering */}
-            {Array.isArray(data.description) ? (
-              <ul className="space-y-2">
-                {data.description.map((item: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="text-emerald-400 mt-0.5 text-xs">◆</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>{data.description}</p>
-            )}
-            <div className="pt-3 border-t border-ash-grey/10">
-               <p className="text-starlight-white text-[10px] uppercase tracking-widest font-bold mb-2">Energetic Resonance / Elemental Lock:</p>
-               <span className="text-[9px] uppercase tracking-widest border border-emerald-500/20 bg-emerald-900/10 text-emerald-400 px-2 py-1 rounded inline-block">
-                  {data.resonance}
-               </span>
+  return (
+    <section 
+      className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col relative overflow-hidden"
+      style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+    >
+      {imageUrl && <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>}
+      <div className="relative z-10 flex-1 flex flex-col h-full">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
+            <Hexagon className="w-4 h-4 text-emerald-400" /> Sacred Geometry
+          </h2>
+        </div>
+        
+        <div className="flex-1 bg-black/30 p-4 rounded-lg border border-ash-grey/5 mb-4">
+          <p className="text-nebula-purple text-[10px] md:text-xs uppercase tracking-wider mb-1">Architectural Form</p>
+          <p className="text-lg md:text-xl font-bold text-starlight-white leading-tight mb-2">{data.shape}</p>
+          <p className="text-emerald-400 text-[10px] uppercase tracking-widest font-mono">{data.principle}</p>
+        </div>
+
+        <div className="mt-auto border-t border-ash-grey/10 pt-4">
+          <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center justify-between w-full text-left text-sm text-starlight-white hover:text-astral-gold transition-colors uppercase tracking-wider">
+            <span>Structural Analysis</span>
+            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+          {isExpanded && (
+            <div className="mt-4 text-ash-grey text-xs md:text-sm leading-relaxed animate-in fade-in slide-in-from-top-2 duration-300 space-y-3">
+              {/* STRUCTURAL UPGRADE: Bullet Point Rendering */}
+              {Array.isArray(data.description) ? (
+                <ul className="space-y-2">
+                  {data.description.map((item: string, idx: number) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-emerald-400 mt-0.5 text-xs">◆</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>{data.description}</p>
+              )}
+              <div className="pt-3 border-t border-ash-grey/10">
+                 <p className="text-starlight-white text-[10px] uppercase tracking-widest font-bold mb-2">Energetic Resonance / Elemental Lock:</p>
+                 <span className="text-[9px] uppercase tracking-widest border border-emerald-500/20 bg-emerald-900/10 text-emerald-400 px-2 py-1 rounded inline-block">
+                    {data.resonance}
+                 </span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </section>
   );
