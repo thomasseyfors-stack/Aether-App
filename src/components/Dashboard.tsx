@@ -6,7 +6,7 @@ import ErrorBoundary from './ErrorBoundary';
 import AetherLogo from './AetherLogo';
 import AetherAnalysis from './AetherAnalysis';
 import AetherForecastDeck from './AetherForecastDeck';
-import CrossGridAnalyzer from './CrossGridAnalyzer';
+import SocialIdentityGrid from './SocialIdentityGrid';
 import { generateCharacteristics } from '../utils/geminiClient';
 import { exportCodexPDF } from '../utils/exportEngine';
 import { PLACEMENT_CODEX, ZODIAC_CODEX, PLANETARY_CODEX, PATTERN_CODEX, ASSET_URL_MATRIX } from '../utils/codexLibrary';
@@ -213,7 +213,7 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
 
         {viewMode === 'cross-grid' && (
           <ErrorBoundary>
-            <CrossGridAnalyzer originNode={payload} />
+            <SocialIdentityGrid />
           </ErrorBoundary>
         )}
       </div>
