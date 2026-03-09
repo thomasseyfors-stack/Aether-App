@@ -1,3 +1,5 @@
+import { getAetherAssetUrl } from './assets';
+
 export function exportCodexPDF(payload: any, pii: any) {
   if (!payload || !payload.matrices) return;
 
@@ -8,11 +10,11 @@ export function exportCodexPDF(payload: any, pii: any) {
   // ============================================================================
   // PASTE YOUR VERCEL BLOB URLS HERE FOR THE PDF THUMBNAILS
   // ============================================================================
-  const IMG_MIND = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-mind.jpg";
-  const IMG_SOUL = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-soul.jpg";
-  const IMG_SPARK = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-spark.jpg";
-  const IMG_SOURCE = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-source.jpg";
-  const IMG_AXIOM = "https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-axiom.jpg";
+  const IMG_MIND = getAetherAssetUrl('identities', 'img-mind.jpg');
+  const IMG_SOUL = getAetherAssetUrl('identities', 'img-soul.jpg');
+  const IMG_SPARK = getAetherAssetUrl('identities', 'img-spark.jpg');
+  const IMG_SOURCE = getAetherAssetUrl('identities', 'img-source.jpg');
+  const IMG_AXIOM = getAetherAssetUrl('identities', 'img-axiom.jpg');
 
   const printWindow = window.open('', '_blank');
   if (!printWindow) {

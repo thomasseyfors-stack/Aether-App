@@ -3,6 +3,7 @@ import { ArrowLeft, Beaker } from 'lucide-react';
 import AetherLogo from './AetherLogo';
 import { NumerologyCard, IdentityMatrixCard } from './Dashboard'; 
 import { PLACEMENT_CODEX, PLANETARY_CODEX } from '../utils/codexLibrary';
+import { AetherImage } from './AetherImage';
 
 export function PlacementSection({ title, icon, placements }: any) {
   // Initiating local state for the Accordion drop-down
@@ -46,28 +47,38 @@ export function PlacementSection({ title, icon, placements }: any) {
                   <div 
                     key={idx} 
                     onClick={() => setActiveNode(isExpanded ? null : nodeName)}
-                    className={`bg-black/30 p-2 md:p-3 rounded border flex flex-col justify-center gap-1 transition-all duration-300 cursor-pointer ${isExpanded ? 'border-astral-gold/50 bg-black/50 shadow-[0_0_15px_rgba(245,208,97,0.1)]' : 'border-ash-grey/5 hover:border-astral-gold/30'}`}
+                    className={`bg-black/30 p-2 md:p-3 rounded border flex flex-col justify-center gap-1 transition-all duration-300 cursor-pointer relative overflow-hidden ${isExpanded ? 'border-astral-gold/50 bg-black/50 shadow-[0_0_15px_rgba(245,208,97,0.1)]' : 'border-ash-grey/5 hover:border-astral-gold/30'}`}
                   >
-                    <span className="text-starlight-white font-medium text-[11px] md:text-xs hover:text-astral-gold transition-colors">{nodeName}</span>
-                    <span className="text-nebula-purple text-[7px] md:text-[8px] uppercase tracking-widest leading-none">
-                      {nodeLore?.title || 'System Node'}
-                    </span>
-                    
-                    <div className="flex flex-wrap items-center justify-between mt-1 pt-1 border-t border-ash-grey/10">
-                      <span className="text-astral-gold uppercase tracking-wider text-[10px] md:text-xs break-words">
-                        {p.sign}
-                      </span>
-                      <span className="text-ash-grey font-mono text-[9px] md:text-[10px] opacity-70">
-                        {p.degree}
-                      </span>
-                    </div>
-
-                    {/* The Accordion Expansion Payload */}
-                    {isExpanded && nodeLore?.description && (
-                      <div className="mt-2 pt-2 border-t border-astral-gold/20 text-[10px] md:text-xs text-ash-grey leading-relaxed animate-in slide-in-from-top-1">
-                        {nodeLore.description}
-                      </div>
+                    {isExpanded && (
+                      <AetherImage 
+                        category="placements" 
+                        filename={`Aether Energy - Placement - ${nodeName}.png`} 
+                        alt={nodeName}
+                        className="absolute inset-0 z-0 opacity-20 pointer-events-none" 
+                      />
                     )}
+                    <div className="relative z-10">
+                      <span className="text-starlight-white font-medium text-[11px] md:text-xs hover:text-astral-gold transition-colors block">{nodeName}</span>
+                      <span className="text-nebula-purple text-[7px] md:text-[8px] uppercase tracking-widest leading-none block mt-1">
+                        {nodeLore?.title || 'System Node'}
+                      </span>
+                      
+                      <div className="flex flex-wrap items-center justify-between mt-2 pt-1 border-t border-ash-grey/10">
+                        <span className="text-astral-gold uppercase tracking-wider text-[10px] md:text-xs break-words">
+                          {p.sign}
+                        </span>
+                        <span className="text-ash-grey font-mono text-[9px] md:text-[10px] opacity-70">
+                          {p.degree}
+                        </span>
+                      </div>
+
+                      {/* The Accordion Expansion Payload */}
+                      {isExpanded && nodeLore?.description && (
+                        <div className="mt-2 pt-2 border-t border-astral-gold/20 text-[10px] md:text-xs text-ash-grey leading-relaxed animate-in slide-in-from-top-1">
+                          {nodeLore.description}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -152,7 +163,8 @@ export default function TheoreticalAxiom({ payload, onBack }: { payload: any, on
                 patterns: theoretical.matrices.patterns,
                 voids: theoretical.matrices.voids
               }} 
-              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-axiom.jpg" 
+              assetCategory="identities"
+              assetFilename="img-axiom.jpg" 
               isPrimary={true} 
             />
 
@@ -162,21 +174,24 @@ export default function TheoreticalAxiom({ payload, onBack }: { payload: any, on
                   title="Standard Sidereal Lahiri" 
                   subtitle="Theoretical Soul Vessel" 
                   data={theoretical.matrices.vaults.sidereal} 
-                  imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-soul.jpg" 
+                  assetCategory="identities"
+                  assetFilename="img-soul.jpg" 
                   isEncrypted 
                 />
                 <IdentityMatrixCard 
                   title="Draconic" 
                   subtitle="Theoretical Spark" 
                   data={theoretical.matrices.vaults.draconic} 
-                  imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-spark.jpg" 
+                  assetCategory="identities"
+                  assetFilename="img-spark.jpg" 
                   isEncrypted 
                 />
                 <IdentityMatrixCard 
                   title="Heliocentric" 
                   subtitle="Theoretical Source" 
                   data={theoretical.matrices.vaults.heliocentric} 
-                  imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/img-source.jpg" 
+                  assetCategory="identities"
+                  assetFilename="img-source.jpg" 
                   isEncrypted 
                 />
               </div>

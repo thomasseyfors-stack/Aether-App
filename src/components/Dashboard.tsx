@@ -5,11 +5,13 @@ import HorizonRadar from './HorizonRadar';
 import ErrorBoundary from './ErrorBoundary';
 import AetherLogo from './AetherLogo';
 import AetherAnalysis from './AetherAnalysis';
-import ChronometerForecast from './ChronometerForecast';
+import AetherForecastDeck from './AetherForecastDeck';
 import CrossGridAnalyzer from './CrossGridAnalyzer';
 import { generateCharacteristics } from '../utils/geminiClient';
 import { exportCodexPDF } from '../utils/exportEngine';
 import { PLACEMENT_CODEX, ZODIAC_CODEX, PLANETARY_CODEX, PATTERN_CODEX, ASSET_URL_MATRIX } from '../utils/codexLibrary';
+import { AetherImage } from './AetherImage';
+import { AssetCategory } from '../utils/assets';
 
 export const ALL_ZODIAC_SIGNS = [
   'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 
@@ -150,7 +152,8 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
               subtitle="The Persona" 
               data={celestialData} 
               isDefaultTime={isDefaultTime} 
-              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-mind.jpg" 
+              assetCategory="identities"
+              assetFilename="img-mind.jpg" 
               isPrimary 
             />
 
@@ -167,21 +170,24 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
               title="Standard Sidereal Lahiri" 
               subtitle="The Soul Vessel" 
               data={celestialData.vaults?.sidereal} 
-              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-soul.jpg" 
+              assetCategory="identities"
+              assetFilename="img-soul.jpg" 
               isEncrypted 
             />
             <IdentityMatrixCard 
               title="Draconic" 
               subtitle="The Spark" 
               data={celestialData.vaults?.draconic} 
-              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-spark.jpg" 
+              assetCategory="identities"
+              assetFilename="img-spark.jpg" 
               isEncrypted 
             />
             <IdentityMatrixCard 
               title="Heliocentric" 
               subtitle="The Source" 
               data={celestialData.vaults?.heliocentric} 
-              imageSrc="https://b1zcpgvhvegysslg.public.blob.vercel-storage.com/Identities/img-source.jpg" 
+              assetCategory="identities"
+              assetFilename="img-source.jpg" 
               isEncrypted 
             />
           </div>
@@ -201,7 +207,7 @@ export default function Dashboard({ payload, onEnterAxiom, onRecalibrate }: { pa
 
         {viewMode === 'chronometer' && (
           <ErrorBoundary>
-            <ChronometerForecast payload={payload} />
+            <AetherForecastDeck payload={payload} />
           </ErrorBoundary>
         )}
 
@@ -228,8 +234,8 @@ const getPatternIcon = (name: string) => {
   return '✧';
 };
 
-// 1. Added imageSrc to the incoming parameters
-export function IdentityMatrixCard({ title, data, icon, imageSrc }: any) {
+// 1. Added assetCategory and assetFilename to the incoming parameters
+export function IdentityMatrixCard({ title, data, icon, assetCategory, assetFilename }: any) {
   const [selectedPlanet, setSelectedPlanet] = useState<{planet: any, lore: any} | null>(null);
 
   if (!data) return <UnavailableCard title={title} />;
@@ -238,10 +244,19 @@ export function IdentityMatrixCard({ title, data, icon, imageSrc }: any) {
     // 2. Applied the Vercel URL as a background image
     <section 
       className="bg-obsidian border border-ash-grey/20 rounded-xl p-4 md:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col h-full"
-      style={imageSrc ? { backgroundImage: `url(${imageSrc})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
     >
       {/* 3. Injected a dark, blurred overlay so your text remains readable over the dynamic image */}
-      {imageSrc && <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>}
+      {assetCategory && assetFilename && (
+        <>
+          <AetherImage 
+            category={assetCategory as AssetCategory} 
+            filename={assetFilename} 
+            alt={title}
+            className="absolute inset-0 z-0" 
+          />
+          <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>
+        </>
+      )}
       
       {/* 4. Wrapped the internal content in a relative container to sit above the background */}
       <div className="relative z-10 flex-1 flex flex-col h-full">
@@ -368,28 +383,38 @@ export function PlacementSection({ title, icon, placements }: any) {
                   <div 
                     key={idx} 
                     onClick={() => setActiveNode(isExpanded ? null : nodeName)}
-                    className={`bg-black/30 p-2 md:p-3 rounded border flex flex-col justify-center gap-1 transition-all duration-300 cursor-pointer ${isExpanded ? 'border-astral-gold/50 bg-black/50 shadow-[0_0_15px_rgba(245,208,97,0.1)]' : 'border-ash-grey/5 hover:border-astral-gold/30'}`}
+                    className={`bg-black/30 p-2 md:p-3 rounded border flex flex-col justify-center gap-1 transition-all duration-300 cursor-pointer relative overflow-hidden ${isExpanded ? 'border-astral-gold/50 bg-black/50 shadow-[0_0_15px_rgba(245,208,97,0.1)]' : 'border-ash-grey/5 hover:border-astral-gold/30'}`}
                   >
-                    <span className="text-starlight-white font-medium text-[11px] md:text-xs hover:text-astral-gold transition-colors">{nodeName}</span>
-                    <span className="text-nebula-purple text-[7px] md:text-[8px] uppercase tracking-widest leading-none">
-                      {nodeLore?.title || 'System Node'}
-                    </span>
-                    
-                    <div className="flex flex-wrap items-center justify-between mt-1 pt-1 border-t border-ash-grey/10">
-                      <span className="text-astral-gold uppercase tracking-wider text-[10px] md:text-xs break-words">
-                        {p.sign}
-                      </span>
-                      <span className="text-ash-grey font-mono text-[9px] md:text-[10px] opacity-70">
-                        {p.degree}
-                      </span>
-                    </div>
-
-                    {/* The Accordion Expansion Payload */}
-                    {isExpanded && nodeLore?.description && (
-                      <div className="mt-2 pt-2 border-t border-astral-gold/20 text-[10px] md:text-xs text-ash-grey leading-relaxed animate-in slide-in-from-top-1">
-                        {nodeLore.description}
-                      </div>
+                    {isExpanded && (
+                      <AetherImage 
+                        category="placements" 
+                        filename={`Aether Energy - Placement - ${nodeName}.png`} 
+                        alt={nodeName}
+                        className="absolute inset-0 z-0 opacity-20 pointer-events-none" 
+                      />
                     )}
+                    <div className="relative z-10">
+                      <span className="text-starlight-white font-medium text-[11px] md:text-xs hover:text-astral-gold transition-colors block">{nodeName}</span>
+                      <span className="text-nebula-purple text-[7px] md:text-[8px] uppercase tracking-widest leading-none block mt-1">
+                        {nodeLore?.title || 'System Node'}
+                      </span>
+                      
+                      <div className="flex flex-wrap items-center justify-between mt-2 pt-1 border-t border-ash-grey/10">
+                        <span className="text-astral-gold uppercase tracking-wider text-[10px] md:text-xs break-words">
+                          {p.sign}
+                        </span>
+                        <span className="text-ash-grey font-mono text-[9px] md:text-[10px] opacity-70">
+                          {p.degree}
+                        </span>
+                      </div>
+
+                      {/* The Accordion Expansion Payload */}
+                      {isExpanded && nodeLore?.description && (
+                        <div className="mt-2 pt-2 border-t border-astral-gold/20 text-[10px] md:text-xs text-ash-grey leading-relaxed animate-in slide-in-from-top-1">
+                          {nodeLore.description}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -428,9 +453,18 @@ export function NumerologyCard({ data }: { data: any }) {
   return (
     <section 
       className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col relative overflow-hidden"
-      style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
     >
-      {imageUrl && <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>}
+      {imageUrl && (
+        <>
+          <AetherImage 
+            category="numerology" 
+            filename={`Aether Energy - Numerology - Life Path ${data.lifePath}.png`} 
+            alt={`Life Path ${data.lifePath}`}
+            className="absolute inset-0 z-0" 
+          />
+          <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>
+        </>
+      )}
       <div className="relative z-10 flex-1 flex flex-col h-full">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-nebula-purple font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
@@ -594,9 +628,18 @@ export function StarseedCard({ data }: { data: any }) {
   return (
     <section 
       className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col relative overflow-hidden"
-      style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
     >
-      {imageUrl && <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>}
+      {imageUrl && (
+        <>
+          <AetherImage 
+            category="starseeds" 
+            filename={imageUrl.split('/').pop() || ''} 
+            alt={data.origin}
+            className="absolute inset-0 z-0" 
+          />
+          <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>
+        </>
+      )}
       <div className="relative z-10 flex-1 flex flex-col h-full">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
@@ -658,9 +701,18 @@ export function SacredGeometryCard({ data }: { data: any }) {
   return (
     <section 
       className="bg-obsidian border border-ash-grey/10 rounded-xl p-4 md:p-6 shadow-lg transition-all h-full flex flex-col relative overflow-hidden"
-      style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
     >
-      {imageUrl && <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>}
+      {imageUrl && (
+        <>
+          <AetherImage 
+            category="geometry" 
+            filename={imageUrl.split('/').pop() || ''} 
+            alt={data.shape}
+            className="absolute inset-0 z-0" 
+          />
+          <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0"></div>
+        </>
+      )}
       <div className="relative z-10 flex-1 flex flex-col h-full">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-astral-gold font-semibold uppercase tracking-widest text-xs md:text-sm flex items-center gap-2">
